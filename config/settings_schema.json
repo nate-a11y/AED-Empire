@@ -492,6 +492,19 @@
         "default": false
       },
       {
+        "type": "checkbox",
+        "id": "product_card_show_swatches",
+        "label": "Show color swatches",
+        "default": true,
+        "info": "Display color variant swatches on product cards"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_card_hover_image",
+        "label": "Show second image on hover",
+        "default": true
+      },
+      {
         "type": "select",
         "id": "product_card_image_ratio",
         "label": "Image ratio",
@@ -502,12 +515,6 @@
           { "value": "landscape", "label": "Landscape 4:3" }
         ],
         "default": "square"
-      },
-      {
-        "type": "checkbox",
-        "id": "product_card_show_secondary_image",
-        "label": "Show second image on hover",
-        "default": true
       }
     ]
   },

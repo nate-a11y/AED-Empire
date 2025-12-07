@@ -27,13 +27,18 @@
           <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
 
-        <a href="/" class="header__logo">
+        <a href="/" class="header__logo" aria-label="{{ shop.name }} - Home">
           {% if settings.logo %}
-            <img src="{{ settings.logo | image_url: width: settings.logo_width | times: 2 }}"
-                 alt="{{ shop.name }} - Home"
-                 width="{{ settings.logo_width }}"
-                 height="{{ settings.logo_width | divided_by: settings.logo.aspect_ratio }}"
-                 loading="eager">
+            {% assign logo_width = settings.logo_width | default: 150 %}
+            {% assign logo_aspect = settings.logo.aspect_ratio | default: 1 %}
+            {% assign logo_height = logo_width | divided_by: logo_aspect | round %}
+            <img src="{{ settings.logo | image_url: width: logo_width | times: 2 }}"
+                 alt="{{ shop.name }}"
+                 width="{{ logo_width }}"
+                 height="{{ logo_height }}"
+                 loading="eager"
+                 onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='inline';">
+            <span class="header__logo-text" style="display:none">{{ shop.name }}</span>
           {% else %}
             <span class="header__logo-text">{{ shop.name }}</span>
           {% endif %}

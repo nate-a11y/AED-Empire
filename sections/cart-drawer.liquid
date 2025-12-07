@@ -1,51 +1,89 @@
-<div class="cart-drawer__overlay" data-cart-overlay></div>
-<div class="cart-drawer" data-cart-drawer>
+<div class="cart-drawer__overlay" data-cart-overlay aria-hidden="true"></div>
+<div class="cart-drawer" data-cart-drawer role="dialog" aria-label="Shopping cart" aria-modal="true">
   <div class="cart-drawer__header">
-    <h2>Your Cart</h2>
+    <h2 id="cart-drawer-title">Your Cart <span class="cart-drawer__count">({{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %})</span></h2>
     <button type="button" class="cart-drawer__close" data-cart-close aria-label="Close cart">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
-  
-  <div class="cart-drawer__items">
+
+  {% if cart.items.size > 0 %}
+    <!-- Free Shipping Progress Bar -->
+    {% assign free_shipping_threshold = settings.free_shipping_threshold | default: 100 | times: 100 %}
+    {% assign remaining = free_shipping_threshold | minus: cart.total_price %}
+    {% assign progress_percent = cart.total_price | times: 100 | divided_by: free_shipping_threshold %}
+    {% if progress_percent > 100 %}{% assign progress_percent = 100 %}{% endif %}
+
+    <div class="free-shipping-progress{% if remaining <= 0 %} free-shipping-progress--achieved{% endif %}" data-shipping-progress data-shipping-threshold="{{ free_shipping_threshold }}" role="progressbar" aria-valuenow="{{ progress_percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="Free shipping progress">
+      <p class="free-shipping-progress__text" data-shipping-text>
+        {% if remaining > 0 %}
+          Add <strong>{{ remaining | money }}</strong> more for <strong>FREE shipping!</strong>
+        {% else %}
+          🎉 You've qualified for <strong>FREE shipping!</strong>
+        {% endif %}
+      </p>
+      <div class="free-shipping-progress__bar">
+        <div class="free-shipping-progress__fill" data-shipping-fill style="width: {{ progress_percent }}%"></div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="cart-drawer__items" role="list" aria-label="Cart items">
     {% if cart.items.size > 0 %}
       {% for item in cart.items %}
-        <div class="cart-drawer__item">
-          <img src="{{ item.image | image_url: width: 100 }}" alt="{{ item.title }}" width="80" height="80" loading="lazy">
-          <div>
-            <div class="cart-drawer__item-title">{{ item.product.title }}</div>
-            {% if item.variant.title != 'Default Title' %}<small>{{ item.variant.title }}</small>{% endif %}
-            <div class="cart-drawer__item-price">{{ item.final_line_price | money }}</div>
-            <div class="cart-drawer__item-qty">Qty: {{ item.quantity }}</div>
+        <div class="cart-drawer__item" role="listitem" data-cart-item="{{ item.key }}">
+          <div class="cart-drawer__item-image">
+            {% if item.image %}
+              <img src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title | escape }}" width="80" height="80" loading="lazy">
+            {% else %}
+              <div class="cart-drawer__item-placeholder">
+                <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </div>
+            {% endif %}
+          </div>
+          <div class="cart-drawer__item-details">
+            <a href="{{ item.url }}" class="cart-drawer__item-title">{{ item.product.title }}</a>
+            {% if item.variant.title != 'Default Title' %}
+              <p class="cart-drawer__item-variant">{{ item.variant.title }}</p>
+            {% endif %}
+            <div class="cart-drawer__item-bottom">
+              <div class="cart-drawer__item-qty-wrapper">
+                <label for="cart-qty-{{ item.key }}" class="visually-hidden">Quantity for {{ item.title }}</label>
+                <div class="cart-drawer__item-qty">
+                  <button type="button" class="cart-drawer__qty-btn" data-qty-change="{{ item.key }}" data-qty-action="minus" aria-label="Decrease quantity">−</button>
+                  <input type="number" id="cart-qty-{{ item.key }}" value="{{ item.quantity }}" min="0" max="99" class="cart-drawer__qty-input" data-qty-input="{{ item.key }}" aria-label="Quantity">
+                  <button type="button" class="cart-drawer__qty-btn" data-qty-change="{{ item.key }}" data-qty-action="plus" aria-label="Increase quantity">+</button>
+                </div>
+              </div>
+              <p class="cart-drawer__item-price">{{ item.final_line_price | money }}</p>
+            </div>
+            <button type="button" class="cart-drawer__item-remove" data-remove-item="{{ item.key }}" aria-label="Remove {{ item.title }} from cart">Remove</button>
           </div>
         </div>
       {% endfor %}
     {% else %}
-      <div class="cart__empty">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <div class="cart-drawer__empty">
+        <svg aria-hidden="true" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
         <p>Your cart is empty</p>
+        <a href="/collections/all" class="btn btn--primary">Start Shopping</a>
       </div>
     {% endif %}
   </div>
-  
+
   {% if cart.items.size > 0 %}
     <div class="cart-drawer__footer">
-      {% if settings.free_shipping_threshold > 0 %}
-        {% assign remaining = settings.free_shipping_threshold | times: 100 | minus: cart.total_price %}
-        <div class="cart-drawer__shipping">
-          {% if remaining > 0 %}
-            Add <strong>{{ remaining | money }}</strong> more for FREE shipping
-          {% else %}
-            <strong>FREE shipping</strong> unlocked!
-          {% endif %}
-        </div>
-      {% endif %}
       <div class="cart-drawer__subtotal">
         <span>Subtotal</span>
-        <span>{{ cart.total_price | money }}</span>
+        <span data-cart-subtotal>{{ cart.total_price | money }}</span>
       </div>
-      <a href="/checkout" class="btn btn--primary btn--full">Checkout</a>
-      <a href="/cart" class="btn btn--outline btn--full" style="margin-top:10px">View Cart</a>
+      <p class="cart-drawer__note">Shipping & taxes calculated at checkout</p>
+      <div class="cart-drawer__actions">
+        <a href="/checkout" class="btn btn--primary btn--full">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Checkout
+        </a>
+        <a href="/cart" class="btn btn--outline btn--full">View Cart</a>
+      </div>
     </div>
   {% endif %}
 </div>
