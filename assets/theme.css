@@ -50,8 +50,11 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 .btn--primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
 .btn--primary:hover { background: var(--color-primary-hover); border-color: var(--color-primary-hover); color: #fff; }
 .btn--secondary { background: var(--color-secondary); color: #fff; border-color: var(--color-secondary); }
+.btn--secondary:hover { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
 .btn--outline { background: transparent; color: var(--color-primary); border-color: var(--color-primary); }
 .btn--outline:hover { background: var(--color-primary); color: #fff; }
+.btn--outline-blue { background: transparent; color: var(--color-secondary); border-color: var(--color-secondary); }
+.btn--outline-blue:hover { background: var(--color-secondary); color: #fff; }
 .btn--outline-white { background: transparent; color: #fff; border-color: #fff; }
 .btn--outline-white:hover { background: #fff; color: var(--color-primary); }
 .btn--small { padding: 10px 20px; font-size: 0.8125rem; }

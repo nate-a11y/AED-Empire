@@ -57,20 +57,26 @@
       {
         "type": "color",
         "id": "color_primary",
-        "label": "Primary brand color",
-        "default": "#A52A2A"
+        "label": "Primary brand color (Red)",
+        "default": "#C41E3A"
       },
       {
         "type": "color",
         "id": "color_primary_hover",
         "label": "Primary hover",
-        "default": "#8B0000"
+        "default": "#A01830"
       },
       {
         "type": "color",
         "id": "color_secondary",
-        "label": "Secondary dark",
-        "default": "#1a1a1a"
+        "label": "Secondary (Navy Blue)",
+        "default": "#002868"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent (Blue)",
+        "default": "#0052A5"
       },
       {
         "type": "header",
@@ -80,13 +86,13 @@
         "type": "color",
         "id": "color_background",
         "label": "Background",
-        "default": "#FAF8F0"
+        "default": "#FFFFFF"
       },
       {
         "type": "color",
         "id": "color_background_alt",
         "label": "Alternate background",
-        "default": "#F5F0E1"
+        "default": "#F5F7FA"
       },
       {
         "type": "header",
@@ -96,13 +102,13 @@
         "type": "color",
         "id": "color_text",
         "label": "Text",
-        "default": "#2C2C2C"
+        "default": "#1A1A2E"
       },
       {
         "type": "color",
         "id": "color_text_light",
         "label": "Light text",
-        "default": "#5C5C5C"
+        "default": "#5A5A6E"
       },
       {
         "type": "header",
@@ -112,7 +118,7 @@
         "type": "color",
         "id": "color_border",
         "label": "Borders",
-        "default": "#E5DFD0"
+        "default": "#E1E5EB"
       },
       {
         "type": "color",

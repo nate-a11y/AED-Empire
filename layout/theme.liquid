@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="theme-color" content="{{ settings.color_primary | default: '#A52A2A' }}">
+  <meta name="theme-color" content="{{ settings.color_primary | default: '#C41E3A' }}">
 
   <title>{{ page_title }}{% unless page_title contains shop.name %} — {{ shop.name }}{% endunless %}</title>
 
@@ -32,7 +32,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="{{ shop.name }}">
   <meta name="application-name" content="{{ shop.name }}">
-  <meta name="msapplication-TileColor" content="{{ settings.color_primary | default: '#A52A2A' }}">
+  <meta name="msapplication-TileColor" content="{{ settings.color_primary | default: '#C41E3A' }}">
 
   {%- comment -%} Preconnect to critical origins {%- endcomment -%}
   <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
@@ -63,24 +63,26 @@
   {%- comment -%} CSS Custom Properties {%- endcomment -%}
   <style>
     :root {
-      --color-primary: {{ settings.color_primary }};
-      --color-primary-hover: {{ settings.color_primary_hover }};
-      --color-secondary: {{ settings.color_secondary }};
-      --color-bg: {{ settings.color_background }};
-      --color-bg-alt: {{ settings.color_background_alt }};
-      --color-bg-dark: {{ settings.color_background_dark | default: '#1a1a1a' }};
-      --color-text: {{ settings.color_text }};
-      --color-text-light: {{ settings.color_text_light }};
-      --color-border: {{ settings.color_border }};
-      --color-sale: {{ settings.color_sale }};
-      --color-error: {{ settings.color_error }};
-      --color-success: {{ settings.color_success }};
+      /* Red/White/Blue Patriotic Color Scheme */
+      --color-primary: {{ settings.color_primary | default: '#C41E3A' }};
+      --color-primary-hover: {{ settings.color_primary_hover | default: '#A01830' }};
+      --color-secondary: {{ settings.color_secondary | default: '#002868' }};
+      --color-accent: {{ settings.color_accent | default: '#0052A5' }};
+      --color-bg: {{ settings.color_background | default: '#FFFFFF' }};
+      --color-bg-alt: {{ settings.color_background_alt | default: '#F5F7FA' }};
+      --color-bg-dark: {{ settings.color_secondary | default: '#002868' }};
+      --color-text: {{ settings.color_text | default: '#1A1A2E' }};
+      --color-text-light: {{ settings.color_text_light | default: '#5A5A6E' }};
+      --color-border: {{ settings.color_border | default: '#E1E5EB' }};
+      --color-sale: {{ settings.color_sale | default: '#2E7D32' }};
+      --color-error: {{ settings.color_error | default: '#dc3545' }};
+      --color-success: {{ settings.color_success | default: '#28a745' }};
       --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
       --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
-      --font-size-base: {{ settings.font_body_size }}px;
-      --page-width: {{ settings.page_width }}px;
-      --spacing-sections: {{ settings.spacing_sections }}px;
-      --button-radius: {{ settings.button_border_radius }}px;
+      --font-size-base: {{ settings.font_body_size | default: 16 }}px;
+      --page-width: {{ settings.page_width | default: 1400 }}px;
+      --spacing-sections: {{ settings.spacing_sections | default: 80 }}px;
+      --button-radius: {{ settings.button_border_radius | default: 0 }}px;
     }
 
     /* Reduced motion support */
