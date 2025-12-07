@@ -1,8 +1,6 @@
-{{ 'header.css' | asset_url | stylesheet_tag }}
-
 <header class="header" data-header>
-  <div class="header__announcement" role="region" aria-label="Promotions">
-    {% if section.settings.announcement_text != blank %}
+  {%- if section.settings.announcement_show and section.settings.announcement_text != blank -%}
+    <div class="header__announcement" role="region" aria-label="Promotions" style="background: {{ section.settings.announcement_bg }}; color: {{ section.settings.announcement_color }};">
       <div class="container">
         <div class="announcement-inner">
           {% if section.settings.announcement_icon %}
@@ -13,12 +11,12 @@
             <span class="countdown" data-countdown="{{ section.settings.countdown_date }}" aria-live="polite" aria-atomic="true"></span>
           {% endif %}
           {% if section.settings.announcement_link != blank %}
-            <a href="{{ section.settings.announcement_link }}" class="announcement-link">{{ section.settings.announcement_link_text | default: 'Learn More' }}</a>
+            <a href="{{ section.settings.announcement_link }}" class="announcement-link" style="color: {{ section.settings.announcement_color }};">{{ section.settings.announcement_link_text | default: 'Learn More' }}</a>
           {% endif %}
         </div>
       </div>
-    {% endif %}
-  </div>
+    </div>
+  {%- endif -%}
 
   <div class="header__main">
     <div class="container">
@@ -27,13 +25,18 @@
           <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
 
-        <a href="/" class="header__logo">
+        <a href="/" class="header__logo" aria-label="{{ shop.name }} - Home">
           {% if settings.logo %}
-            <img src="{{ settings.logo | image_url: width: settings.logo_width | times: 2 }}"
-                 alt="{{ shop.name }} - Home"
-                 width="{{ settings.logo_width }}"
-                 height="{{ settings.logo_width | divided_by: settings.logo.aspect_ratio }}"
-                 loading="eager">
+            {% assign logo_width = settings.logo_width | default: 150 %}
+            {% assign logo_aspect = settings.logo.aspect_ratio | default: 1 %}
+            {% assign logo_height = logo_width | divided_by: logo_aspect | round %}
+            <img src="{{ settings.logo | image_url: width: logo_width | times: 2 }}"
+                 alt="{{ shop.name }}"
+                 width="{{ logo_width }}"
+                 height="{{ logo_height }}"
+                 loading="eager"
+                 onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='inline';">
+            <span class="header__logo-text" style="display:none">{{ shop.name }}</span>
           {% else %}
             <span class="header__logo-text">{{ shop.name }}</span>
           {% endif %}
@@ -234,10 +237,28 @@
       "content": "Announcement Bar"
     },
     {
+      "type": "checkbox",
+      "id": "announcement_show",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "announcement_text",
       "label": "Announcement text",
       "default": "Free shipping on orders over $500"
+    },
+    {
+      "type": "color",
+      "id": "announcement_bg",
+      "label": "Background color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "announcement_color",
+      "label": "Text color",
+      "default": "#ffffff"
     },
     {
       "type": "select",

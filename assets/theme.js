@@ -929,6 +929,696 @@
   };
 
   // =========================================
+  // PRODUCT LIGHTBOX
+  // =========================================
+  const productLightbox = {
+    currentIndex: 0,
+    images: [],
+
+    init() {
+      const lightbox = document.querySelector('[data-product-lightbox]');
+      const zoomContainers = document.querySelectorAll('[data-zoom-trigger]');
+
+      if (!lightbox || !zoomContainers.length) return;
+
+      // Collect all images
+      this.images = Array.from(document.querySelectorAll('[data-lightbox-src]')).map(el => ({
+        src: el.dataset.lightboxSrc,
+        alt: el.getAttribute('alt') || ''
+      }));
+
+      // Open lightbox on click
+      zoomContainers.forEach((trigger, index) => {
+        trigger.addEventListener('click', () => this.open(lightbox, index));
+      });
+
+      // Close button
+      lightbox.querySelector('[data-lightbox-close]')?.addEventListener('click', () => this.close(lightbox));
+
+      // Navigation
+      lightbox.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => this.prev(lightbox));
+      lightbox.querySelector('[data-lightbox-next]')?.addEventListener('click', () => this.next(lightbox));
+
+      // Overlay click
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) this.close(lightbox);
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('is-open')) return;
+        if (e.key === 'Escape') this.close(lightbox);
+        if (e.key === 'ArrowLeft') this.prev(lightbox);
+        if (e.key === 'ArrowRight') this.next(lightbox);
+      });
+    },
+
+    open(lightbox, index) {
+      this.currentIndex = index;
+      lightbox.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      this.updateImage(lightbox);
+      focusTrap.trap(lightbox);
+      utils.announce('Image lightbox opened. Use arrow keys to navigate.');
+    },
+
+    close(lightbox) {
+      lightbox.classList.remove('is-open');
+      document.body.style.overflow = '';
+      focusTrap.release();
+      utils.announce('Image lightbox closed');
+    },
+
+    prev(lightbox) {
+      this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+      this.updateImage(lightbox);
+    },
+
+    next(lightbox) {
+      this.currentIndex = (this.currentIndex + 1) % this.images.length;
+      this.updateImage(lightbox);
+    },
+
+    updateImage(lightbox) {
+      const img = lightbox.querySelector('[data-lightbox-image]');
+      const counter = lightbox.querySelector('[data-lightbox-counter]');
+
+      if (img && this.images[this.currentIndex]) {
+        img.src = this.images[this.currentIndex].src;
+        img.alt = this.images[this.currentIndex].alt;
+      }
+
+      if (counter) {
+        counter.textContent = `${this.currentIndex + 1} / ${this.images.length}`;
+      }
+
+      utils.announce(`Image ${this.currentIndex + 1} of ${this.images.length}`);
+    }
+  };
+
+  // =========================================
+  // SALE COUNTDOWN TIMER (Enhanced)
+  // =========================================
+  const saleCountdown = {
+    init() {
+      document.querySelectorAll('[data-sale-countdown]').forEach(el => {
+        const endDate = el.dataset.saleCountdown;
+        if (!endDate) return;
+
+        const target = new Date(endDate).getTime();
+        if (isNaN(target)) return;
+
+        this.update(el, target);
+        setInterval(() => this.update(el, target), 1000);
+      });
+    },
+
+    update(el, target) {
+      const now = Date.now();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        el.innerHTML = '<span class="product-sale-countdown__label">Sale Ended</span>';
+        el.setAttribute('aria-label', 'Sale has ended');
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+      el.querySelector('[data-countdown-days]').textContent = String(days).padStart(2, '0');
+      el.querySelector('[data-countdown-hours]').textContent = String(hours).padStart(2, '0');
+      el.querySelector('[data-countdown-mins]').textContent = String(mins).padStart(2, '0');
+      el.querySelector('[data-countdown-secs]').textContent = String(secs).padStart(2, '0');
+
+      el.setAttribute('aria-label', `Sale ends in ${days} days, ${hours} hours, ${mins} minutes, ${secs} seconds`);
+    }
+  };
+
+  // =========================================
+  // QUOTE REQUEST MODAL
+  // =========================================
+  const quoteModal = {
+    init() {
+      const modal = document.querySelector('[data-quote-modal]');
+      if (!modal) return;
+
+      // Open triggers (floating button and inline buttons)
+      document.querySelectorAll('[data-quote-trigger]').forEach(trigger => {
+        trigger.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.open(modal);
+        });
+      });
+
+      // Close button
+      modal.querySelector('[data-quote-close]')?.addEventListener('click', () => this.close(modal));
+
+      // Overlay click
+      modal.querySelector('.quote-modal__overlay')?.addEventListener('click', () => this.close(modal));
+
+      // Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.hidden) {
+          this.close(modal);
+        }
+      });
+
+      // Form submission
+      modal.querySelector('form')?.addEventListener('submit', (e) => this.handleSubmit(e, modal));
+    },
+
+    open(modal) {
+      modal.hidden = false;
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      focusTrap.trap(modal);
+      utils.announce('Quote request form opened');
+    },
+
+    close(modal) {
+      modal.hidden = true;
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      focusTrap.release();
+      utils.announce('Quote request form closed');
+    },
+
+    async handleSubmit(e, modal) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = form.querySelector('button[type="submit"]');
+      const originalText = btn.textContent;
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      try {
+        // In a real implementation, this would submit to a server/API
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        form.innerHTML = `
+          <div class="form__success">
+            <h3>Thank You!</h3>
+            <p>We've received your quote request and will contact you within 24 hours.</p>
+          </div>
+        `;
+        utils.announce('Quote request submitted successfully', 'assertive');
+
+        setTimeout(() => this.close(modal), 3000);
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+        utils.announce('Error submitting quote request. Please try again.', 'assertive');
+      }
+    }
+  };
+
+  // =========================================
+  // B2B QUICK ORDER FORM
+  // =========================================
+  const quickOrderForm = {
+    init() {
+      const form = document.querySelector('[data-quick-order]');
+      if (!form) return;
+
+      // Add row button
+      form.querySelector('[data-quick-order-add]')?.addEventListener('click', () => this.addRow(form));
+
+      // Remove row buttons
+      form.addEventListener('click', (e) => {
+        if (e.target.closest('[data-quick-order-remove]')) {
+          const row = e.target.closest('[data-quick-order-row]');
+          if (form.querySelectorAll('[data-quick-order-row]').length > 1) {
+            row.remove();
+            utils.announce('Row removed');
+          }
+        }
+      });
+
+      // Form submission
+      form.addEventListener('submit', (e) => this.handleSubmit(e, form));
+    },
+
+    addRow(form) {
+      const rows = form.querySelector('[data-quick-order-rows]');
+      const newRow = document.createElement('div');
+      newRow.className = 'quick-order-form__row';
+      newRow.setAttribute('data-quick-order-row', '');
+      newRow.innerHTML = `
+        <input type="text" class="quick-order-form__input" placeholder="SKU or Product Name" aria-label="SKU or Product Name" required>
+        <input type="number" class="quick-order-form__input" placeholder="Qty" min="1" value="1" aria-label="Quantity" required>
+        <button type="button" class="quick-order-form__remove" data-quick-order-remove aria-label="Remove row">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      `;
+      rows.appendChild(newRow);
+      newRow.querySelector('input').focus();
+      utils.announce('New row added');
+    },
+
+    async handleSubmit(e, form) {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      const originalText = btn.textContent;
+      const rows = Array.from(form.querySelectorAll('[data-quick-order-row]'));
+
+      const items = rows.map(row => ({
+        sku: row.querySelector('input[type="text"]').value,
+        qty: parseInt(row.querySelector('input[type="number"]').value) || 1
+      })).filter(item => item.sku);
+
+      if (!items.length) {
+        utils.announce('Please enter at least one product', 'assertive');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Adding to Cart...';
+
+      try {
+        // In production, this would look up SKUs and add to cart
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        utils.announce(`${items.length} items added to cart`, 'assertive');
+        btn.textContent = 'Added!';
+
+        // Reset form after success
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = originalText;
+          form.reset();
+        }, 2000);
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+        utils.announce('Error adding items to cart', 'assertive');
+      }
+    }
+  };
+
+  // =========================================
+  // FREE SHIPPING PROGRESS BAR
+  // =========================================
+  const freeShippingProgress = {
+    threshold: 10000, // $100 in cents
+
+    init() {
+      const progressBars = document.querySelectorAll('[data-shipping-progress]');
+      if (!progressBars.length) return;
+
+      // Get threshold from data attribute if provided
+      const firstBar = progressBars[0];
+      if (firstBar.dataset.shippingThreshold) {
+        this.threshold = parseInt(firstBar.dataset.shippingThreshold);
+      }
+
+      this.update();
+
+      // Update when cart changes
+      document.addEventListener('cart:updated', () => this.update());
+    },
+
+    async update() {
+      try {
+        const response = await fetch('/cart.js');
+        const cart = await response.json();
+        const total = cart.total_price;
+        const remaining = Math.max(0, this.threshold - total);
+        const percentage = Math.min(100, (total / this.threshold) * 100);
+
+        document.querySelectorAll('[data-shipping-progress]').forEach(el => {
+          const fill = el.querySelector('[data-shipping-fill]');
+          const text = el.querySelector('[data-shipping-text]');
+
+          if (fill) fill.style.width = `${percentage}%`;
+
+          if (text) {
+            if (remaining <= 0) {
+              text.innerHTML = '🎉 You\'ve qualified for <strong>FREE shipping!</strong>';
+              el.classList.add('free-shipping-progress--achieved');
+            } else {
+              text.innerHTML = `Add <strong>${utils.formatMoney(remaining)}</strong> more for FREE shipping`;
+              el.classList.remove('free-shipping-progress--achieved');
+            }
+          }
+        });
+      } catch (e) {
+        console.error('Error updating shipping progress:', e);
+      }
+    }
+  };
+
+  // =========================================
+  // ENHANCED STICKY ADD-TO-CART BAR
+  // =========================================
+  const stickyCartBar = {
+    init() {
+      const bar = document.querySelector('[data-sticky-cart-bar]');
+      const form = document.querySelector('[data-product-form]');
+      if (!bar || !form) return;
+
+      // Show/hide based on scroll position
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          bar.classList.toggle('is-visible', !entry.isIntersecting);
+          bar.setAttribute('aria-hidden', entry.isIntersecting);
+        });
+      }, { threshold: 0, rootMargin: '-100px 0px 0px 0px' });
+
+      observer.observe(form);
+
+      // Sync quantity
+      const mainQty = form.querySelector('[data-qty-input]');
+      const stickyQty = bar.querySelector('[data-sticky-qty-input]');
+
+      if (mainQty && stickyQty) {
+        mainQty.addEventListener('change', () => {
+          stickyQty.value = mainQty.value;
+        });
+        stickyQty.addEventListener('change', () => {
+          mainQty.value = stickyQty.value;
+        });
+      }
+
+      // Sticky quantity buttons
+      bar.querySelector('[data-sticky-qty-minus]')?.addEventListener('click', () => {
+        const val = parseInt(stickyQty.value) || 1;
+        if (val > 1) {
+          stickyQty.value = val - 1;
+          mainQty.value = val - 1;
+          utils.announce(`Quantity: ${val - 1}`);
+        }
+      });
+
+      bar.querySelector('[data-sticky-qty-plus]')?.addEventListener('click', () => {
+        const val = parseInt(stickyQty.value) || 1;
+        stickyQty.value = val + 1;
+        mainQty.value = val + 1;
+        utils.announce(`Quantity: ${val + 1}`);
+      });
+
+      // Add to cart from sticky bar
+      bar.querySelector('[data-sticky-add]')?.addEventListener('click', () => {
+        form.querySelector('[data-add-btn]')?.click();
+      });
+    }
+  };
+
+  // =========================================
+  // WISHLIST SYSTEM
+  // =========================================
+  const wishlist = {
+    STORAGE_KEY: 'aed_wishlist',
+
+    init() {
+      this.updateAllButtons();
+
+      // Listen for wishlist button clicks
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-wishlist-add]');
+        if (btn) {
+          e.preventDefault();
+          this.toggle(btn);
+        }
+      });
+
+      // Listen for storage changes (sync across tabs)
+      window.addEventListener('storage', (e) => {
+        if (e.key === this.STORAGE_KEY) {
+          this.updateAllButtons();
+          window.dispatchEvent(new CustomEvent('wishlist:updated', {
+            detail: { count: this.getList().length }
+          }));
+        }
+      });
+
+      // Expose globally
+      window.updateWishlistButtons = () => this.updateAllButtons();
+    },
+
+    getList() {
+      try {
+        return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    },
+
+    saveList(list) {
+      try {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+        window.dispatchEvent(new CustomEvent('wishlist:updated', {
+          detail: { count: list.length }
+        }));
+      } catch {}
+    },
+
+    isInList(handle) {
+      return this.getList().some(p => p.handle === handle);
+    },
+
+    toggle(btn) {
+      const handle = btn.dataset.wishlistAdd;
+      const list = this.getList();
+      const existingIndex = list.findIndex(p => p.handle === handle);
+
+      if (existingIndex > -1) {
+        // Remove from wishlist
+        list.splice(existingIndex, 1);
+        this.saveList(list);
+        this.updateButton(btn, false);
+        utils.announce('Removed from wishlist');
+      } else {
+        // Add to wishlist
+        const product = {
+          handle: handle,
+          id: btn.dataset.productId,
+          title: btn.dataset.productTitle,
+          price: parseInt(btn.dataset.productPrice) || 0,
+          image: btn.dataset.productImage,
+          url: btn.dataset.productUrl,
+          available: btn.dataset.productAvailable === 'true'
+        };
+        list.push(product);
+        this.saveList(list);
+        this.updateButton(btn, true);
+        utils.announce(`${product.title} added to wishlist`);
+      }
+    },
+
+    updateButton(btn, isActive) {
+      btn.classList.toggle('is-active', isActive);
+      btn.setAttribute('aria-pressed', isActive);
+      const text = btn.querySelector('.wishlist-btn__text');
+      if (text) {
+        text.textContent = isActive ? 'Saved' : 'Save';
+      }
+    },
+
+    updateAllButtons() {
+      document.querySelectorAll('[data-wishlist-add]').forEach(btn => {
+        const handle = btn.dataset.wishlistAdd;
+        this.updateButton(btn, this.isInList(handle));
+      });
+
+      // Update wishlist count in header if exists
+      const countEl = document.querySelector('[data-wishlist-count]');
+      if (countEl) {
+        const count = this.getList().length;
+        countEl.textContent = count;
+        countEl.hidden = count === 0;
+      }
+    }
+  };
+
+  // =========================================
+  // QUICK VIEW MODAL
+  // =========================================
+  const quickViewModal = {
+    init() {
+      // Listen for quick view button clicks
+      document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('[data-quick-view]');
+        if (btn) {
+          e.preventDefault();
+          const handle = btn.dataset.quickView;
+          await this.open(handle);
+        }
+      });
+    },
+
+    async open(handle) {
+      try {
+        // Fetch product data
+        const response = await fetch(`/products/${handle}.js`);
+        const product = await response.json();
+
+        // Create modal
+        const modal = document.createElement('div');
+        modal.className = 'quick-view-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'quick-view-title');
+        modal.innerHTML = `
+          <div class="quick-view-modal__overlay" data-quick-view-close></div>
+          <div class="quick-view-modal__content">
+            <button type="button" class="quick-view-modal__close" data-quick-view-close aria-label="Close">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="quick-view-modal__image">
+              <img src="${product.featured_image}" alt="${product.title}" width="450" height="450">
+            </div>
+            <div class="quick-view-modal__info">
+              <h2 id="quick-view-title" class="quick-view-modal__title">${product.title}</h2>
+              <p class="quick-view-modal__price">${utils.formatMoney(product.price)}</p>
+              <div class="quick-view-modal__description">${product.description?.substring(0, 200) || ''}...</div>
+              <form class="quick-view-modal__form">
+                <input type="hidden" name="id" value="${product.variants[0].id}">
+                <button type="submit" class="btn btn--primary btn--full" ${!product.available ? 'disabled' : ''}>
+                  ${product.available ? 'Add to Cart' : 'Sold Out'}
+                </button>
+              </form>
+              <a href="${product.url}" class="quick-view-modal__link">View Full Details →</a>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+        document.body.style.overflow = 'hidden';
+
+        // Focus trap
+        const focusable = modal.querySelectorAll('button, [href], input, select, textarea');
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        first?.focus();
+
+        // Event handlers
+        const close = () => {
+          modal.remove();
+          document.body.style.overflow = '';
+        };
+
+        modal.querySelectorAll('[data-quick-view-close]').forEach(el => {
+          el.addEventListener('click', close);
+        });
+
+        modal.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') close();
+          if (e.key === 'Tab') {
+            if (e.shiftKey && document.activeElement === first) {
+              e.preventDefault();
+              last?.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+              e.preventDefault();
+              first?.focus();
+            }
+          }
+        });
+
+        // Add to cart from quick view
+        const form = modal.querySelector('.quick-view-modal__form');
+        form?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const btn = form.querySelector('button[type="submit"]');
+          btn.disabled = true;
+          btn.innerHTML = '<span class="loader" style="width:20px;height:20px;border-width:2px"></span>';
+
+          try {
+            await fetch('/cart/add.js', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ items: [{ id: product.variants[0].id, quantity: 1 }] })
+            });
+            btn.textContent = 'Added!';
+            document.dispatchEvent(new CustomEvent('cart:updated'));
+            setTimeout(close, 1500);
+          } catch (err) {
+            btn.textContent = 'Error';
+            btn.disabled = false;
+          }
+        });
+
+      } catch (err) {
+        console.error('Quick view error:', err);
+      }
+    }
+  };
+
+  // =========================================
+  // RECENTLY VIEWED ENHANCEMENT
+  // =========================================
+  const recentlyViewedEnhanced = {
+    init() {
+      // Carousel navigation
+      document.querySelectorAll('.recently-viewed__carousel').forEach(carousel => {
+        const track = carousel.querySelector('.recently-viewed__track');
+        const prevBtn = carousel.querySelector('.recently-viewed__nav--prev');
+        const nextBtn = carousel.querySelector('.recently-viewed__nav--next');
+
+        if (!track) return;
+
+        const scrollAmount = 220;
+
+        prevBtn?.addEventListener('click', () => {
+          track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+
+        nextBtn?.addEventListener('click', () => {
+          track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+
+        // Update button states
+        track.addEventListener('scroll', () => {
+          if (prevBtn) prevBtn.disabled = track.scrollLeft <= 0;
+          if (nextBtn) nextBtn.disabled = track.scrollLeft + track.offsetWidth >= track.scrollWidth - 10;
+        });
+
+        // Initial state
+        if (prevBtn) prevBtn.disabled = true;
+      });
+    }
+  };
+
+  // =========================================
+  // VARIANT COLOR SWATCHES
+  // =========================================
+  const variantSwatches = {
+    init() {
+      document.querySelectorAll('[data-swatch-option]').forEach(swatch => {
+        swatch.addEventListener('change', (e) => {
+          const optionIndex = swatch.closest('[data-option-index]')?.dataset.optionIndex;
+          const value = e.target.value;
+
+          // Update the hidden select if exists
+          const select = document.querySelector(`[data-option-select="${optionIndex}"]`);
+          if (select) {
+            select.value = value;
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+
+          // Update variant display
+          this.updateVariantInfo();
+          utils.announce(`Selected: ${value}`);
+        });
+      });
+    },
+
+    updateVariantInfo() {
+      // This would typically update price, availability, etc. based on variant
+      const selectedOptions = Array.from(document.querySelectorAll('[data-swatch-option]:checked'))
+        .map(input => input.value);
+
+      // Dispatch event for other components to react
+      document.dispatchEvent(new CustomEvent('variant:changed', {
+        detail: { options: selectedOptions }
+      }));
+    }
+  };
+
+  // =========================================
   // INIT
   // =========================================
   document.addEventListener('DOMContentLoaded', () => {
@@ -950,9 +1640,24 @@
     countdown.init();
     lazyImages.init();
 
+    // Premium features
+    productLightbox.init();
+    saleCountdown.init();
+    quoteModal.init();
+    quickOrderForm.init();
+    freeShippingProgress.init();
+    stickyCartBar.init();
+    variantSwatches.init();
+
+    // Premium+ features
+    wishlist.init();
+    quickViewModal.init();
+    recentlyViewedEnhanced.init();
+
     // Expose utils for external use
     window.themeUtils = utils;
     window.recentlyViewed = recentlyViewed;
+    window.wishlist = wishlist;
   });
 
 })();

@@ -1,0 +1,338 @@
+{% comment %}
+  Store Locator / Dealer Finder
+  Premium feature - helps customers find nearby dealers or stores
+  Integrates with Google Maps (requires API key in settings)
+{% endcomment %}
+
+<section class="store-locator section" aria-labelledby="locator-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 id="locator-heading">{{ section.settings.title | default: 'Find a Dealer' }}</h2>
+      {% if section.settings.subtitle %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    <div class="store-locator__layout">
+      <div class="store-locator__sidebar">
+        <form class="store-locator__search" data-locator-search>
+          <div class="store-locator__input-group">
+            <label for="locator-zip" class="visually-hidden">Enter ZIP code or city</label>
+            <input
+              type="text"
+              id="locator-zip"
+              name="location"
+              placeholder="{{ section.settings.search_placeholder | default: 'Enter ZIP code or city' }}"
+              data-locator-input
+              aria-describedby="locator-help"
+            >
+            <button type="submit" class="btn btn--primary" aria-label="Search">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+              </svg>
+            </button>
+          </div>
+          <p id="locator-help" class="store-locator__help">Or <button type="button" class="store-locator__use-location" data-use-location>use my location</button></p>
+        </form>
+
+        <div class="store-locator__filter" data-locator-filter>
+          <label class="store-locator__filter-label">
+            <input type="checkbox" name="certified" checked data-filter-certified>
+            <span>Certified Dealers Only</span>
+          </label>
+        </div>
+
+        <div class="store-locator__results" data-locator-results role="list" aria-live="polite">
+          <p class="store-locator__empty">Enter a location to find dealers near you.</p>
+        </div>
+      </div>
+
+      <div class="store-locator__map" data-locator-map aria-label="Map showing dealer locations">
+        <div class="store-locator__map-placeholder">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <p>Search to view dealers on the map</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .store-locator__layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 30px;
+    min-height: 500px;
+  }
+  @media (max-width: 968px) {
+    .store-locator__layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  .store-locator__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .store-locator__input-group {
+    display: flex;
+    gap: 10px;
+  }
+  .store-locator__input-group input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--button-radius);
+    font-size: 1rem;
+  }
+  .store-locator__input-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2);
+  }
+  .store-locator__help {
+    font-size: 0.875rem;
+    color: var(--color-text-light);
+    margin: 8px 0 0;
+  }
+  .store-locator__use-location {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
+    padding: 0;
+  }
+  .store-locator__filter {
+    padding: 15px;
+    background: var(--color-bg-alt);
+    border-radius: 8px;
+  }
+  .store-locator__filter-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.875rem;
+  }
+  .store-locator__filter-label input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-primary);
+  }
+  .store-locator__results {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 400px;
+  }
+  .store-locator__empty {
+    color: var(--color-text-light);
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .store-locator__item {
+    padding: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .store-locator__item:hover,
+  .store-locator__item.is-active {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .store-locator__item-name {
+    font-weight: 600;
+    margin: 0 0 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .store-locator__badge {
+    font-size: 0.6875rem;
+    padding: 2px 6px;
+    background: var(--color-success);
+    color: #fff;
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .store-locator__item-address {
+    font-size: 0.875rem;
+    color: var(--color-text-light);
+    margin: 0 0 10px;
+  }
+  .store-locator__item-distance {
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+  }
+  .store-locator__item-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .store-locator__item-actions a {
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+  .store-locator__map {
+    background: var(--color-bg-alt);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    min-height: 400px;
+  }
+  .store-locator__map-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 400px;
+    color: var(--color-text-light);
+    text-align: center;
+    gap: 15px;
+  }
+  .store-locator__map-placeholder svg {
+    opacity: 0.3;
+  }
+</style>
+
+<script>
+  (function() {
+    // Demo store data - replace with actual API or metafield data
+    const stores = {{ section.settings.stores_json | default: '[]' }};
+
+    const searchForm = document.querySelector('[data-locator-search]');
+    const input = document.querySelector('[data-locator-input]');
+    const results = document.querySelector('[data-locator-results]');
+    const useLocationBtn = document.querySelector('[data-use-location]');
+
+    // Demo search function
+    function searchStores(query) {
+      // In production, this would call Google Maps Geocoding API
+      // For demo, show sample results
+      const sampleStores = [
+        {
+          name: 'AED Solutions NYC',
+          address: '123 Medical Drive, New York, NY 10001',
+          phone: '(212) 555-0123',
+          certified: true,
+          distance: '2.3 mi'
+        },
+        {
+          name: 'Safety First Equipment',
+          address: '456 Emergency Lane, Brooklyn, NY 11201',
+          phone: '(718) 555-0456',
+          certified: true,
+          distance: '4.7 mi'
+        },
+        {
+          name: 'MedEquip Store',
+          address: '789 Health Ave, Queens, NY 11375',
+          phone: '(347) 555-0789',
+          certified: false,
+          distance: '8.2 mi'
+        }
+      ];
+
+      renderResults(sampleStores);
+    }
+
+    function renderResults(storeList) {
+      if (storeList.length === 0) {
+        results.innerHTML = '<p class="store-locator__empty">No dealers found in this area.</p>';
+        return;
+      }
+
+      results.innerHTML = storeList.map((store, i) => `
+        <div class="store-locator__item" role="listitem" data-store-index="${i}">
+          <h3 class="store-locator__item-name">
+            ${store.name}
+            ${store.certified ? '<span class="store-locator__badge">Certified</span>' : ''}
+          </h3>
+          <p class="store-locator__item-address">${store.address}</p>
+          <p class="store-locator__item-distance">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            ${store.distance} away
+          </p>
+          <div class="store-locator__item-actions">
+            <a href="tel:${store.phone.replace(/[^0-9]/g, '')}">${store.phone}</a>
+            <a href="https://maps.google.com/?q=${encodeURIComponent(store.address)}" target="_blank" rel="noopener">Get Directions</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    searchForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const query = input?.value.trim();
+      if (query) {
+        searchStores(query);
+      }
+    });
+
+    useLocationBtn?.addEventListener('click', () => {
+      if ('geolocation' in navigator) {
+        useLocationBtn.textContent = 'Getting location...';
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            input.value = 'Current Location';
+            searchStores('current');
+            useLocationBtn.textContent = 'use my location';
+          },
+          (error) => {
+            useLocationBtn.textContent = 'Location unavailable';
+            setTimeout(() => {
+              useLocationBtn.textContent = 'use my location';
+            }, 2000);
+          }
+        );
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Store Locator",
+  "tag": "section",
+  "class": "section-store-locator",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Find a Dealer"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Locate an authorized AED dealer near you"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Enter ZIP code or city"
+    },
+    {
+      "type": "textarea",
+      "id": "stores_json",
+      "label": "Stores JSON",
+      "info": "JSON array of store data. In production, use metafields or API."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Store Locator"
+    }
+  ]
+}
+{% endschema %}

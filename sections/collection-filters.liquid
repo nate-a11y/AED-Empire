@@ -1,0 +1,489 @@
+{% comment %}
+  Advanced Collection Filters
+  Premium feature with price range slider, multi-select filters, and active filter tags
+  Fully accessible with keyboard navigation
+{% endcomment %}
+
+{%- liquid
+  assign current_tags = collection.current_tags | join: ','
+  assign min_price = 0
+  assign max_price = 10000
+
+  for product in collection.products
+    if product.price > max_price
+      assign max_price = product.price
+    endif
+  endfor
+
+  assign max_price_dollars = max_price | divided_by: 100
+-%}
+
+{%- comment -%} Mobile Toggle {%- endcomment -%}
+<button type="button" class="collection-filters__mobile-toggle" data-filters-toggle aria-expanded="false" aria-controls="collection-filters">
+  <span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+    Filter & Sort
+  </span>
+  <span data-filter-count class="collection-filters__count" hidden>0 active</span>
+</button>
+
+<aside class="collection-filters" id="collection-filters" data-collection-filters aria-label="Collection filters">
+  <div class="collection-filters__header">
+    <h2 class="collection-filters__title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      {{ section.settings.title | default: 'Filters' }}
+    </h2>
+    <button type="button" class="collection-filters__clear" data-clear-filters hidden>Clear All</button>
+  </div>
+
+  {%- comment -%} Active Filters {%- endcomment -%}
+  <div class="active-filters" data-active-filters hidden aria-live="polite">
+    {%- comment -%} Active filter tags injected by JS {%- endcomment -%}
+  </div>
+
+  <form class="collection-filters__form" data-filter-form method="get" action="{{ collection.url }}">
+    <div class="collection-filters__groups">
+
+      {%- comment -%} Sort By {%- endcomment -%}
+      {% if section.settings.show_sort %}
+        <div class="collection-filters__group">
+          <h3 class="collection-filters__group-title">Sort By</h3>
+          <div class="collection-filters__select">
+            <select name="sort_by" data-sort-select aria-label="Sort products">
+              <option value="manual" {% if collection.sort_by == 'manual' %}selected{% endif %}>Featured</option>
+              <option value="best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Best Selling</option>
+              <option value="title-ascending" {% if collection.sort_by == 'title-ascending' %}selected{% endif %}>A-Z</option>
+              <option value="title-descending" {% if collection.sort_by == 'title-descending' %}selected{% endif %}>Z-A</option>
+              <option value="price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Price: Low to High</option>
+              <option value="price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Price: High to Low</option>
+              <option value="created-ascending" {% if collection.sort_by == 'created-ascending' %}selected{% endif %}>Oldest</option>
+              <option value="created-descending" {% if collection.sort_by == 'created-descending' %}selected{% endif %}>Newest</option>
+            </select>
+          </div>
+        </div>
+      {% endif %}
+
+      {%- comment -%} Price Range {%- endcomment -%}
+      {% if section.settings.show_price_filter %}
+        <div class="collection-filters__group collection-filters__group--price">
+          <h3 class="collection-filters__group-title">Price Range</h3>
+          <div class="price-range" data-price-range>
+            <div class="price-range__inputs">
+              <div class="price-range__input">
+                <label for="price-min">Min</label>
+                <input type="number" id="price-min" name="filter.v.price.gte" data-price-min min="0" max="{{ max_price_dollars }}" value="{{ filter.min_value.value | default: 0 }}" aria-label="Minimum price">
+              </div>
+              <span class="price-range__separator">to</span>
+              <div class="price-range__input">
+                <label for="price-max">Max</label>
+                <input type="number" id="price-max" name="filter.v.price.lte" data-price-max min="0" max="{{ max_price_dollars }}" value="{{ filter.max_value.value | default: max_price_dollars }}" aria-label="Maximum price">
+              </div>
+            </div>
+            <div class="price-range__slider" data-price-slider>
+              <div class="price-range__slider-track" data-price-track></div>
+              <button type="button" class="price-range__slider-thumb" data-price-thumb-min tabindex="0" role="slider" aria-label="Minimum price" aria-valuemin="0" aria-valuemax="{{ max_price_dollars }}" aria-valuenow="0"></button>
+              <button type="button" class="price-range__slider-thumb" data-price-thumb-max tabindex="0" role="slider" aria-label="Maximum price" aria-valuemin="0" aria-valuemax="{{ max_price_dollars }}" aria-valuenow="{{ max_price_dollars }}"></button>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {%- comment -%} Availability {%- endcomment -%}
+      {% if section.settings.show_availability %}
+        <div class="collection-filters__group">
+          <h3 class="collection-filters__group-title">Availability</h3>
+          <div class="collection-filters__options">
+            <label class="collection-filters__option">
+              <input type="checkbox" name="filter.v.availability" value="1" data-filter-checkbox {% if collection.filters contains 'availability:1' %}checked{% endif %}>
+              <span>In Stock</span>
+            </label>
+            <label class="collection-filters__option">
+              <input type="checkbox" name="filter.v.availability" value="0" data-filter-checkbox>
+              <span>Out of Stock</span>
+            </label>
+          </div>
+        </div>
+      {% endif %}
+
+      {%- comment -%} Product Type {%- endcomment -%}
+      {% if section.settings.show_product_type %}
+        {% assign product_types = collection.products | map: 'type' | uniq | sort %}
+        {% if product_types.size > 0 %}
+          <div class="collection-filters__group">
+            <h3 class="collection-filters__group-title">Product Type</h3>
+            <div class="collection-filters__options">
+              {% for type in product_types %}
+                {% if type != blank %}
+                  <label class="collection-filters__option">
+                    <input type="checkbox" name="filter.p.product_type" value="{{ type }}" data-filter-checkbox>
+                    <span>{{ type }}</span>
+                  </label>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {%- comment -%} Vendor / Brand {%- endcomment -%}
+      {% if section.settings.show_vendor %}
+        {% assign vendors = collection.products | map: 'vendor' | uniq | sort %}
+        {% if vendors.size > 0 %}
+          <div class="collection-filters__group">
+            <h3 class="collection-filters__group-title">Brand</h3>
+            <div class="collection-filters__options">
+              {% for vendor in vendors %}
+                {% if vendor != blank %}
+                  <label class="collection-filters__option">
+                    <input type="checkbox" name="filter.p.vendor" value="{{ vendor }}" data-filter-checkbox>
+                    <span>{{ vendor }}</span>
+                  </label>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {%- comment -%} Tags {%- endcomment -%}
+      {% if section.settings.show_tags %}
+        {% assign all_tags = collection.all_tags %}
+        {% if all_tags.size > 0 %}
+          <div class="collection-filters__group">
+            <h3 class="collection-filters__group-title">Tags</h3>
+            <div class="collection-filters__options">
+              {% for tag in all_tags limit: 15 %}
+                {% unless tag contains '_' %}
+                  <label class="collection-filters__option">
+                    <input type="checkbox" name="filter.p.tag" value="{{ tag }}" data-filter-checkbox {% if current_tags contains tag %}checked{% endif %}>
+                    <span>{{ tag }}</span>
+                  </label>
+                {% endunless %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {%- comment -%} Dynamic Option Filters (Color, Size, etc.) {%- endcomment -%}
+      {% for block in section.blocks %}
+        {% if block.type == 'option_filter' %}
+          {% assign option_name = block.settings.option_name %}
+          {% assign option_values = '' %}
+
+          {% for product in collection.products %}
+            {% for option in product.options_with_values %}
+              {% if option.name == option_name %}
+                {% for value in option.values %}
+                  {% assign option_values = option_values | append: value | append: ',' %}
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+
+          {% assign unique_values = option_values | split: ',' | uniq | sort %}
+
+          {% if unique_values.size > 0 %}
+            <div class="collection-filters__group" {{ block.shopify_attributes }}>
+              <h3 class="collection-filters__group-title">{{ option_name }}</h3>
+              <div class="collection-filters__options {% if block.settings.show_swatches %}collection-filters__options--swatches{% endif %}">
+                {% for value in unique_values %}
+                  {% if value != blank %}
+                    <label class="collection-filters__option {% if block.settings.show_swatches %}collection-filters__option--swatch{% endif %}">
+                      <input type="checkbox" name="filter.v.option.{{ option_name | handleize }}" value="{{ value }}" data-filter-checkbox>
+                      {% if block.settings.show_swatches %}
+                        <span class="collection-filters__swatch" style="background-color: {{ value | handleize }};" title="{{ value }}"></span>
+                      {% endif %}
+                      <span>{{ value }}</span>
+                    </label>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+    </div>
+
+    <div class="collection-filters__actions">
+      <button type="submit" class="btn btn--primary btn--small">Apply Filters</button>
+    </div>
+  </form>
+</aside>
+
+<script>
+  (function() {
+    const filtersContainer = document.querySelector('[data-collection-filters]');
+    const filterForm = document.querySelector('[data-filter-form]');
+    const mobileToggle = document.querySelector('[data-filters-toggle]');
+    const clearBtn = document.querySelector('[data-clear-filters]');
+    const activeFiltersEl = document.querySelector('[data-active-filters]');
+    const filterCountEl = document.querySelector('[data-filter-count]');
+    const sortSelect = document.querySelector('[data-sort-select]');
+
+    // Mobile toggle
+    mobileToggle?.addEventListener('click', () => {
+      const isOpen = filtersContainer.classList.toggle('is-open');
+      mobileToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Sort change - auto submit
+    sortSelect?.addEventListener('change', () => {
+      filterForm?.submit();
+    });
+
+    // Price range slider
+    const priceRange = document.querySelector('[data-price-range]');
+    if (priceRange) {
+      const slider = priceRange.querySelector('[data-price-slider]');
+      const track = priceRange.querySelector('[data-price-track]');
+      const minThumb = priceRange.querySelector('[data-price-thumb-min]');
+      const maxThumb = priceRange.querySelector('[data-price-thumb-max]');
+      const minInput = priceRange.querySelector('[data-price-min]');
+      const maxInput = priceRange.querySelector('[data-price-max]');
+
+      const minValue = parseInt(minInput.min);
+      const maxValue = parseInt(minInput.max);
+
+      function updateSlider() {
+        const min = parseInt(minInput.value) || minValue;
+        const max = parseInt(maxInput.value) || maxValue;
+
+        const minPercent = ((min - minValue) / (maxValue - minValue)) * 100;
+        const maxPercent = ((max - minValue) / (maxValue - minValue)) * 100;
+
+        minThumb.style.left = `${minPercent}%`;
+        maxThumb.style.left = `${maxPercent}%`;
+        track.style.left = `${minPercent}%`;
+        track.style.width = `${maxPercent - minPercent}%`;
+
+        minThumb.setAttribute('aria-valuenow', min);
+        maxThumb.setAttribute('aria-valuenow', max);
+      }
+
+      function handleDrag(thumb, isMin) {
+        let isDragging = false;
+
+        const startDrag = (e) => {
+          e.preventDefault();
+          isDragging = true;
+          document.addEventListener('mousemove', drag);
+          document.addEventListener('mouseup', stopDrag);
+          document.addEventListener('touchmove', drag);
+          document.addEventListener('touchend', stopDrag);
+        };
+
+        const drag = (e) => {
+          if (!isDragging) return;
+
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+          const rect = slider.getBoundingClientRect();
+          let percent = ((clientX - rect.left) / rect.width) * 100;
+          percent = Math.min(Math.max(percent, 0), 100);
+
+          const value = Math.round((percent / 100) * (maxValue - minValue) + minValue);
+
+          if (isMin) {
+            if (value < parseInt(maxInput.value)) {
+              minInput.value = value;
+            }
+          } else {
+            if (value > parseInt(minInput.value)) {
+              maxInput.value = value;
+            }
+          }
+
+          updateSlider();
+        };
+
+        const stopDrag = () => {
+          isDragging = false;
+          document.removeEventListener('mousemove', drag);
+          document.removeEventListener('mouseup', stopDrag);
+          document.removeEventListener('touchmove', drag);
+          document.removeEventListener('touchend', stopDrag);
+        };
+
+        thumb.addEventListener('mousedown', startDrag);
+        thumb.addEventListener('touchstart', startDrag);
+
+        // Keyboard support
+        thumb.addEventListener('keydown', (e) => {
+          const step = 10;
+          let currentValue = parseInt(isMin ? minInput.value : maxInput.value);
+
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            currentValue = Math.max(currentValue - step, minValue);
+          } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            currentValue = Math.min(currentValue + step, maxValue);
+          }
+
+          if (isMin) {
+            if (currentValue < parseInt(maxInput.value)) {
+              minInput.value = currentValue;
+            }
+          } else {
+            if (currentValue > parseInt(minInput.value)) {
+              maxInput.value = currentValue;
+            }
+          }
+
+          updateSlider();
+        });
+      }
+
+      handleDrag(minThumb, true);
+      handleDrag(maxThumb, false);
+
+      minInput.addEventListener('change', updateSlider);
+      maxInput.addEventListener('change', updateSlider);
+
+      updateSlider();
+    }
+
+    // Track active filters
+    function updateActiveFilters() {
+      const checkboxes = filterForm?.querySelectorAll('[data-filter-checkbox]:checked') || [];
+      const count = checkboxes.length;
+
+      if (clearBtn) clearBtn.hidden = count === 0;
+      if (activeFiltersEl) activeFiltersEl.hidden = count === 0;
+      if (filterCountEl) {
+        filterCountEl.hidden = count === 0;
+        filterCountEl.textContent = `${count} active`;
+      }
+
+      if (activeFiltersEl && count > 0) {
+        activeFiltersEl.innerHTML = Array.from(checkboxes).map(cb => `
+          <span class="active-filter">
+            ${cb.value}
+            <button type="button" class="active-filter__remove" data-remove-filter="${cb.name}:${cb.value}" aria-label="Remove ${cb.value} filter">×</button>
+          </span>
+        `).join('');
+      }
+    }
+
+    // Listen for filter changes
+    filterForm?.querySelectorAll('[data-filter-checkbox]').forEach(cb => {
+      cb.addEventListener('change', updateActiveFilters);
+    });
+
+    // Remove individual filter
+    activeFiltersEl?.addEventListener('click', (e) => {
+      const removeBtn = e.target.closest('[data-remove-filter]');
+      if (removeBtn) {
+        const [name, value] = removeBtn.dataset.removeFilter.split(':');
+        const checkbox = filterForm?.querySelector(`input[name="${name}"][value="${value}"]`);
+        if (checkbox) {
+          checkbox.checked = false;
+          updateActiveFilters();
+        }
+      }
+    });
+
+    // Clear all filters
+    clearBtn?.addEventListener('click', () => {
+      filterForm?.querySelectorAll('[data-filter-checkbox]').forEach(cb => {
+        cb.checked = false;
+      });
+
+      const minInput = document.querySelector('[data-price-min]');
+      const maxInput = document.querySelector('[data-price-max]');
+      if (minInput) minInput.value = minInput.min;
+      if (maxInput) maxInput.value = maxInput.max;
+
+      updateActiveFilters();
+
+      // Update price slider
+      if (typeof updateSlider === 'function') updateSlider();
+    });
+
+    // Initialize
+    updateActiveFilters();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Collection Filters",
+  "tag": "section",
+  "class": "section-collection-filters",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Filters"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort",
+      "label": "Show sort dropdown",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price_filter",
+      "label": "Show price filter",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_availability",
+      "label": "Show availability filter",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_type",
+      "label": "Show product type filter",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor/brand filter",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show tags filter",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "option_filter",
+      "name": "Option Filter",
+      "settings": [
+        {
+          "type": "text",
+          "id": "option_name",
+          "label": "Option name",
+          "info": "e.g., Color, Size, Material",
+          "default": "Color"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_swatches",
+          "label": "Show as color swatches",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Filters",
+      "blocks": [
+        { "type": "option_filter", "settings": { "option_name": "Color", "show_swatches": true } },
+        { "type": "option_filter", "settings": { "option_name": "Size" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,358 @@
+{% comment %}
+  Product Comparison Tool
+  Premium feature - allows side-by-side product comparison
+  Fully accessible with keyboard navigation
+{% endcomment %}
+
+<section class="product-compare section" id="product-compare" aria-labelledby="compare-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 id="compare-heading">{{ section.settings.title | default: 'Compare Products' }}</h2>
+      {% if section.settings.subtitle %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    {%- comment -%} Empty State {%- endcomment -%}
+    <div class="product-compare__empty" data-compare-empty>
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+      </svg>
+      <h3>No products to compare</h3>
+      <p>Add products to compare by clicking the compare button on product cards.</p>
+      <a href="/collections/all" class="btn btn--primary">Browse Products</a>
+    </div>
+
+    {%- comment -%} Comparison Table {%- endcomment -%}
+    <div class="product-compare__table-wrapper" data-compare-table hidden>
+      <div class="product-compare__actions">
+        <button type="button" class="btn btn--outline btn--small" data-compare-clear>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Clear All
+        </button>
+        <button type="button" class="btn btn--outline btn--small" data-compare-print>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print Comparison
+        </button>
+      </div>
+
+      <div class="product-compare__scroll">
+        <table class="product-compare__table" role="table" aria-label="Product comparison">
+          <thead>
+            <tr>
+              <th scope="col" class="product-compare__feature-header">Feature</th>
+              {%- comment -%} Product headers injected by JS {%- endcomment -%}
+            </tr>
+          </thead>
+          <tbody data-compare-body>
+            {%- comment -%} Rows injected by JS {%- endcomment -%}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td></td>
+              {%- comment -%} Add to cart buttons injected by JS {%- endcomment -%}
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+{%- comment -%} Floating Compare Bar {%- endcomment -%}
+<div class="compare-bar" data-compare-bar hidden aria-live="polite">
+  <div class="container">
+    <div class="compare-bar__inner">
+      <div class="compare-bar__products" data-compare-bar-products>
+        {%- comment -%} Product thumbnails injected by JS {%- endcomment -%}
+      </div>
+      <div class="compare-bar__actions">
+        <span class="compare-bar__count"><span data-compare-count>0</span> products selected</span>
+        <a href="#product-compare" class="btn btn--primary btn--small" data-compare-view>
+          Compare Now
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const STORAGE_KEY = 'aed_compare_products';
+    const MAX_COMPARE = {{ section.settings.max_products | default: 4 }};
+
+    const compareBar = document.querySelector('[data-compare-bar]');
+    const compareTable = document.querySelector('[data-compare-table]');
+    const compareEmpty = document.querySelector('[data-compare-empty]');
+    const compareBody = document.querySelector('[data-compare-body]');
+    const compareCount = document.querySelector('[data-compare-count]');
+    const compareBarProducts = document.querySelector('[data-compare-bar-products]');
+
+    const compareFeatures = [
+      { key: 'price', label: 'Price' },
+      { key: 'vendor', label: 'Brand' },
+      { key: 'type', label: 'Type' },
+      { key: 'sku', label: 'SKU' },
+      { key: 'availability', label: 'Availability' },
+      { key: 'description', label: 'Description' }
+    ];
+
+    // Get compare list from storage
+    function getCompareList() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    // Save compare list
+    function saveCompareList(list) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      } catch {}
+    }
+
+    // Add product to compare
+    window.addToCompare = async function(handle) {
+      const list = getCompareList();
+      if (list.find(p => p.handle === handle)) {
+        window.removeFromCompare(handle);
+        return;
+      }
+      if (list.length >= MAX_COMPARE) {
+        if (window.themeUtils) {
+          window.themeUtils.announce(`Maximum ${MAX_COMPARE} products can be compared`, 'assertive');
+        }
+        return;
+      }
+
+      try {
+        const response = await fetch(`/products/${handle}.js`);
+        const product = await response.json();
+
+        list.push({
+          handle: product.handle,
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          compare_at_price: product.compare_at_price,
+          vendor: product.vendor,
+          type: product.type,
+          image: product.featured_image,
+          url: product.url,
+          available: product.available,
+          variants: product.variants,
+          description: product.description ? product.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...' : ''
+        });
+
+        saveCompareList(list);
+        updateCompareUI();
+        updateCompareButtons();
+
+        if (window.themeUtils) {
+          window.themeUtils.announce(`${product.title} added to comparison`, 'polite');
+        }
+      } catch (err) {
+        console.error('Error adding to compare:', err);
+      }
+    };
+
+    // Remove product from compare
+    window.removeFromCompare = function(handle) {
+      let list = getCompareList();
+      list = list.filter(p => p.handle !== handle);
+      saveCompareList(list);
+      updateCompareUI();
+      updateCompareButtons();
+    };
+
+    // Check if product is in compare
+    window.isInCompare = function(handle) {
+      return getCompareList().some(p => p.handle === handle);
+    };
+
+    // Update compare buttons on page
+    function updateCompareButtons() {
+      document.querySelectorAll('[data-compare-add]').forEach(btn => {
+        const handle = btn.dataset.compareAdd;
+        const isInList = window.isInCompare(handle);
+        btn.classList.toggle('is-active', isInList);
+        btn.setAttribute('aria-pressed', isInList);
+        btn.querySelector('.compare-btn__text').textContent = isInList ? 'Remove' : 'Compare';
+      });
+    }
+
+    // Update floating bar and table
+    function updateCompareUI() {
+      const list = getCompareList();
+
+      // Update count
+      if (compareCount) {
+        compareCount.textContent = list.length;
+      }
+
+      // Show/hide bar
+      if (compareBar) {
+        compareBar.hidden = list.length === 0;
+      }
+
+      // Update bar thumbnails
+      if (compareBarProducts) {
+        compareBarProducts.innerHTML = list.map(p => `
+          <div class="compare-bar__product">
+            <img src="${p.image}" alt="${p.title}" width="40" height="40">
+            <button type="button" class="compare-bar__remove" onclick="removeFromCompare('${p.handle}')" aria-label="Remove ${p.title}">×</button>
+          </div>
+        `).join('');
+      }
+
+      // Update table
+      if (compareTable && compareEmpty && compareBody) {
+        if (list.length < 2) {
+          compareTable.hidden = true;
+          compareEmpty.hidden = false;
+          return;
+        }
+
+        compareTable.hidden = false;
+        compareEmpty.hidden = true;
+
+        // Build header row
+        const thead = compareTable.querySelector('thead tr');
+        thead.innerHTML = '<th scope="col" class="product-compare__feature-header">Feature</th>';
+        list.forEach(p => {
+          thead.innerHTML += `
+            <th scope="col" class="product-compare__product-header">
+              <button type="button" class="product-compare__remove" onclick="removeFromCompare('${p.handle}')" aria-label="Remove ${p.title}">×</button>
+              <a href="${p.url}">
+                <img src="${p.image}" alt="${p.title}" width="120" height="120">
+              </a>
+              <a href="${p.url}" class="product-compare__product-title">${p.title}</a>
+            </th>
+          `;
+        });
+
+        // Build body rows
+        compareBody.innerHTML = '';
+
+        // Price row
+        const priceRow = document.createElement('tr');
+        priceRow.innerHTML = '<th scope="row">Price</th>' + list.map(p => {
+          const price = window.themeUtils ? window.themeUtils.formatMoney(p.price) : '$' + (p.price / 100).toFixed(2);
+          let html = `<td><strong class="product-compare__price">${price}</strong>`;
+          if (p.compare_at_price > p.price) {
+            const compare = window.themeUtils ? window.themeUtils.formatMoney(p.compare_at_price) : '$' + (p.compare_at_price / 100).toFixed(2);
+            html += `<span class="product-compare__compare-price">${compare}</span>`;
+          }
+          return html + '</td>';
+        }).join('');
+        compareBody.appendChild(priceRow);
+
+        // Other feature rows
+        [
+          { key: 'vendor', label: 'Brand' },
+          { key: 'type', label: 'Product Type' },
+          { key: 'available', label: 'Availability', format: v => v ? '✓ In Stock' : '✗ Out of Stock' },
+          { key: 'description', label: 'Description' }
+        ].forEach(feature => {
+          const row = document.createElement('tr');
+          row.innerHTML = `<th scope="row">${feature.label}</th>` + list.map(p => {
+            let value = p[feature.key] || '-';
+            if (feature.format) value = feature.format(value);
+            return `<td>${value}</td>`;
+          }).join('');
+          compareBody.appendChild(row);
+        });
+
+        // Build footer with add to cart buttons
+        const tfoot = compareTable.querySelector('tfoot tr');
+        tfoot.innerHTML = '<td></td>' + list.map(p => `
+          <td>
+            ${p.available
+              ? `<button type="button" class="btn btn--primary btn--small btn--full" onclick="addBundleItem(${p.variants[0].id})">Add to Cart</button>`
+              : '<button class="btn btn--outline btn--small btn--full" disabled>Sold Out</button>'
+            }
+          </td>
+        `).join('');
+      }
+    }
+
+    // Add single item to cart
+    window.addBundleItem = async function(variantId) {
+      try {
+        await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] })
+        });
+        document.dispatchEvent(new CustomEvent('cart:updated'));
+        if (window.themeUtils) {
+          window.themeUtils.announce('Item added to cart', 'assertive');
+        }
+      } catch (err) {
+        console.error('Error adding to cart:', err);
+      }
+    };
+
+    // Clear all
+    document.querySelector('[data-compare-clear]')?.addEventListener('click', () => {
+      saveCompareList([]);
+      updateCompareUI();
+      updateCompareButtons();
+    });
+
+    // Print comparison
+    document.querySelector('[data-compare-print]')?.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Initialize
+    updateCompareUI();
+    updateCompareButtons();
+
+    // Listen for compare button clicks
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('[data-compare-add]');
+      if (btn) {
+        e.preventDefault();
+        window.addToCompare(btn.dataset.compareAdd);
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product Compare",
+  "tag": "section",
+  "class": "section-product-compare",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Compare Products"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "See how our products stack up against each other"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Maximum products to compare",
+      "min": 2,
+      "max": 6,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Compare"
+    }
+  ]
+}
+{% endschema %}

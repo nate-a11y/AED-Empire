@@ -1,40 +1,73 @@
-<div class="product-page">
+<div class="product-page" data-product-id="{{ product.id }}">
   <div class="container">
     <!-- Breadcrumbs -->
     <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <a href="/">Home</a>
-      <span class="breadcrumbs__sep">/</span>
-      {% if collection %}
-        <a href="{{ collection.url }}">{{ collection.title }}</a>
-        <span class="breadcrumbs__sep">/</span>
-      {% endif %}
-      <span aria-current="page">{{ product.title }}</span>
+      <ol role="list">
+        <li><a href="/">Home</a></li>
+        {% if collection %}
+          <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+        {% endif %}
+        <li aria-current="page">{{ product.title }}</li>
+      </ol>
     </nav>
 
     <div class="product-page__main">
-      <!-- Gallery -->
-      <div class="product-gallery">
+      <!-- Gallery with Zoom -->
+      <div class="product-gallery" data-product-gallery>
         <div class="product-gallery__main">
           {% for media in product.media %}
-            <div class="product-gallery__slide{% if forloop.first %} product-gallery__slide--active{% endif %}" data-media-id="{{ media.id }}">
+            <div class="product-gallery__slide{% if forloop.first %} product-gallery__slide--active{% endif %}"
+                 data-media-id="{{ media.id }}"
+                 data-media-type="{{ media.media_type }}"
+                 {% if media.media_type == 'image' %}data-zoom-src="{{ media | image_url: width: 2400 }}"{% endif %}>
               {% if media.media_type == 'image' %}
-                <img src="{{ media | image_url: width: 1200 }}" alt="{{ media.alt | default: product.title }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+                <div class="product-gallery__zoom-container" data-zoom-container>
+                  <img src="{{ media | image_url: width: 1200 }}"
+                       alt="{{ media.alt | default: product.title }}"
+                       loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                       data-zoom-image>
+                  <div class="product-gallery__zoom-lens" data-zoom-lens></div>
+                </div>
+                <button class="product-gallery__fullscreen" data-open-lightbox="{{ forloop.index0 }}" aria-label="View full size">
+                  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                </button>
               {% elsif media.media_type == 'video' %}
-                {{ media | video_tag: autoplay: false, controls: true }}
+                {{ media | video_tag: autoplay: false, controls: true, class: 'product-gallery__video' }}
               {% elsif media.media_type == 'external_video' %}
-                {{ media | external_video_tag }}
+                <div class="product-gallery__external-video">{{ media | external_video_tag }}</div>
               {% endif %}
             </div>
           {% endfor %}
-          {% if product.compare_at_price > product.price %}
-            <span class="product-badge product-badge--sale">Sale</span>
-          {% endif %}
+
+          <!-- Badges -->
+          <div class="product-gallery__badges">
+            {% if product.compare_at_price > product.price %}
+              {% assign save_percent = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
+              <span class="product-badge product-badge--sale">{{ save_percent }}% OFF</span>
+            {% endif %}
+            {% if product.tags contains 'new' %}
+              <span class="product-badge product-badge--new">New</span>
+            {% endif %}
+            {% if product.tags contains 'bestseller' %}
+              <span class="product-badge product-badge--best">Bestseller</span>
+            {% endif %}
+          </div>
         </div>
+
         {% if product.media.size > 1 %}
-          <div class="product-gallery__thumbs">
+          <div class="product-gallery__thumbs" role="tablist" aria-label="Product images">
             {% for media in product.media %}
-              <button class="product-gallery__thumb{% if forloop.first %} product-gallery__thumb--active{% endif %}" data-thumb="{{ media.id }}">
-                <img src="{{ media | image_url: width: 150 }}" alt="{{ media.alt | default: product.title }}" loading="lazy">
+              <button class="product-gallery__thumb{% if forloop.first %} product-gallery__thumb--active{% endif %}"
+                      data-thumb="{{ media.id }}"
+                      role="tab"
+                      aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                      aria-label="View image {{ forloop.index }}">
+                {% if media.media_type == 'video' or media.media_type == 'external_video' %}
+                  <div class="product-gallery__thumb-video">
+                    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                {% endif %}
+                <img src="{{ media.preview_image | image_url: width: 150 }}" alt="" loading="lazy">
               </button>
             {% endfor %}
           </div>
@@ -44,54 +77,122 @@
       <!-- Product Info -->
       <div class="product-info">
         {% if product.vendor %}
-          <p class="product-info__vendor">{{ product.vendor }}</p>
+          <p class="product-info__vendor">
+            <a href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
+          </p>
         {% endif %}
-        
+
         <h1 class="product-info__title">{{ product.title }}</h1>
-        
+
+        <!-- Rating Placeholder -->
+        <div class="product-info__rating" data-product-rating>
+          <div class="product-rating__stars">
+            {% for i in (1..5) %}
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="#E5DFD0" stroke="#E5DFD0" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            {% endfor %}
+          </div>
+          <span class="product-rating__text">No reviews yet</span>
+        </div>
+
+        <!-- Price -->
         <div class="product-info__price">
           <span class="product-info__price-current" data-product-price>{{ product.price | money }}</span>
           {% if product.compare_at_price > product.price %}
             <span class="product-info__price-compare">{{ product.compare_at_price | money }}</span>
-            <span class="product-info__price-save">Save {{ product.compare_at_price | minus: product.price | money }}</span>
+            <span class="product-info__price-save">
+              Save {{ product.compare_at_price | minus: product.price | money }}
+            </span>
           {% endif %}
         </div>
 
-        {% if product.metafields.custom.bulk_pricing_note != blank %}
-          <div class="product-info__bulk">
-            {% render 'icon', name: 'phone' %}
-            <span>{{ product.metafields.custom.bulk_pricing_note }}</span>
+        <!-- Sale Countdown Timer -->
+        {% if section.settings.show_sale_countdown and product.compare_at_price > product.price and section.settings.sale_end_date != blank %}
+          <div class="product-countdown" data-sale-countdown="{{ section.settings.sale_end_date }}" aria-live="polite">
+            <span class="product-countdown__label">Sale ends in:</span>
+            <div class="product-countdown__timer">
+              <div class="product-countdown__unit"><span data-days>00</span><small>Days</small></div>
+              <div class="product-countdown__unit"><span data-hours>00</span><small>Hrs</small></div>
+              <div class="product-countdown__unit"><span data-minutes>00</span><small>Min</small></div>
+              <div class="product-countdown__unit"><span data-seconds>00</span><small>Sec</small></div>
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Volume/Tiered Pricing (B2B) -->
+        {% if section.settings.show_volume_pricing %}
+          <div class="product-volume-pricing">
+            <button class="product-volume-pricing__toggle" aria-expanded="false" aria-controls="volume-pricing-table">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              Volume Discounts Available
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="product-volume-pricing__table" id="volume-pricing-table" hidden>
+              <table>
+                <thead><tr><th>Quantity</th><th>Price Each</th><th>Savings</th></tr></thead>
+                <tbody>
+                  <tr><td>1-4</td><td>{{ product.price | money }}</td><td>—</td></tr>
+                  <tr><td>5-9</td><td>{{ product.price | times: 0.95 | money }}</td><td class="text-success">5% off</td></tr>
+                  <tr><td>10-24</td><td>{{ product.price | times: 0.90 | money }}</td><td class="text-success">10% off</td></tr>
+                  <tr><td>25+</td><td>{{ product.price | times: 0.85 | money }}</td><td class="text-success">15% off</td></tr>
+                  <tr class="volume-pricing__contact"><td colspan="3"><a href="#quote-form">Need 50+? Request a custom quote</a></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Stock Urgency -->
+        {% assign inventory_qty = product.selected_or_first_available_variant.inventory_quantity %}
+        {% if product.available and section.settings.show_stock_countdown and inventory_qty > 0 and inventory_qty <= section.settings.low_stock_threshold %}
+          <div class="product-urgency" role="status">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Only <strong>{{ inventory_qty }}</strong> left in stock - order soon!</span>
           </div>
         {% endif %}
 
         <!-- Trust Badges -->
         <div class="product-trust">
-          {% if settings.trust_badge_1_text != blank %}
-            <div class="product-trust__item">
-              {% render 'icon', name: settings.trust_badge_1_icon %}
-              <span>{{ settings.trust_badge_1_text }}</span>
-            </div>
-          {% endif %}
-          {% if settings.trust_badge_2_text != blank %}
-            <div class="product-trust__item">
-              {% render 'icon', name: settings.trust_badge_2_icon %}
-              <span>{{ settings.trust_badge_2_text }}</span>
-            </div>
-          {% endif %}
+          <div class="product-trust__item">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>FDA Registered</span>
+          </div>
+          <div class="product-trust__item">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>Authorized Dealer</span>
+          </div>
+          <div class="product-trust__item">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>Free Shipping $500+</span>
+          </div>
         </div>
 
-        {% form 'product', product, data-product-form: '' %}
+        {% form 'product', product, data-product-form: '', id: 'product-form' %}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
-          
+
           {% unless product.has_only_default_variant %}
             {% for option in product.options_with_values %}
-              <div class="product-option">
-                <label class="product-option__label">{{ option.name }}</label>
-                <div class="product-option__values">
+              <div class="product-option" data-option-index="{{ forloop.index0 }}">
+                <label class="product-option__label" id="option-label-{{ forloop.index }}">
+                  {{ option.name }}{% if option.name == 'Color' %}: <span data-selected-option>{{ option.selected_value }}</span>{% endif %}
+                </label>
+                <div class="product-option__values" role="radiogroup" aria-labelledby="option-label-{{ forloop.index }}">
                   {% for value in option.values %}
-                    <label class="product-option__value{% if option.selected_value == value %} product-option__value--selected{% endif %}">
-                      <input type="radio" name="{{ option.name }}" value="{{ value }}" {% if option.selected_value == value %}checked{% endif %} data-option-input>
-                      <span>{{ value }}</span>
+                    {% assign option_disabled = false %}
+                    {% assign color_value = value | handleize %}
+                    <label class="product-option__value{% if option.selected_value == value %} product-option__value--selected{% endif %}{% if option.name == 'Color' %} product-option__value--color{% endif %}"
+                           {% if option.name == 'Color' %}style="--swatch-color: {{ value | handleize }}"{% endif %}
+                           data-option-value="{{ value }}">
+                      <input type="radio"
+                             name="{{ option.name }}"
+                             value="{{ value }}"
+                             {% if option.selected_value == value %}checked{% endif %}
+                             data-option-input
+                             aria-label="{{ option.name }}: {{ value }}">
+                      {% if option.name == 'Color' %}
+                        <span class="product-option__swatch" title="{{ value }}"></span>
+                      {% else %}
+                        <span>{{ value }}</span>
+                      {% endif %}
                     </label>
                   {% endfor %}
                 </div>
@@ -102,17 +203,33 @@
           <div class="product-actions">
             <div class="product-quantity">
               <label class="visually-hidden" for="quantity">Quantity</label>
-              <button type="button" class="product-quantity__btn" data-qty-minus aria-label="Decrease quantity">−</button>
-              <input type="number" id="quantity" name="quantity" value="1" min="1" class="product-quantity__input" data-qty-input>
-              <button type="button" class="product-quantity__btn" data-qty-plus aria-label="Increase quantity">+</button>
+              <button type="button" class="product-quantity__btn" data-qty-minus aria-label="Decrease quantity">
+                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <input type="number" id="quantity" name="quantity" value="1" min="1" max="999" class="product-quantity__input" data-qty-input aria-describedby="qty-hint">
+              <button type="button" class="product-quantity__btn" data-qty-plus aria-label="Increase quantity">
+                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
             </div>
-            
+            <span id="qty-hint" class="visually-hidden">Enter quantity between 1 and 999</span>
+
             <button type="submit" class="btn btn--primary btn--large product-add-btn" {% unless product.available %}disabled{% endunless %} data-add-btn>
-              {% if product.available %}
-                Add to Cart
-              {% else %}
-                Sold Out
-              {% endif %}
+              <span class="product-add-btn__text">
+                {% if product.available %}
+                  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                  Add to Cart
+                {% else %}
+                  Sold Out
+                {% endif %}
+              </span>
+              <span class="product-add-btn__loading" hidden>
+                <svg class="spinner" width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="32" stroke-linecap="round"/></svg>
+                Adding...
+              </span>
+              <span class="product-add-btn__added" hidden>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Added!
+              </span>
             </button>
           </div>
 
@@ -123,9 +240,20 @@
           {% endif %}
         {% endform %}
 
+        <!-- B2B Quote Request Button -->
+        {% if section.settings.show_quote_button %}
+          <div class="product-quote-cta">
+            <span>Need a quote for your organization?</span>
+            <a href="#quote-form" class="btn btn--outline btn--small" data-scroll-to>
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Request Quote
+            </a>
+          </div>
+        {% endif %}
+
         <!-- Short Description -->
         {% if product.description != blank and product.description.size < 500 %}
-          <div class="product-info__short-desc">
+          <div class="product-info__short-desc rte">
             {{ product.description }}
           </div>
         {% endif %}
@@ -135,94 +263,188 @@
           {% if product.selected_or_first_available_variant.sku != blank %}
             <p><strong>SKU:</strong> <span data-product-sku>{{ product.selected_or_first_available_variant.sku }}</span></p>
           {% endif %}
-          <p><strong>Availability:</strong> 
+          <p><strong>Availability:</strong>
             <span data-product-availability>
               {% if product.available %}
                 <span class="text-success">In Stock</span>
+                {% if product.selected_or_first_available_variant.inventory_policy == 'continue' %}
+                  <span class="product-meta__backorder">(Ships in 1-2 weeks if backordered)</span>
+                {% endif %}
               {% else %}
                 <span class="text-error">Out of Stock</span>
               {% endif %}
             </span>
           </p>
+          {% if product.tags contains 'free-training' %}
+            <p class="product-meta__bonus"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Includes FREE CPR/AED Training</p>
+          {% endif %}
+        </div>
+
+        <!-- Shipping Estimate -->
+        <div class="product-shipping-estimate">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <div>
+            <strong>Free Shipping</strong> on orders over $500
+            <p>Order within <span data-shipping-cutoff></span> to ship today!</p>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Product Tabs -->
-    <div class="product-tabs" data-product-tabs>
+    <div class="product-tabs" data-product-tabs role="tablist" aria-label="Product information">
       <div class="product-tabs__nav">
+        {% assign first_tab = true %}
         {% if product.description != blank and product.description.size >= 500 %}
-          <button class="product-tabs__tab product-tabs__tab--active" data-tab="description">Description</button>
+          <button class="product-tabs__tab{% if first_tab %} product-tabs__tab--active{% endif %}"
+                  data-tab="description"
+                  role="tab"
+                  aria-selected="{% if first_tab %}true{% else %}false{% endif %}"
+                  aria-controls="panel-description"
+                  id="tab-description">Description</button>
+          {% assign first_tab = false %}
         {% endif %}
         {% if product.metafields.custom.specifications != blank %}
-          <button class="product-tabs__tab{% if product.description.size < 500 %} product-tabs__tab--active{% endif %}" data-tab="specs">Specifications</button>
+          <button class="product-tabs__tab{% if first_tab %} product-tabs__tab--active{% endif %}"
+                  data-tab="specs"
+                  role="tab"
+                  aria-selected="{% if first_tab %}true{% else %}false{% endif %}"
+                  aria-controls="panel-specs"
+                  id="tab-specs">Specifications</button>
+          {% assign first_tab = false %}
         {% endif %}
         {% if product.metafields.custom.whats_included != blank %}
-          <button class="product-tabs__tab" data-tab="included">What's Included</button>
+          <button class="product-tabs__tab" data-tab="included" role="tab" aria-selected="false" aria-controls="panel-included" id="tab-included">What's Included</button>
         {% endif %}
         {% if product.metafields.custom.warranty_info != blank %}
-          <button class="product-tabs__tab" data-tab="warranty">Warranty</button>
+          <button class="product-tabs__tab" data-tab="warranty" role="tab" aria-selected="false" aria-controls="panel-warranty" id="tab-warranty">Warranty</button>
         {% endif %}
         {% if section.settings.show_shipping_tab %}
-          <button class="product-tabs__tab" data-tab="shipping">Shipping</button>
+          <button class="product-tabs__tab" data-tab="shipping" role="tab" aria-selected="false" aria-controls="panel-shipping" id="tab-shipping">Shipping & Returns</button>
         {% endif %}
       </div>
-      
+
       <div class="product-tabs__content">
+        {% assign first_panel = true %}
         {% if product.description != blank and product.description.size >= 500 %}
-          <div class="product-tabs__panel product-tabs__panel--active" data-panel="description">
+          <div class="product-tabs__panel{% if first_panel %} product-tabs__panel--active{% endif %}"
+               data-panel="description"
+               role="tabpanel"
+               id="panel-description"
+               aria-labelledby="tab-description"
+               {% unless first_panel %}hidden{% endunless %}>
             <div class="rte">{{ product.description }}</div>
           </div>
+          {% assign first_panel = false %}
         {% endif %}
-        
+
         {% if product.metafields.custom.specifications != blank %}
-          <div class="product-tabs__panel{% if product.description.size < 500 %} product-tabs__panel--active{% endif %}" data-panel="specs">
+          <div class="product-tabs__panel{% if first_panel %} product-tabs__panel--active{% endif %}"
+               data-panel="specs"
+               role="tabpanel"
+               id="panel-specs"
+               aria-labelledby="tab-specs"
+               {% unless first_panel %}hidden{% endunless %}>
             <div class="specs-table">{{ product.metafields.custom.specifications }}</div>
           </div>
+          {% assign first_panel = false %}
         {% endif %}
-        
+
         {% if product.metafields.custom.whats_included != blank %}
-          <div class="product-tabs__panel" data-panel="included">
+          <div class="product-tabs__panel" data-panel="included" role="tabpanel" id="panel-included" aria-labelledby="tab-included" hidden>
             <div class="whats-included">{{ product.metafields.custom.whats_included }}</div>
           </div>
         {% endif %}
-        
+
         {% if product.metafields.custom.warranty_info != blank %}
-          <div class="product-tabs__panel" data-panel="warranty">
+          <div class="product-tabs__panel" data-panel="warranty" role="tabpanel" id="panel-warranty" aria-labelledby="tab-warranty" hidden>
             <div class="warranty-info">{{ product.metafields.custom.warranty_info }}</div>
           </div>
         {% endif %}
-        
+
         {% if section.settings.show_shipping_tab %}
-          <div class="product-tabs__panel" data-panel="shipping">
-            <div class="shipping-info">
+          <div class="product-tabs__panel" data-panel="shipping" role="tabpanel" id="panel-shipping" aria-labelledby="tab-shipping" hidden>
+            <div class="shipping-info rte">
               {{ section.settings.shipping_content }}
             </div>
           </div>
         {% endif %}
       </div>
     </div>
+
+    <!-- Cross-sells / Frequently Bought Together -->
+    {% if section.settings.show_cross_sells and product.metafields.custom.cross_sell_products != blank %}
+      <div class="product-cross-sells">
+        <h2>Frequently Bought Together</h2>
+        <div class="product-cross-sells__grid">
+          <!-- Populated by metafield or recommendations API -->
+        </div>
+      </div>
+    {% endif %}
   </div>
 </div>
 
-<!-- Sticky Add to Cart (Mobile) -->
-<div class="sticky-cart" data-sticky-cart>
-  <div class="sticky-cart__inner">
-    <div class="sticky-cart__info">
-      <span class="sticky-cart__title">{{ product.title | truncate: 30 }}</span>
-      <span class="sticky-cart__price" data-sticky-price>{{ product.price | money }}</span>
-    </div>
-    <button class="btn btn--primary sticky-cart__btn" data-sticky-add {% unless product.available %}disabled{% endunless %}>
-      {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
+<!-- Image Lightbox Modal -->
+<div class="lightbox" data-lightbox hidden role="dialog" aria-label="Image gallery" aria-modal="true">
+  <div class="lightbox__overlay" data-lightbox-close></div>
+  <div class="lightbox__content">
+    <button class="lightbox__close" data-lightbox-close aria-label="Close gallery">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
+    <button class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label="Previous image">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="lightbox__main">
+      <img src="" alt="" data-lightbox-image>
+    </div>
+    <button class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label="Next image">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <div class="lightbox__counter" aria-live="polite">
+      <span data-lightbox-current>1</span> / <span data-lightbox-total>{{ product.images.size }}</span>
+    </div>
   </div>
 </div>
+
+<!-- Enhanced Sticky Add to Cart -->
+<div class="sticky-cart" data-sticky-cart aria-hidden="true">
+  <div class="sticky-cart__inner">
+    <div class="sticky-cart__product">
+      {% if product.featured_image %}
+        <img src="{{ product.featured_image | image_url: width: 80 }}" alt="" class="sticky-cart__image" loading="lazy">
+      {% endif %}
+      <div class="sticky-cart__info">
+        <span class="sticky-cart__title">{{ product.title | truncate: 40 }}</span>
+        <span class="sticky-cart__price" data-sticky-price>{{ product.price | money }}</span>
+      </div>
+    </div>
+    <div class="sticky-cart__actions">
+      <div class="sticky-cart__qty">
+        <button type="button" data-sticky-qty-minus aria-label="Decrease quantity">−</button>
+        <span data-sticky-qty>1</span>
+        <button type="button" data-sticky-qty-plus aria-label="Increase quantity">+</button>
+      </div>
+      <button class="btn btn--primary sticky-cart__btn" data-sticky-add {% unless product.available %}disabled{% endunless %}>
+        {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Quote Button (B2B) -->
+{% if section.settings.show_floating_quote %}
+  <a href="#quote-form" class="floating-quote-btn" data-scroll-to aria-label="Request a quote">
+    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <span>Get Quote</span>
+  </a>
+{% endif %}
 
 <!-- Recently Viewed -->
 {% render 'recently-viewed', product: product %}
 
-<script type="application/json" data-product-json>
-  {{ product | json }}
+<script type="application/json" data-product-json>{{ product | json }}</script>
+<script type="application/json" data-product-images>
+  [{% for image in product.images %}{"id":"{{ image.id }}","src":"{{ image | image_url: width: 2400 }}","alt":"{{ image.alt | escape }}"}{% unless forloop.last %},{% endunless %}{% endfor %}]
 </script>
 
 {% schema %}
@@ -230,10 +452,71 @@
   "name": "Product page",
   "settings": [
     {
+      "type": "header",
+      "content": "General"
+    },
+    {
       "type": "checkbox",
       "id": "show_dynamic_checkout",
       "label": "Show dynamic checkout buttons",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Urgency & Conversion"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stock_countdown",
+      "label": "Show low stock warning",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "low_stock_threshold",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "label": "Low stock threshold",
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_countdown",
+      "label": "Show sale countdown timer",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "sale_end_date",
+      "label": "Sale end date",
+      "info": "Format: YYYY-MM-DD HH:MM"
+    },
+    {
+      "type": "header",
+      "content": "B2B Features"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_volume_pricing",
+      "label": "Show volume pricing table",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quote_button",
+      "label": "Show quote request button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_floating_quote",
+      "label": "Show floating quote button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Tabs"
     },
     {
       "type": "checkbox",
@@ -245,7 +528,17 @@
       "type": "richtext",
       "id": "shipping_content",
       "label": "Shipping tab content",
-      "default": "<p><strong>Free Shipping</strong> on orders over $500</p><p>Standard shipping: 3-5 business days</p><p>Expedited shipping: 1-2 business days</p>"
+      "default": "<p><strong>Free Shipping</strong> on orders over $500</p><p>Standard shipping: 3-5 business days</p><p>Expedited shipping: 1-2 business days</p><p><strong>Returns:</strong> 30-day return policy on unopened items.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Cross-sells"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cross_sells",
+      "label": "Show frequently bought together",
+      "default": false
     }
   ]
 }

@@ -1,0 +1,314 @@
+{% comment %}
+  Countdown Timer Banner
+  Premium feature - countdown to sales, launches, or events
+  Fully customizable with background options
+{% endcomment %}
+
+{%- liquid
+  assign end_date = section.settings.end_date
+  assign has_ended = false
+
+  if end_date != blank
+    assign end_timestamp = end_date | date: '%s' | times: 1000
+    assign now_timestamp = 'now' | date: '%s' | times: 1000
+    if now_timestamp > end_timestamp
+      assign has_ended = true
+    endif
+  endif
+-%}
+
+{% unless has_ended and section.settings.hide_when_ended %}
+<section
+  class="countdown-banner {% if section.settings.full_width %}countdown-banner--full{% endif %}"
+  style="
+    --countdown-bg: {{ section.settings.background_color }};
+    --countdown-text: {{ section.settings.text_color }};
+    {% if section.settings.background_image %}
+    background-image: url('{{ section.settings.background_image | image_url: width: 1920 }}');
+    {% endif %}
+  "
+  aria-label="Countdown promotion"
+>
+  <div class="{% unless section.settings.full_width %}container{% endunless %}">
+    <div class="countdown-banner__inner">
+      {% if section.settings.pretitle %}
+        <p class="countdown-banner__pretitle">{{ section.settings.pretitle }}</p>
+      {% endif %}
+
+      <h2 class="countdown-banner__title">{{ section.settings.title | default: 'Sale Ends Soon' }}</h2>
+
+      {% if section.settings.subtitle %}
+        <p class="countdown-banner__subtitle">{{ section.settings.subtitle }}</p>
+      {% endif %}
+
+      {% if end_date != blank and has_ended == false %}
+        <div class="countdown-banner__timer" data-countdown-banner="{{ end_date }}" aria-live="polite">
+          <div class="countdown-banner__unit">
+            <span class="countdown-banner__number" data-days>00</span>
+            <span class="countdown-banner__label">Days</span>
+          </div>
+          <span class="countdown-banner__separator">:</span>
+          <div class="countdown-banner__unit">
+            <span class="countdown-banner__number" data-hours>00</span>
+            <span class="countdown-banner__label">Hours</span>
+          </div>
+          <span class="countdown-banner__separator">:</span>
+          <div class="countdown-banner__unit">
+            <span class="countdown-banner__number" data-minutes>00</span>
+            <span class="countdown-banner__label">Mins</span>
+          </div>
+          <span class="countdown-banner__separator">:</span>
+          <div class="countdown-banner__unit">
+            <span class="countdown-banner__number" data-seconds>00</span>
+            <span class="countdown-banner__label">Secs</span>
+          </div>
+        </div>
+      {% elsif has_ended %}
+        <p class="countdown-banner__ended">{{ section.settings.ended_text | default: 'This offer has ended' }}</p>
+      {% endif %}
+
+      {% if section.settings.button_text != blank %}
+        <a href="{{ section.settings.button_link }}" class="btn btn--primary countdown-banner__btn">
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .countdown-banner {
+    background-color: var(--countdown-bg, var(--color-primary));
+    color: var(--countdown-text, #fff);
+    padding: 50px 20px;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .countdown-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    pointer-events: none;
+  }
+  .countdown-banner--full {
+    padding: 80px 20px;
+  }
+  .countdown-banner__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .countdown-banner__pretitle {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0 0 10px;
+    opacity: 0.9;
+  }
+  .countdown-banner__title {
+    font-size: 2.5rem;
+    margin: 0 0 10px;
+    color: inherit;
+  }
+  @media (max-width: 768px) {
+    .countdown-banner__title {
+      font-size: 1.75rem;
+    }
+  }
+  .countdown-banner__subtitle {
+    font-size: 1.125rem;
+    margin: 0 0 30px;
+    opacity: 0.9;
+  }
+  .countdown-banner__timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  @media (max-width: 480px) {
+    .countdown-banner__timer {
+      gap: 5px;
+    }
+  }
+  .countdown-banner__unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 70px;
+  }
+  @media (max-width: 480px) {
+    .countdown-banner__unit {
+      min-width: 55px;
+    }
+  }
+  .countdown-banner__number {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 480px) {
+    .countdown-banner__number {
+      font-size: 2rem;
+    }
+  }
+  .countdown-banner__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+    margin-top: 5px;
+  }
+  .countdown-banner__separator {
+    font-size: 2rem;
+    font-weight: 700;
+    opacity: 0.5;
+    margin-top: -20px;
+  }
+  .countdown-banner__ended {
+    font-size: 1.25rem;
+    opacity: 0.8;
+    margin: 0 0 30px;
+  }
+  .countdown-banner__btn {
+    background: #fff;
+    color: var(--countdown-bg, var(--color-primary));
+    border-color: #fff;
+  }
+  .countdown-banner__btn:hover {
+    background: transparent;
+    color: #fff;
+  }
+</style>
+
+<script>
+  (function() {
+    document.querySelectorAll('[data-countdown-banner]').forEach(timer => {
+      const endDate = new Date(timer.dataset.countdownBanner).getTime();
+      const daysEl = timer.querySelector('[data-days]');
+      const hoursEl = timer.querySelector('[data-hours]');
+      const minutesEl = timer.querySelector('[data-minutes]');
+      const secondsEl = timer.querySelector('[data-seconds]');
+
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = endDate - now;
+
+        if (distance < 0) {
+          clearInterval(interval);
+          timer.innerHTML = '<p class="countdown-banner__ended">This offer has ended</p>';
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (daysEl) daysEl.textContent = days.toString().padStart(2, '0');
+        if (hoursEl) hoursEl.textContent = hours.toString().padStart(2, '0');
+        if (minutesEl) minutesEl.textContent = minutes.toString().padStart(2, '0');
+        if (secondsEl) secondsEl.textContent = seconds.toString().padStart(2, '0');
+      }
+
+      updateCountdown();
+      const interval = setInterval(updateCountdown, 1000);
+    });
+  })();
+</script>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Countdown Banner",
+  "tag": "section",
+  "class": "section-countdown-banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "Pre-title",
+      "default": "Limited Time Offer"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Flash Sale Ends Soon"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Up to 30% off select AED equipment"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "End date",
+      "info": "Format: YYYY-MM-DD HH:MM (e.g., 2025-12-31 23:59)"
+    },
+    {
+      "type": "text",
+      "id": "ended_text",
+      "label": "Text when ended",
+      "default": "This offer has ended"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_when_ended",
+      "label": "Hide section when ended",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#A52A2A"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Countdown Banner"
+    }
+  ]
+}
+{% endschema %}
