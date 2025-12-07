@@ -1,0 +1,38 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    <div class="grid grid--2" style="align-items:center;gap:60px">
+      <div class="{% if section.settings.image_position == 'right' %}order-2{% endif %}">
+        {% if section.settings.image %}
+          <img src="{{ section.settings.image | image_url: width: 800 }}" alt="{{ section.settings.image.alt }}" loading="lazy" style="width:100%;border:1px solid var(--color-border)">
+        {% else %}
+          {{ 'image' | placeholder_svg_tag }}
+        {% endif %}
+      </div>
+      <div>
+        {% if section.settings.subheading %}<p style="color:var(--color-primary);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">{{ section.settings.subheading }}</p>{% endif %}
+        <h2>{{ section.settings.title }}</h2>
+        <div style="color:var(--color-text-light);line-height:1.8">{{ section.settings.text }}</div>
+        {% if section.settings.button_text %}
+          <a href="{{ section.settings.button_link }}" class="btn btn--primary" style="margin-top:25px">{{ section.settings.button_text }}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "settings": [
+    {"type":"image_picker","id":"image","label":"Image"},
+    {"type":"select","id":"image_position","label":"Image position","options":[{"value":"left","label":"Left"},{"value":"right","label":"Right"}],"default":"left"},
+    {"type":"text","id":"subheading","label":"Subheading"},
+    {"type":"text","id":"title","label":"Heading","default":"Why Choose AED Empire?"},
+    {"type":"richtext","id":"text","label":"Text","default":"<p>As authorized dealers for top AED brands, we provide quality equipment at competitive prices with expert support every step of the way.</p>"},
+    {"type":"text","id":"button_text","label":"Button text","default":"Learn More"},
+    {"type":"url","id":"button_link","label":"Button link"},
+    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":false}
+  ],
+  "presets": [{"name":"Image with text"}]
+}
+{% endschema %}

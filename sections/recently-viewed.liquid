@@ -1,0 +1,21 @@
+<section class="recently-viewed" style="display:none">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ section.settings.title }}</h2>
+      <div class="section-header__divider"></div>
+    </div>
+    <div class="recently-viewed__grid" data-recently-viewed data-current-product="{{ product.handle }}">
+      {% comment %} Populated by JavaScript {% endcomment %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Recently viewed",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading","default":"Recently Viewed"}
+  ],
+  "presets": [{"name":"Recently viewed"}]
+}
+{% endschema %}

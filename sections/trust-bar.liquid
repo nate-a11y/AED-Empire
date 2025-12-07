@@ -1,0 +1,37 @@
+<div class="trust-bar">
+  <div class="container">
+    <div class="trust-bar__grid">
+      {% if settings.trust_badge_1 != blank %}
+        <div class="trust-bar__item">
+          <div class="trust-bar__icon">{% render 'icon', name: settings.trust_badge_1_icon %}</div>
+          <span class="trust-bar__text">{{ settings.trust_badge_1 }}</span>
+        </div>
+      {% endif %}
+      {% if settings.trust_badge_2 != blank %}
+        <div class="trust-bar__item">
+          <div class="trust-bar__icon">{% render 'icon', name: settings.trust_badge_2_icon %}</div>
+          <span class="trust-bar__text">{{ settings.trust_badge_2 }}</span>
+        </div>
+      {% endif %}
+      {% if settings.trust_badge_3 != blank %}
+        <div class="trust-bar__item">
+          <div class="trust-bar__icon">{% render 'icon', name: settings.trust_badge_3_icon %}</div>
+          <span class="trust-bar__text">{{ settings.trust_badge_3 }}</span>
+        </div>
+      {% endif %}
+      {% if settings.trust_badge_4 != blank %}
+        <div class="trust-bar__item">
+          <div class="trust-bar__icon">{% render 'icon', name: settings.trust_badge_4_icon %}</div>
+          <span class="trust-bar__text">{{ settings.trust_badge_4 }}</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Trust bar",
+  "settings": []
+}
+{% endschema %}

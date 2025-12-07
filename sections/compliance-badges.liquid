@@ -1,0 +1,69 @@
+<section class="compliance-badges{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2>{{ section.settings.title }}</h2>
+        <div class="section-header__divider"></div>
+      </div>
+    {% endif %}
+    
+    <div class="compliance-badges__grid">
+      {% for block in section.blocks %}
+        <div class="compliance-badge" {{ block.shopify_attributes }}>
+          {% if block.settings.image %}
+            <img src="{{ block.settings.image | image_url: height: 80 }}" alt="{{ block.settings.title }}" loading="lazy">
+          {% elsif block.settings.icon != blank %}
+            <div class="compliance-badge__icon">
+              {% render 'icon', name: block.settings.icon %}
+            </div>
+          {% endif %}
+          {% if block.settings.title %}
+            <h4 class="compliance-badge__title">{{ block.settings.title }}</h4>
+          {% endif %}
+          {% if block.settings.text %}
+            <p class="compliance-badge__text">{{ block.settings.text }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Compliance Badges",
+  "settings": [
+    {"type": "text", "id": "title", "label": "Heading", "default": "Quality & Compliance"},
+    {"type": "checkbox", "id": "alt_bg", "label": "Alternate background", "default": false}
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Badge",
+      "settings": [
+        {"type": "image_picker", "id": "image", "label": "Image"},
+        {"type": "select", "id": "icon", "label": "Or select icon", "options": [
+          {"value": "", "label": "None"},
+          {"value": "shield", "label": "Shield"},
+          {"value": "check", "label": "Checkmark"},
+          {"value": "award", "label": "Award"},
+          {"value": "heart", "label": "Heart"}
+        ]},
+        {"type": "text", "id": "title", "label": "Title", "default": "FDA Registered"},
+        {"type": "text", "id": "text", "label": "Description", "default": "All products meet FDA requirements"}
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Compliance Badges",
+      "blocks": [
+        {"type": "badge", "settings": {"icon": "shield", "title": "FDA Registered", "text": "All products meet FDA requirements"}},
+        {"type": "badge", "settings": {"icon": "award", "title": "AHA Guidelines", "text": "Compliant with AHA/ECC standards"}},
+        {"type": "badge", "settings": {"icon": "check", "title": "Authorized Dealer", "text": "Factory authorized for all brands"}},
+        {"type": "badge", "settings": {"icon": "heart", "title": "GSA Approved", "text": "Available on GSA Schedule"}}
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,47 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container" style="max-width:800px">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2>{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle %}<p>{{ section.settings.subtitle }}</p>{% endif %}
+        <div class="section-header__divider"></div>
+      </div>
+    {% endif %}
+    
+    <div class="faq-list">
+      {% for block in section.blocks %}
+        <div class="faq-item" {{ block.shopify_attributes }}>
+          <button class="faq-question" aria-expanded="false">
+            {{ block.settings.question }}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer__inner">{{ block.settings.answer }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading","default":"Frequently Asked Questions"},
+    {"type":"text","id":"subtitle","label":"Subtitle"},
+    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":false}
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        {"type":"text","id":"question","label":"Question","default":"What is an AED?"},
+        {"type":"richtext","id":"answer","label":"Answer","default":"<p>An AED (Automated External Defibrillator) is a portable device that can check heart rhythm and deliver an electric shock to restore a normal heartbeat during sudden cardiac arrest.</p>"}
+      ]
+    }
+  ],
+  "presets": [{"name":"FAQ","blocks":[{"type":"question"},{"type":"question"},{"type":"question"}]}]
+}
+{% endschema %}

@@ -1,0 +1,36 @@
+{% comment %}
+  Recently Viewed Products
+  Usage: {% render 'recently-viewed', product: product %}
+{% endcomment %}
+
+<section class="recently-viewed section" data-recently-viewed hidden>
+  <div class="container">
+    <div class="section-header">
+      <h2>Recently Viewed</h2>
+    </div>
+    <div class="recently-viewed__grid grid grid--4" data-recently-viewed-grid>
+      <!-- Products injected via JS -->
+    </div>
+  </div>
+</section>
+
+{% if product %}
+  <script>
+    (function() {
+      const product = {
+        id: {{ product.id | json }},
+        title: {{ product.title | json }},
+        url: {{ product.url | json }},
+        image: {{ product.featured_image | image_url: width: 400 | json }},
+        price: {{ product.price | money | json }},
+        vendor: {{ product.vendor | json }}
+      };
+      
+      let viewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      viewed = viewed.filter(p => p.id !== product.id);
+      viewed.unshift(product);
+      viewed = viewed.slice(0, 8);
+      localStorage.setItem('recentlyViewed', JSON.stringify(viewed));
+    })();
+  </script>
+{% endif %}

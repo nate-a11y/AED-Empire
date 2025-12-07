@@ -1,0 +1,23 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ shop.name | json }},
+  "url": {{ request.origin | json }},
+  {% if settings.logo %}
+  "logo": {{ settings.logo | image_url: width: 500 | json }},
+  {% endif %}
+  {% if settings.contact_phone %}
+  "telephone": {{ settings.contact_phone | json }},
+  {% endif %}
+  {% if settings.contact_email %}
+  "email": {{ settings.contact_email | json }},
+  {% endif %}
+  "sameAs": [
+    {% if settings.social_facebook %}{{ settings.social_facebook | json }}{% endif %}
+    {% if settings.social_instagram %}{% if settings.social_facebook %},{% endif %}{{ settings.social_instagram | json }}{% endif %}
+    {% if settings.social_youtube %}{% if settings.social_facebook or settings.social_instagram %},{% endif %}{{ settings.social_youtube | json }}{% endif %}
+    {% if settings.social_linkedin %}{% if settings.social_facebook or settings.social_instagram or settings.social_youtube %},{% endif %}{{ settings.social_linkedin | json }}{% endif %}
+  ]
+}
+</script>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ shop.name }} Gift Card</title>
+  {{ content_for_header }}
+  <style>
+    :root{--color-primary:{{ settings.color_primary }};--color-secondary:{{ settings.color_secondary }}}
+    *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:var(--color-secondary);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .gift-card{max-width:500px;width:100%;text-align:center;background:rgba(255,255,255,.05);padding:50px 40px;border-radius:12px}
+    .gift-card__logo{max-width:150px;margin-bottom:30px}
+    .gift-card__image{max-width:300px;margin:0 auto 30px;border-radius:8px;overflow:hidden}
+    .gift-card__image img{width:100%;display:block}
+    .gift-card__amount{font-size:3rem;font-weight:700;color:var(--color-primary);margin-bottom:30px}
+    .gift-card__code{background:#fff;color:var(--color-secondary);font-family:monospace;font-size:1.5rem;font-weight:700;letter-spacing:2px;padding:20px;margin-bottom:20px;border-radius:4px;word-break:break-all}
+    .gift-card__expired{background:#dc3545;color:#fff;padding:10px;margin-bottom:20px;font-weight:600}
+    .gift-card__qr{margin:30px auto;max-width:150px}
+    .gift-card__actions{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+    .gift-card__actions a,.gift-card__actions button{padding:12px 24px;font-weight:600;text-transform:uppercase;text-decoration:none;border:2px solid #fff;background:transparent;color:#fff;cursor:pointer;font-size:.875rem}
+    .gift-card__actions a:hover,.gift-card__actions button:hover{background:#fff;color:var(--color-secondary)}
+  </style>
+</head>
+<body>
+  <div class="gift-card">
+    {% if settings.logo %}
+      <img src="{{ settings.logo | image_url: width: 150 }}" alt="{{ shop.name }}" class="gift-card__logo">
+    {% else %}
+      <h1>{{ shop.name }}</h1>
+    {% endif %}
+    
+    {% if gift_card.image %}
+      <div class="gift-card__image"><img src="{{ gift_card.image | image_url: width: 600 }}" alt="Gift Card"></div>
+    {% endif %}
+    
+    <div class="gift-card__amount">{{ gift_card.initial_value | money }}</div>
+    
+    {% if gift_card.expired %}
+      <p class="gift-card__expired">This gift card has expired</p>
+    {% endif %}
+    
+    <div class="gift-card__code" id="gift-card-code">{{ gift_card.code | format_code }}</div>
+    
+    {% if gift_card.balance != gift_card.initial_value %}
+      <p>Remaining balance: {{ gift_card.balance | money }}</p>
+    {% endif %}
+    
+    <div class="gift-card__qr">{{ gift_card | qr_code }}</div>
+    
+    <div class="gift-card__actions">
+      <button onclick="copyCode()">Copy Code</button>
+      <button onclick="window.print()">Print</button>
+      {% if gift_card.pass_url %}<a href="{{ gift_card.pass_url }}">Add to Apple Wallet</a>{% endif %}
+    </div>
+    
+    <p style="margin-top:40px;opacity:.6"><a href="{{ shop.url }}" style="color:#fff">Continue Shopping at {{ shop.name }}</a></p>
+  </div>
+  
+  <script>
+    function copyCode() {
+      var code = document.getElementById('gift-card-code').textContent;
+      navigator.clipboard.writeText(code.replace(/\s/g, ''));
+      alert('Gift card code copied!');
+    }
+  </script>
+</body>
+</html>

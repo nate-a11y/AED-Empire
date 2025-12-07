@@ -1,0 +1,55 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    <div class="grid grid--2" style="gap:60px">
+      <div>
+        <h2>{{ section.settings.title }}</h2>
+        <div style="color:var(--color-text-light);margin-bottom:30px">{{ section.settings.text }}</div>
+        {% if settings.contact_phone %}
+          <p style="display:flex;align-items:center;gap:10px;margin-bottom:15px">
+            {% render 'icon', name: 'phone' %}
+            <a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone }}</a>
+          </p>
+        {% endif %}
+        {% if settings.contact_email %}
+          <p style="display:flex;align-items:center;gap:10px;margin-bottom:15px">
+            {% render 'icon', name: 'mail' %}
+            <a href="mailto:{{ settings.contact_email }}">{{ settings.contact_email }}</a>
+          </p>
+        {% endif %}
+        {% if settings.contact_hours %}
+          <p style="display:flex;align-items:center;gap:10px;color:var(--color-text-light)">
+            {% render 'icon', name: 'clock' %}
+            {{ settings.contact_hours }}
+          </p>
+        {% endif %}
+      </div>
+      <div>
+        {% form 'contact' %}
+          {% if form.posted_successfully? %}
+            <p class="form__success">Thanks for your message! We'll get back to you soon.</p>
+          {% endif %}
+          {{ form.errors | default_errors }}
+          <div class="form__row">
+            <div class="form__group"><label for="name">Name *</label><input type="text" id="name" name="contact[name]" required></div>
+            <div class="form__group"><label for="email">Email *</label><input type="email" id="email" name="contact[email]" required></div>
+          </div>
+          <div class="form__group"><label for="phone">Phone</label><input type="tel" id="phone" name="contact[phone]"></div>
+          <div class="form__group"><label for="message">Message *</label><textarea id="message" name="contact[body]" rows="5" required></textarea></div>
+          <button type="submit" class="btn btn--primary btn--large">Send Message</button>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact form",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading","default":"Get in Touch"},
+    {"type":"richtext","id":"text","label":"Text","default":"<p>Have questions about AEDs or need help finding the right equipment? Our team of experts is here to help.</p>"},
+    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":false}
+  ],
+  "presets": [{"name":"Contact form"}]
+}
+{% endschema %}

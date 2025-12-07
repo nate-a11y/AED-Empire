@@ -1,0 +1,42 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2>{{ section.settings.title }}</h2>
+        <div class="section-header__divider"></div>
+      </div>
+    {% endif %}
+    
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:40px">
+      {% for block in section.blocks %}
+        {% if block.settings.link %}
+          <a href="{{ block.settings.link }}" target="_blank" rel="noopener" {{ block.shopify_attributes }}>
+        {% endif %}
+          <img src="{{ block.settings.image | image_url: height: 60 }}" alt="{{ block.settings.alt }}" style="max-height:60px;max-width:150px;opacity:.7;transition:opacity .2s{% if block.settings.link %}:hover{opacity:1}{% endif %}" loading="lazy">
+        {% if block.settings.link %}</a>{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Logo list",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading","default":"Authorized Dealer For"},
+    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":false}
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {"type":"image_picker","id":"image","label":"Logo image"},
+        {"type":"text","id":"alt","label":"Alt text"},
+        {"type":"url","id":"link","label":"Link"}
+      ]
+    }
+  ],
+  "presets": [{"name":"Logo list"}]
+}
+{% endschema %}

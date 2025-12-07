@@ -1,0 +1,35 @@
+<div class="cta-bar">
+  <div class="container">
+    <div class="cta-bar__inner">
+      <div class="cta-bar__text">
+        <h3>{{ section.settings.title }}</h3>
+        {% if section.settings.text %}<p>{{ section.settings.text }}</p>{% endif %}
+      </div>
+      <div class="cta-bar__actions">
+        {% if section.settings.button_text %}
+          <a href="{{ section.settings.button_link }}" class="btn">{{ section.settings.button_text }}</a>
+        {% endif %}
+        {% if section.settings.phone and settings.contact_phone %}
+          <a href="tel:{{ settings.contact_phone | remove: ' ' }}" class="btn" style="background:transparent;border-color:#fff">
+            {% render 'icon', name: 'phone' %}
+            {{ settings.contact_phone }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "CTA bar",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading","default":"Need Help Choosing the Right AED?"},
+    {"type":"text","id":"text","label":"Subtext","default":"Our experts are ready to help you find the perfect solution."},
+    {"type":"text","id":"button_text","label":"Button text","default":"Get Expert Advice"},
+    {"type":"url","id":"button_link","label":"Button link"},
+    {"type":"checkbox","id":"phone","label":"Show phone number","default":true}
+  ],
+  "presets": [{"name":"CTA bar"}]
+}
+{% endschema %}

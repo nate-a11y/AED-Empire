@@ -1,0 +1,14 @@
+<section class="section">
+  <div class="container">
+    <div class="auth-page">
+      <h1>Activate Account</h1>
+      {% form 'activate_customer_password' %}
+        {{ form.errors | default_errors }}
+        <div class="form__group"><label for="password">Password</label><input type="password" id="password" name="customer[password]" required></div>
+        <div class="form__group"><label for="password_confirmation">Confirm Password</label><input type="password" id="password_confirmation" name="customer[password_confirmation]" required></div>
+        <button type="submit" class="btn btn--primary btn--full">Activate Account</button>
+      {% endform %}
+    </div>
+  </div>
+</section>
+{% schema %}{"name":"Activate Account","settings":[]}{% endschema %}

@@ -1,0 +1,15 @@
+<section class="section">
+  <div class="container">
+    <p><a href="{{ routes.account_url }}">&larr; Back to Account</a></p>
+    <h1>Your Addresses</h1>
+    <div class="grid grid--2" style="margin-top:30px">
+      {% for address in customer.addresses %}
+        <div style="background:#fff;border:1px solid var(--color-border);padding:25px">
+          {% if address == customer.default_address %}<span style="background:var(--color-primary);color:#fff;font-size:.75rem;padding:4px 10px;margin-bottom:15px;display:inline-block">Default</span>{% endif %}
+          <p>{{ address | format_address }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% schema %}{"name":"Addresses","settings":[]}{% endschema %}

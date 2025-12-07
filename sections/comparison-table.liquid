@@ -1,0 +1,105 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2>{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle %}<p>{{ section.settings.subtitle }}</p>{% endif %}
+        <div class="section-header__divider"></div>
+      </div>
+    {% endif %}
+    
+    <div class="comparison-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                <th>
+                  <div class="comparison-table__product">
+                    {% assign product = all_products[block.settings.product] %}
+                    {% if product %}
+                      <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title }}">
+                      <h4>{{ product.title }}</h4>
+                      <p class="price">{{ product.price | money }}</p>
+                      <a href="{{ product.url }}" class="btn btn--primary btn--small">View Details</a>
+                    {% endif %}
+                  </div>
+                </th>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for block in section.blocks %}
+            {% if block.type == 'feature' %}
+              <tr {{ block.shopify_attributes }}>
+                <th>{{ block.settings.feature_name }}</th>
+                {% for i in (1..4) %}
+                  {% capture value_key %}value_{{ i }}{% endcapture %}
+                  {% assign value = block.settings[value_key] %}
+                  {% if value != blank %}
+                    <td>
+                      {% if value == 'yes' %}
+                        <span class="check">✓</span>
+                      {% elsif value == 'no' %}
+                        <span class="cross">✗</span>
+                      {% else %}
+                        {{ value }}
+                      {% endif %}
+                    </td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Comparison table",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading","default":"Compare AED Models"},
+    {"type":"text","id":"subtitle","label":"Subtitle"},
+    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":false}
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product column",
+      "settings": [
+        {"type":"product","id":"product","label":"Product"}
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Feature row",
+      "settings": [
+        {"type":"text","id":"feature_name","label":"Feature name","default":"Feature"},
+        {"type":"text","id":"value_1","label":"Product 1 value","info":"Use 'yes' or 'no' for checkmarks"},
+        {"type":"text","id":"value_2","label":"Product 2 value"},
+        {"type":"text","id":"value_3","label":"Product 3 value"},
+        {"type":"text","id":"value_4","label":"Product 4 value"}
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison table",
+      "blocks": [
+        {"type": "product"},
+        {"type": "product"},
+        {"type": "product"},
+        {"type": "feature", "settings": {"feature_name": "Warranty", "value_1": "8 years", "value_2": "7 years", "value_3": "8 years"}},
+        {"type": "feature", "settings": {"feature_name": "FDA Cleared", "value_1": "yes", "value_2": "yes", "value_3": "yes"}},
+        {"type": "feature", "settings": {"feature_name": "Pediatric Capable", "value_1": "yes", "value_2": "no", "value_3": "yes"}},
+        {"type": "feature", "settings": {"feature_name": "CPR Feedback", "value_1": "yes", "value_2": "yes", "value_3": "no"}}
+      ]
+    }
+  ]
+}
+{% endschema %}

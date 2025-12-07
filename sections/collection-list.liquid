@@ -1,0 +1,55 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2>{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle %}<p>{{ section.settings.subtitle }}</p>{% endif %}
+        <div class="section-header__divider"></div>
+      </div>
+    {% endif %}
+    
+    <div class="grid grid--{{ section.settings.columns }}">
+      {% for block in section.blocks %}
+        {% assign collection = collections[block.settings.collection] %}
+        <a href="{{ collection.url }}" class="collection-card" style="display:block;text-align:center;text-decoration:none" {{ block.shopify_attributes }}>
+          <div style="aspect-ratio:1;overflow:hidden;background:var(--color-bg-alt);margin-bottom:15px">
+            {% if block.settings.image %}
+              <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ collection.title }}" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+            {% elsif collection.image %}
+              <img src="{{ collection.image | image_url: width: 600 }}" alt="{{ collection.title }}" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+            {% elsif collection.products.first.featured_image %}
+              <img src="{{ collection.products.first.featured_image | image_url: width: 600 }}" alt="{{ collection.title }}" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+            {% else %}
+              {{ 'collection-1' | placeholder_svg_tag }}
+            {% endif %}
+          </div>
+          <h3 style="margin-bottom:5px">{{ collection.title }}</h3>
+          <span style="color:var(--color-text-light)">{{ collection.products_count }} products</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection list",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading","default":"Shop by Category"},
+    {"type":"text","id":"subtitle","label":"Subtitle"},
+    {"type":"range","id":"columns","min":2,"max":4,"step":1,"label":"Columns","default":3},
+    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":false}
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {"type":"collection","id":"collection","label":"Collection"},
+        {"type":"image_picker","id":"image","label":"Custom image"}
+      ]
+    }
+  ],
+  "presets": [{"name":"Collection list","blocks":[{"type":"collection"},{"type":"collection"},{"type":"collection"}]}]
+}
+{% endschema %}

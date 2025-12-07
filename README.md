@@ -1,19 +1,62 @@
-# AED-Empire Shopify Theme
+# AED Empire Shopify Theme
 
-Shopify theme for AED-Empire store.
+Custom Shopify theme for AED Empire - AED and medical equipment e-commerce store.
 
-## Setup
+**Version:** 1.0.0
+**Author:** Nate Bullock
 
-Upload your Shopify theme zip file to this repository to get started.
+## Theme Structure
+
+```
+├── assets/          # CSS and JavaScript files
+├── config/          # Theme settings (settings_schema.json, settings_data.json)
+├── layout/          # Theme layouts (theme.liquid, password.liquid)
+├── locales/         # Translation files (en.default.json)
+├── sections/        # Reusable theme sections
+├── snippets/        # Reusable code snippets
+└── templates/       # Page templates (JSON templates)
+```
+
+## Key Sections
+
+- **Header & Footer** - Site navigation and footer
+- **Hero & Slideshow** - Homepage hero banners
+- **Featured Collection** - Product showcases
+- **Product Comparison** - Compare AED models
+- **Compliance Badges** - Medical certifications display
+- **Trust Bar** - Build customer trust
+- **FAQ** - Frequently asked questions
+- **Quote Request** - B2B quote functionality
+- **Bulk Order** - Bulk ordering form
+- **Testimonials** - Customer reviews
+- **Newsletter** - Email signup
 
 ## Development
 
-This theme follows the standard Shopify theme structure:
+### Local Development
 
-- `assets/` - CSS, JavaScript, and image files
-- `config/` - Theme settings and configuration
-- `layout/` - Theme layout files
-- `locales/` - Translation files
-- `sections/` - Reusable theme sections
-- `snippets/` - Reusable code snippets
-- `templates/` - Page templates
+Use [Shopify CLI](https://shopify.dev/docs/themes/tools/cli) for local development:
+
+```bash
+shopify theme dev --store your-store.myshopify.com
+```
+
+### Deploying
+
+Push theme to Shopify:
+
+```bash
+shopify theme push
+```
+
+## Theme Customization
+
+Access theme settings in your Shopify admin:
+**Online Store > Themes > Customize**
+
+Configurable options include:
+- Logo and branding
+- Colors and typography
+- Social media links
+- Header/footer settings
+- Section-specific settings

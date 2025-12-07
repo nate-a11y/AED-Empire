@@ -1,0 +1,16 @@
+<section class="section">
+  <div class="container">
+    <div class="auth-page">
+      <h1>Login</h1>
+      {% form 'customer_login' %}
+        {{ form.errors | default_errors }}
+        <div class="form__group"><label for="email">Email</label><input type="email" id="email" name="customer[email]" required></div>
+        <div class="form__group"><label for="password">Password</label><input type="password" id="password" name="customer[password]" required></div>
+        <button type="submit" class="btn btn--primary btn--full">Sign In</button>
+        <p style="margin-top:15px"><a href="{{ routes.account_recover_url }}">Forgot password?</a></p>
+      {% endform %}
+      <div class="auth-page__alt"><p>Don't have an account? <a href="{{ routes.account_register_url }}">Create one</a></p></div>
+    </div>
+  </div>
+</section>
+{% schema %}{"name":"Login","settings":[]}{% endschema %}

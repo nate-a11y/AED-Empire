@@ -1,0 +1,465 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "AED Empire",
+    "theme_version": "1.0.0",
+    "theme_author": "Nate Bullock",
+    "theme_documentation_url": "https://aedempire.com",
+    "theme_support_url": "https://aedempire.com"
+  },
+  {
+    "name": "Logo",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "min": 50,
+        "max": 300,
+        "step": 10,
+        "unit": "px",
+        "label": "Desktop logo width",
+        "default": 180
+      },
+      {
+        "type": "range",
+        "id": "logo_width_mobile",
+        "min": 30,
+        "max": 200,
+        "step": 10,
+        "unit": "px",
+        "label": "Mobile logo width",
+        "default": 120
+      },
+      {
+        "type": "image_picker",
+        "id": "logo_inverted",
+        "label": "Logo for dark backgrounds"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon"
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Primary colors"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary brand color",
+        "default": "#A52A2A"
+      },
+      {
+        "type": "color",
+        "id": "color_primary_hover",
+        "label": "Primary hover",
+        "default": "#8B0000"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary dark",
+        "default": "#1a1a1a"
+      },
+      {
+        "type": "header",
+        "content": "Background colors"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background",
+        "default": "#FAF8F0"
+      },
+      {
+        "type": "color",
+        "id": "color_background_alt",
+        "label": "Alternate background",
+        "default": "#F5F0E1"
+      },
+      {
+        "type": "header",
+        "content": "Text colors"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text",
+        "default": "#2C2C2C"
+      },
+      {
+        "type": "color",
+        "id": "color_text_light",
+        "label": "Light text",
+        "default": "#5C5C5C"
+      },
+      {
+        "type": "header",
+        "content": "Other"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Borders",
+        "default": "#E5DFD0"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale price",
+        "default": "#2E7D32"
+      },
+      {
+        "type": "color",
+        "id": "color_error",
+        "label": "Error",
+        "default": "#dc3545"
+      },
+      {
+        "type": "color",
+        "id": "color_success",
+        "label": "Success",
+        "default": "#28a745"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading font",
+        "default": "playfair_display_n7"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body font",
+        "default": "source_sans_pro_n4"
+      },
+      {
+        "type": "range",
+        "id": "font_body_size",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Base font size",
+        "default": 16
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "min": 1000,
+        "max": 1600,
+        "step": 50,
+        "unit": "px",
+        "label": "Page width",
+        "default": 1400
+      },
+      {
+        "type": "range",
+        "id": "spacing_sections",
+        "min": 40,
+        "max": 150,
+        "step": 10,
+        "unit": "px",
+        "label": "Space between sections",
+        "default": 80
+      }
+    ]
+  },
+  {
+    "name": "Buttons",
+    "settings": [
+      {
+        "type": "range",
+        "id": "button_border_radius",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "unit": "px",
+        "label": "Button border radius",
+        "default": 0
+      },
+      {
+        "type": "checkbox",
+        "id": "button_uppercase",
+        "label": "Uppercase button text",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Contact information",
+    "settings": [
+      {
+        "type": "text",
+        "id": "contact_phone",
+        "label": "Phone number",
+        "default": "1-800-555-0123"
+      },
+      {
+        "type": "text",
+        "id": "contact_email",
+        "label": "Email address",
+        "default": "info@aedempire.com"
+      },
+      {
+        "type": "textarea",
+        "id": "contact_address",
+        "label": "Address"
+      },
+      {
+        "type": "text",
+        "id": "contact_hours",
+        "label": "Business hours",
+        "default": "Mon-Fri 9am-5pm EST"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook"
+      },
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube",
+        "label": "YouTube"
+      },
+      {
+        "type": "url",
+        "id": "social_linkedin",
+        "label": "LinkedIn"
+      },
+      {
+        "type": "url",
+        "id": "social_twitter",
+        "label": "Twitter/X"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "TikTok"
+      },
+      {
+        "type": "url",
+        "id": "social_pinterest",
+        "label": "Pinterest"
+      }
+    ]
+  },
+  {
+    "name": "Trust badges",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_trust_badges",
+        "label": "Show trust badges",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "trust_badge_1",
+        "label": "Badge 1 text",
+        "default": "FDA Registered"
+      },
+      {
+        "type": "select",
+        "id": "trust_badge_1_icon",
+        "label": "Badge 1 icon",
+        "options": [
+          { "value": "shield", "label": "Shield" },
+          { "value": "check", "label": "Checkmark" },
+          { "value": "award", "label": "Award" },
+          { "value": "heart", "label": "Heart" },
+          { "value": "truck", "label": "Truck" },
+          { "value": "phone", "label": "Phone" },
+          { "value": "clock", "label": "Clock" }
+        ],
+        "default": "shield"
+      },
+      {
+        "type": "text",
+        "id": "trust_badge_2",
+        "label": "Badge 2 text",
+        "default": "Authorized Dealer"
+      },
+      {
+        "type": "select",
+        "id": "trust_badge_2_icon",
+        "label": "Badge 2 icon",
+        "options": [
+          { "value": "shield", "label": "Shield" },
+          { "value": "check", "label": "Checkmark" },
+          { "value": "award", "label": "Award" },
+          { "value": "heart", "label": "Heart" },
+          { "value": "truck", "label": "Truck" },
+          { "value": "phone", "label": "Phone" },
+          { "value": "clock", "label": "Clock" }
+        ],
+        "default": "award"
+      },
+      {
+        "type": "text",
+        "id": "trust_badge_3",
+        "label": "Badge 3 text",
+        "default": "Free Shipping $500+"
+      },
+      {
+        "type": "select",
+        "id": "trust_badge_3_icon",
+        "label": "Badge 3 icon",
+        "options": [
+          { "value": "shield", "label": "Shield" },
+          { "value": "check", "label": "Checkmark" },
+          { "value": "award", "label": "Award" },
+          { "value": "heart", "label": "Heart" },
+          { "value": "truck", "label": "Truck" },
+          { "value": "phone", "label": "Phone" },
+          { "value": "clock", "label": "Clock" }
+        ],
+        "default": "truck"
+      },
+      {
+        "type": "text",
+        "id": "trust_badge_4",
+        "label": "Badge 4 text",
+        "default": "Expert Support"
+      },
+      {
+        "type": "select",
+        "id": "trust_badge_4_icon",
+        "label": "Badge 4 icon",
+        "options": [
+          { "value": "shield", "label": "Shield" },
+          { "value": "check", "label": "Checkmark" },
+          { "value": "award", "label": "Award" },
+          { "value": "heart", "label": "Heart" },
+          { "value": "truck", "label": "Truck" },
+          { "value": "phone", "label": "Phone" },
+          { "value": "clock", "label": "Clock" }
+        ],
+        "default": "phone"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart type",
+        "options": [
+          { "value": "drawer", "label": "Drawer" },
+          { "value": "page", "label": "Page" }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_notes_enable",
+        "label": "Enable cart notes",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free shipping threshold",
+        "default": 500,
+        "info": "Enter 0 to disable free shipping progress bar"
+      }
+    ]
+  },
+  {
+    "name": "Product cards",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "product_card_show_vendor",
+        "label": "Show vendor",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "product_card_show_rating",
+        "label": "Show product rating",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "product_card_image_ratio",
+        "label": "Image ratio",
+        "options": [
+          { "value": "adapt", "label": "Adapt to image" },
+          { "value": "square", "label": "Square 1:1" },
+          { "value": "portrait", "label": "Portrait 3:4" },
+          { "value": "landscape", "label": "Landscape 4:3" }
+        ],
+        "default": "square"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_card_show_secondary_image",
+        "label": "Show second image on hover",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "search_enable_suggestions",
+        "label": "Enable search suggestions",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "search_show_products",
+        "label": "Show products in suggestions",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "search_show_collections",
+        "label": "Show collections in suggestions",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "search_show_pages",
+        "label": "Show pages in suggestions",
+        "default": false
+      }
+    ]
+  }
+]

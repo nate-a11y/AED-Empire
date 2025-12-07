@@ -1,0 +1,51 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2>{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle %}<p>{{ section.settings.subtitle }}</p>{% endif %}
+        <div class="section-header__divider"></div>
+      </div>
+    {% endif %}
+    
+    <div class="grid grid--3">
+      {% for block in section.blocks %}
+        <div class="testimonial" {{ block.shopify_attributes }}>
+          <div class="testimonial__stars">
+            {% for i in (1..5) %}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            {% endfor %}
+          </div>
+          <p class="testimonial__quote">"{{ block.settings.quote }}"</p>
+          <div class="testimonial__author">
+            <strong>{{ block.settings.author }}</strong>
+            {% if block.settings.title %}<span>{{ block.settings.title }}</span>{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading","default":"What Our Customers Say"},
+    {"type":"text","id":"subtitle","label":"Subtitle"},
+    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":true}
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {"type":"textarea","id":"quote","label":"Quote","default":"Excellent products and outstanding customer service. The AED arrived quickly and the team walked us through setup."},
+        {"type":"text","id":"author","label":"Author name","default":"John Smith"},
+        {"type":"text","id":"title","label":"Author title","default":"Safety Director, ABC Company"}
+      ]
+    }
+  ],
+  "presets": [{"name":"Testimonials","blocks":[{"type":"testimonial"},{"type":"testimonial"},{"type":"testimonial"}]}]
+}
+{% endschema %}

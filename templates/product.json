@@ -1,0 +1,27 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": {
+        "show_upsells": true
+      }
+    },
+    "recently-viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "title": "Recently Viewed"
+      }
+    },
+    "recommendations": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "You May Also Like",
+        "limit": 4,
+        "columns": 4,
+        "show_view_all": false,
+        "alt_bg": true
+      }
+    }
+  },
+  "order": ["main", "recently-viewed", "recommendations"]
+}

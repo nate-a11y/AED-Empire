@@ -1,0 +1,40 @@
+{% comment %}
+  Product structured data for Google
+  Usage: {% render 'product-schema', product: product %}
+{% endcomment %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "url": {{ request.origin | append: product.url | json }},
+  {% if product.featured_image %}
+  "image": [{{ product.featured_image | image_url: width: 1200 | json }}],
+  {% endif %}
+  "description": {{ product.description | strip_html | truncate: 5000 | json }},
+  {% if product.vendor %}
+  "brand": {
+    "@type": "Brand",
+    "name": {{ product.vendor | json }}
+  },
+  {% endif %}
+  {% if product.variants.first.sku %}
+  "sku": {{ product.variants.first.sku | json }},
+  {% endif %}
+  {% if product.variants.first.barcode %}
+  "gtin": {{ product.variants.first.barcode | json }},
+  {% endif %}
+  "offers": {
+    "@type": "Offer",
+    "url": {{ request.origin | append: product.url | json }},
+    "priceCurrency": {{ cart.currency.iso_code | json }},
+    "price": {{ product.price | divided_by: 100.0 | json }},
+    "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "seller": {
+      "@type": "Organization",
+      "name": {{ shop.name | json }}
+    }
+  }
+}
+</script>

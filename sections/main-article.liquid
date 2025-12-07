@@ -1,0 +1,25 @@
+<article class="section">
+  <div class="container" style="max-width:800px">
+    <p class="article__meta">{{ article.published_at | date: '%B %d, %Y' }}{% if article.author %} by {{ article.author }}{% endif %}</p>
+    <h1>{{ article.title }}</h1>
+    
+    {% if article.image %}
+      <div class="article__image">
+        <img src="{{ article.image | image_url: width: 1200 }}" alt="{{ article.image.alt | default: article.title }}">
+      </div>
+    {% endif %}
+    
+    <div class="article__content">
+      {{ article.content }}
+    </div>
+    
+    <p style="margin-top:40px"><a href="{{ blog.url }}">&larr; Back to {{ blog.title }}</a></p>
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Article page",
+  "settings": []
+}
+{% endschema %}
