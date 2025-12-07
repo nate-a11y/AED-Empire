@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "logo_width": 180,
@@ -42,6 +51,49 @@
     "search_enable_suggestions": true,
     "search_show_products": true,
     "search_show_collections": true,
-    "search_show_pages": false
+    "search_show_pages": false,
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "settings": {
+          "show": false,
+          "icon": true,
+          "text": "Free Shipping on Orders Over $500 | FDA Registered AED Dealer",
+          "link": "",
+          "background_color": "#1a1a1a",
+          "text_color": "#ffffff"
+        }
+      },
+      "header": {
+        "type": "header",
+        "settings": {
+          "announcement_text": "Free shipping on orders over $500",
+          "announcement_icon": "truck",
+          "announcement_link": "",
+          "announcement_link_text": "Learn More",
+          "announcement_countdown": false,
+          "countdown_date": ""
+        }
+      },
+      "trust-bar": {
+        "type": "trust-bar",
+        "settings": {}
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "about_text": "Your trusted source for AEDs and life safety equipment. Authorized dealer serving schools, businesses, and communities nationwide.",
+          "menu_1_title": "Shop",
+          "menu_1": "",
+          "menu_2_title": "Company",
+          "menu_2": ""
+        }
+      },
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "settings": {}
+      }
+    },
+    "content_for_index": []
   }
 }
