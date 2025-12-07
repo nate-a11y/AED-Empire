@@ -27,7 +27,23 @@
       "results": "Results",
       "no_results": "No results found"
     },
-    "cart": {
+    "404": {
+      "title": "404",
+      "subtext": "Page not found",
+      "link": "Continue shopping"
+    },
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "close": "Close",
+      "menu": "Menu",
+      "cart": "Cart",
+      "search": "Search",
+      "loading": "Loading...",
+      "refresh": "Refresh page"
+    }
+  },
+  "cart": {
+    "general": {
       "title": "Cart",
       "empty": "Your cart is empty",
       "continue_shopping": "Continue shopping",
@@ -36,12 +52,10 @@
       "view_cart": "View cart",
       "remove": "Remove",
       "quantity": "Quantity",
-      "note": "Order notes"
-    },
-    "404": {
-      "title": "404",
-      "subtext": "Page not found",
-      "link": "Continue shopping"
+      "note": "Order notes",
+      "item_added": "Item added to cart",
+      "update": "Update",
+      "shipping_note": "Shipping & taxes calculated at checkout"
     }
   },
   "blogs": {
@@ -54,7 +68,11 @@
   "collections": {
     "general": {
       "all_products": "All Products",
-      "no_matches": "No products match your search."
+      "no_matches": "No products match your search.",
+      "items_count": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      }
     },
     "sorting": {
       "title": "Sort by",
@@ -66,20 +84,36 @@
       "price_descending": "Price, high to low",
       "date_descending": "Date, new to old",
       "date_ascending": "Date, old to new"
+    },
+    "filters": {
+      "title": "Filters",
+      "clear_all": "Clear all",
+      "apply": "Apply",
+      "price": "Price",
+      "availability": "Availability",
+      "in_stock": "In stock",
+      "out_of_stock": "Out of stock"
     }
   },
   "products": {
     "product": {
-      "add_to_cart": "Add to cart",
-      "sold_out": "Sold out",
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
       "unavailable": "Unavailable",
       "quantity": "Quantity",
       "description": "Description",
+      "specifications": "Specifications",
+      "whats_included": "What's Included",
+      "reviews": "Reviews",
       "vendor": "Vendor",
       "sku": "SKU",
       "sale": "Sale",
       "from": "From",
-      "view_product": "View product"
+      "view_product": "View product",
+      "quick_view": "Quick view",
+      "buy_now": "Buy it now",
+      "compare": "Compare",
+      "share": "Share"
     }
   },
   "gift_cards": {
@@ -110,7 +144,8 @@
       "sign_in": "Sign in",
       "cancel": "Cancel",
       "guest_title": "Continue as guest",
-      "guest_continue": "Continue"
+      "guest_continue": "Continue",
+      "create_account": "Create account"
     },
     "register": {
       "title": "Create Account",
@@ -195,6 +230,19 @@
       "message": "Message",
       "submit": "Send",
       "success": "Thanks for contacting us. We'll get back to you as soon as possible."
+    }
+  },
+  "quote": {
+    "form": {
+      "title": "Request a Quote",
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "company": "Company/Organization",
+      "quantity": "Quantity Needed",
+      "message": "Additional Details",
+      "submit": "Submit Quote Request",
+      "success": "Thank you! We'll prepare your quote within 24 hours."
     }
   },
   "date_formats": {

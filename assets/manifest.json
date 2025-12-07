@@ -1,0 +1,25 @@
+{
+  "name": "AED Empire",
+  "short_name": "AED Empire",
+  "description": "Your trusted source for AED devices and medical equipment",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF8F0",
+  "theme_color": "#A52A2A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/cdn/shop/files/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/cdn/shop/files/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "health", "medical"]
+}

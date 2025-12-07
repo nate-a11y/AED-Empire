@@ -1,26 +1,66 @@
 <!doctype html>
-<html class="no-js" lang="{{ request.locale.iso_code }}">
+<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ request.locale.direction | default: 'ltr' }}">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="{{ settings.color_primary | default: '#A52A2A' }}">
+
   <title>{{ page_title }}{% unless page_title contains shop.name %} — {{ shop.name }}{% endunless %}</title>
-  
+
   {% if page_description %}<meta name="description" content="{{ page_description | escape }}">{% endif %}
   <link rel="canonical" href="{{ canonical_url }}">
-  
-  {% if settings.favicon %}<link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32 }}">{% endif %}
-  
+
+  {%- comment -%} Robots meta for search engine control {%- endcomment -%}
+  {% if template contains 'search' or template contains 'cart' or template contains 'customers' %}
+  <meta name="robots" content="noindex, nofollow">
+  {% endif %}
+
+  {%- comment -%} Social Meta Tags {%- endcomment -%}
+  {% render 'social-meta' %}
+
+  {%- comment -%} Favicons & App Icons {%- endcomment -%}
+  {% if settings.favicon %}
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ settings.favicon | image_url: width: 32 }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ settings.favicon | image_url: width: 16 }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ settings.favicon | image_url: width: 180 }}">
+  {% endif %}
+
+  {%- comment -%} PWA Manifest {%- endcomment -%}
+  <link rel="manifest" href="{{ 'manifest.json' | asset_url }}">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="{{ shop.name }}">
+  <meta name="application-name" content="{{ shop.name }}">
+  <meta name="msapplication-TileColor" content="{{ settings.color_primary | default: '#A52A2A' }}">
+
+  {%- comment -%} Preconnect to critical origins {%- endcomment -%}
   <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
   <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
-  
+  <link rel="preconnect" href="https://monorail-edge.shopifysvc.com" crossorigin>
+  {% if settings.google_analytics_id %}
+  <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+  {% endif %}
+
+  {%- comment -%} DNS Prefetch for third-party services {%- endcomment -%}
+  <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
+  <link rel="dns-prefetch" href="https://ajax.googleapis.com">
+
+  {%- comment -%} Preload critical assets {%- endcomment -%}
+  <link rel="preload" as="style" href="{{ 'theme.css' | asset_url }}">
+  <link rel="preload" as="script" href="{{ 'theme.js' | asset_url }}">
+
+  {%- comment -%} Font declarations with font-display: swap {%- endcomment -%}
   <style>
     {{ settings.font_heading | font_face: font_display: 'swap' }}
     {{ settings.font_body | font_face: font_display: 'swap' }}
   </style>
-  
+
+  {%- comment -%} Main stylesheet {%- endcomment -%}
   {{ 'theme.css' | asset_url | stylesheet_tag }}
-  
+
+  {%- comment -%} CSS Custom Properties {%- endcomment -%}
   <style>
     :root {
       --color-primary: {{ settings.color_primary }};
@@ -42,41 +82,121 @@
       --spacing-sections: {{ settings.spacing_sections }}px;
       --button-radius: {{ settings.button_border_radius }}px;
     }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      :root {
+        --color-border: #000;
+      }
+      .btn { border-width: 3px; }
+    }
+
+    /* Print styles */
+    @media print {
+      .header__main, .footer, .cart-drawer, .mobile-menu,
+      .back-to-top, .cookie-consent, .newsletter-popup,
+      .announcement-bar, .trust-bar, .skip-link { display: none !important; }
+      body { font-size: 12pt; color: #000; background: #fff; }
+      a { color: #000; text-decoration: underline; }
+      .container { max-width: 100%; padding: 0; }
+      .product-gallery__thumbs { display: none; }
+      .btn { border: 1px solid #000; background: #fff; color: #000; }
+    }
   </style>
-  
+
   {{ content_for_header }}
-  
+
+  {%- comment -%} Google Analytics 4 {%- endcomment -%}
+  {% if settings.google_analytics_id %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.google_analytics_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ settings.google_analytics_id }}', {
+      'anonymize_ip': true,
+      'cookie_flags': 'SameSite=None;Secure'
+    });
+  </script>
+  {% endif %}
+
+  {%- comment -%} Facebook Pixel {%- endcomment -%}
+  {% if settings.facebook_pixel_id %}
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '{{ settings.facebook_pixel_id }}');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{ settings.facebook_pixel_id }}&ev=PageView&noscript=1"/></noscript>
+  {% endif %}
+
   <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
 </head>
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
+  {%- comment -%} Skip link for keyboard/screen reader users {%- endcomment -%}
   <a class="skip-link visually-hidden" href="#main-content">Skip to content</a>
-  
+
+  {%- comment -%} Announcement Bar {%- endcomment -%}
+  {% section 'announcement-bar' %}
+
+  {%- comment -%} Header {%- endcomment -%}
   {% section 'header' %}
-  
-  <main id="main-content" role="main">
+
+  {%- comment -%} Main Content {%- endcomment -%}
+  <main id="main-content" role="main" tabindex="-1">
     {{ content_for_layout }}
   </main>
-  
+
+  {%- comment -%} Trust Bar {%- endcomment -%}
   {% if settings.show_trust_badges %}
     {% section 'trust-bar' %}
   {% endif %}
-  
+
+  {%- comment -%} Footer {%- endcomment -%}
   {% section 'footer' %}
-  
+
+  {%- comment -%} Cart Drawer {%- endcomment -%}
   {% if settings.cart_type == 'drawer' %}
     {% section 'cart-drawer' %}
   {% endif %}
-  
+
+  {%- comment -%} Quick View Modal {%- endcomment -%}
+  {% render 'quick-view' %}
+
+  {%- comment -%} Back to Top Button {%- endcomment -%}
   {% render 'back-to-top' %}
-  
+
+  {%- comment -%} Cookie Consent Banner {%- endcomment -%}
   {% if settings.enable_cookie_banner %}
     {% render 'cookie-consent' %}
   {% endif %}
-  
+
+  {%- comment -%} Newsletter Popup {%- endcomment -%}
   {% if settings.enable_newsletter_popup %}
     {% render 'newsletter-popup' %}
   {% endif %}
-  
+
+  {%- comment -%} JSON-LD Structured Data {%- endcomment -%}
+  {% render 'json-ld' %}
+
+  {%- comment -%} Global JavaScript Config {%- endcomment -%}
   <script>
     window.theme = {
       moneyFormat: {{ shop.money_format | json }},
@@ -87,9 +207,21 @@
         cartChange: '/cart/change.js',
         cartUpdate: '/cart/update.js',
         search: '/search/suggest.json'
+      },
+      strings: {
+        addToCart: {{ 'products.product.add_to_cart' | t | json }},
+        soldOut: {{ 'products.product.sold_out' | t | json }},
+        unavailable: {{ 'products.product.unavailable' | t | json }},
+        cartEmpty: {{ 'cart.general.empty' | t | json }},
+        itemAdded: {{ 'cart.general.item_added' | t | json }}
       }
     };
   </script>
+
+  {%- comment -%} Main JavaScript {%- endcomment -%}
   <script src="{{ 'theme.js' | asset_url }}" defer></script>
+
+  {%- comment -%} Accessibility: Announce dynamic content changes {%- endcomment -%}
+  <div id="aria-live-region" aria-live="polite" aria-atomic="true" class="visually-hidden"></div>
 </body>
 </html>

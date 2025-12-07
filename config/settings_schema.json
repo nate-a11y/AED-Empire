@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "AED Empire",
-    "theme_version": "1.0.0",
+    "theme_version": "2.0.0",
     "theme_author": "Nate Bullock",
     "theme_documentation_url": "https://aedempire.com",
     "theme_support_url": "https://aedempire.com"
@@ -276,6 +276,84 @@
     ]
   },
   {
+    "name": "SEO & Social sharing",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Social sharing image"
+      },
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "Default share image",
+        "info": "Used when page doesn't have its own image. Recommended: 1200x630px"
+      },
+      {
+        "type": "text",
+        "id": "share_image_alt",
+        "label": "Share image alt text"
+      },
+      {
+        "type": "header",
+        "content": "Additional SEO"
+      },
+      {
+        "type": "textarea",
+        "id": "seo_homepage_title",
+        "label": "Homepage title override",
+        "info": "Leave blank to use store name"
+      },
+      {
+        "type": "textarea",
+        "id": "seo_homepage_description",
+        "label": "Homepage meta description",
+        "info": "Leave blank to use store description"
+      }
+    ]
+  },
+  {
+    "name": "Analytics & Tracking",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Google Analytics"
+      },
+      {
+        "type": "text",
+        "id": "google_analytics_id",
+        "label": "Google Analytics 4 ID",
+        "info": "Example: G-XXXXXXXXXX",
+        "placeholder": "G-XXXXXXXXXX"
+      },
+      {
+        "type": "header",
+        "content": "Facebook"
+      },
+      {
+        "type": "text",
+        "id": "facebook_pixel_id",
+        "label": "Facebook Pixel ID",
+        "placeholder": "123456789012345"
+      },
+      {
+        "type": "header",
+        "content": "Other tracking"
+      },
+      {
+        "type": "textarea",
+        "id": "custom_head_scripts",
+        "label": "Custom scripts (head)",
+        "info": "Scripts added before </head>. Include <script> tags."
+      },
+      {
+        "type": "textarea",
+        "id": "custom_body_scripts",
+        "label": "Custom scripts (body)",
+        "info": "Scripts added before </body>. Include <script> tags."
+      }
+    ]
+  },
+  {
     "name": "Trust badges",
     "settings": [
       {
@@ -459,6 +537,104 @@
         "id": "search_show_pages",
         "label": "Show pages in suggestions",
         "default": false
+      }
+    ]
+  },
+  {
+    "name": "Popups & Banners",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Cookie consent"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_cookie_banner",
+        "label": "Enable cookie consent banner",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "cookie_banner_text",
+        "label": "Cookie banner text",
+        "default": "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies."
+      },
+      {
+        "type": "url",
+        "id": "cookie_policy_link",
+        "label": "Cookie policy page link"
+      },
+      {
+        "type": "header",
+        "content": "Newsletter popup"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_newsletter_popup",
+        "label": "Enable newsletter popup",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "newsletter_popup_title",
+        "label": "Popup title",
+        "default": "Join Our Newsletter"
+      },
+      {
+        "type": "textarea",
+        "id": "newsletter_popup_text",
+        "label": "Popup text",
+        "default": "Subscribe for exclusive offers and updates."
+      },
+      {
+        "type": "text",
+        "id": "newsletter_popup_discount",
+        "label": "Discount offer text",
+        "info": "Optional. e.g., 'Get 10% off your first order'"
+      },
+      {
+        "type": "image_picker",
+        "id": "newsletter_popup_image",
+        "label": "Popup image"
+      },
+      {
+        "type": "range",
+        "id": "newsletter_popup_delay",
+        "min": 0,
+        "max": 60,
+        "step": 5,
+        "unit": "s",
+        "label": "Show popup after",
+        "default": 5
+      }
+    ]
+  },
+  {
+    "name": "Accessibility",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_animations",
+        "label": "Enable animations",
+        "default": true,
+        "info": "Respects user's reduced motion preference"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_focus_outlines",
+        "label": "Show focus outlines",
+        "default": true,
+        "info": "Helps keyboard navigation"
+      },
+      {
+        "type": "range",
+        "id": "focus_outline_width",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "unit": "px",
+        "label": "Focus outline width",
+        "default": 2
       }
     ]
   }
