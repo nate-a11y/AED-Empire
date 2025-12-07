@@ -1,0 +1,29 @@
+<section class="newsletter{% if section.settings.dark %} newsletter--dark{% endif %}">
+  <div class="container">
+    <div class="newsletter__inner">
+      <div>
+        <h2>{{ section.settings.title }}</h2>
+        <p>{{ section.settings.text }}</p>
+      </div>
+      {% form 'customer', class: 'newsletter__form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <input type="email" name="contact[email]" class="newsletter__input" placeholder="{{ section.settings.placeholder }}" required>
+        <button type="submit" class="btn btn--primary">{{ section.settings.button_text }}</button>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading","default":"Stay Prepared"},
+    {"type":"textarea","id":"text","label":"Text","default":"Subscribe to receive safety tips, product updates, and exclusive offers."},
+    {"type":"text","id":"placeholder","label":"Input placeholder","default":"Enter your email"},
+    {"type":"text","id":"button_text","label":"Button text","default":"Subscribe"},
+    {"type":"checkbox","id":"dark","label":"Dark background","default":false}
+  ],
+  "presets": [{"name":"Newsletter"}]
+}
+{% endschema %}

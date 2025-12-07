@@ -1,0 +1,252 @@
+<div class="product-page">
+  <div class="container">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="breadcrumbs__sep">/</span>
+      {% if collection %}
+        <a href="{{ collection.url }}">{{ collection.title }}</a>
+        <span class="breadcrumbs__sep">/</span>
+      {% endif %}
+      <span aria-current="page">{{ product.title }}</span>
+    </nav>
+
+    <div class="product-page__main">
+      <!-- Gallery -->
+      <div class="product-gallery">
+        <div class="product-gallery__main">
+          {% for media in product.media %}
+            <div class="product-gallery__slide{% if forloop.first %} product-gallery__slide--active{% endif %}" data-media-id="{{ media.id }}">
+              {% if media.media_type == 'image' %}
+                <img src="{{ media | image_url: width: 1200 }}" alt="{{ media.alt | default: product.title }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+              {% elsif media.media_type == 'video' %}
+                {{ media | video_tag: autoplay: false, controls: true }}
+              {% elsif media.media_type == 'external_video' %}
+                {{ media | external_video_tag }}
+              {% endif %}
+            </div>
+          {% endfor %}
+          {% if product.compare_at_price > product.price %}
+            <span class="product-badge product-badge--sale">Sale</span>
+          {% endif %}
+        </div>
+        {% if product.media.size > 1 %}
+          <div class="product-gallery__thumbs">
+            {% for media in product.media %}
+              <button class="product-gallery__thumb{% if forloop.first %} product-gallery__thumb--active{% endif %}" data-thumb="{{ media.id }}">
+                <img src="{{ media | image_url: width: 150 }}" alt="{{ media.alt | default: product.title }}" loading="lazy">
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info">
+        {% if product.vendor %}
+          <p class="product-info__vendor">{{ product.vendor }}</p>
+        {% endif %}
+        
+        <h1 class="product-info__title">{{ product.title }}</h1>
+        
+        <div class="product-info__price">
+          <span class="product-info__price-current" data-product-price>{{ product.price | money }}</span>
+          {% if product.compare_at_price > product.price %}
+            <span class="product-info__price-compare">{{ product.compare_at_price | money }}</span>
+            <span class="product-info__price-save">Save {{ product.compare_at_price | minus: product.price | money }}</span>
+          {% endif %}
+        </div>
+
+        {% if product.metafields.custom.bulk_pricing_note != blank %}
+          <div class="product-info__bulk">
+            {% render 'icon', name: 'phone' %}
+            <span>{{ product.metafields.custom.bulk_pricing_note }}</span>
+          </div>
+        {% endif %}
+
+        <!-- Trust Badges -->
+        <div class="product-trust">
+          {% if settings.trust_badge_1_text != blank %}
+            <div class="product-trust__item">
+              {% render 'icon', name: settings.trust_badge_1_icon %}
+              <span>{{ settings.trust_badge_1_text }}</span>
+            </div>
+          {% endif %}
+          {% if settings.trust_badge_2_text != blank %}
+            <div class="product-trust__item">
+              {% render 'icon', name: settings.trust_badge_2_icon %}
+              <span>{{ settings.trust_badge_2_text }}</span>
+            </div>
+          {% endif %}
+        </div>
+
+        {% form 'product', product, data-product-form: '' %}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
+          
+          {% unless product.has_only_default_variant %}
+            {% for option in product.options_with_values %}
+              <div class="product-option">
+                <label class="product-option__label">{{ option.name }}</label>
+                <div class="product-option__values">
+                  {% for value in option.values %}
+                    <label class="product-option__value{% if option.selected_value == value %} product-option__value--selected{% endif %}">
+                      <input type="radio" name="{{ option.name }}" value="{{ value }}" {% if option.selected_value == value %}checked{% endif %} data-option-input>
+                      <span>{{ value }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endfor %}
+          {% endunless %}
+
+          <div class="product-actions">
+            <div class="product-quantity">
+              <label class="visually-hidden" for="quantity">Quantity</label>
+              <button type="button" class="product-quantity__btn" data-qty-minus aria-label="Decrease quantity">−</button>
+              <input type="number" id="quantity" name="quantity" value="1" min="1" class="product-quantity__input" data-qty-input>
+              <button type="button" class="product-quantity__btn" data-qty-plus aria-label="Increase quantity">+</button>
+            </div>
+            
+            <button type="submit" class="btn btn--primary btn--large product-add-btn" {% unless product.available %}disabled{% endunless %} data-add-btn>
+              {% if product.available %}
+                Add to Cart
+              {% else %}
+                Sold Out
+              {% endif %}
+            </button>
+          </div>
+
+          {% if section.settings.show_dynamic_checkout and product.available %}
+            <div class="product-dynamic-checkout">
+              {{ form | payment_button }}
+            </div>
+          {% endif %}
+        {% endform %}
+
+        <!-- Short Description -->
+        {% if product.description != blank and product.description.size < 500 %}
+          <div class="product-info__short-desc">
+            {{ product.description }}
+          </div>
+        {% endif %}
+
+        <!-- SKU & Availability -->
+        <div class="product-meta">
+          {% if product.selected_or_first_available_variant.sku != blank %}
+            <p><strong>SKU:</strong> <span data-product-sku>{{ product.selected_or_first_available_variant.sku }}</span></p>
+          {% endif %}
+          <p><strong>Availability:</strong> 
+            <span data-product-availability>
+              {% if product.available %}
+                <span class="text-success">In Stock</span>
+              {% else %}
+                <span class="text-error">Out of Stock</span>
+              {% endif %}
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Tabs -->
+    <div class="product-tabs" data-product-tabs>
+      <div class="product-tabs__nav">
+        {% if product.description != blank and product.description.size >= 500 %}
+          <button class="product-tabs__tab product-tabs__tab--active" data-tab="description">Description</button>
+        {% endif %}
+        {% if product.metafields.custom.specifications != blank %}
+          <button class="product-tabs__tab{% if product.description.size < 500 %} product-tabs__tab--active{% endif %}" data-tab="specs">Specifications</button>
+        {% endif %}
+        {% if product.metafields.custom.whats_included != blank %}
+          <button class="product-tabs__tab" data-tab="included">What's Included</button>
+        {% endif %}
+        {% if product.metafields.custom.warranty_info != blank %}
+          <button class="product-tabs__tab" data-tab="warranty">Warranty</button>
+        {% endif %}
+        {% if section.settings.show_shipping_tab %}
+          <button class="product-tabs__tab" data-tab="shipping">Shipping</button>
+        {% endif %}
+      </div>
+      
+      <div class="product-tabs__content">
+        {% if product.description != blank and product.description.size >= 500 %}
+          <div class="product-tabs__panel product-tabs__panel--active" data-panel="description">
+            <div class="rte">{{ product.description }}</div>
+          </div>
+        {% endif %}
+        
+        {% if product.metafields.custom.specifications != blank %}
+          <div class="product-tabs__panel{% if product.description.size < 500 %} product-tabs__panel--active{% endif %}" data-panel="specs">
+            <div class="specs-table">{{ product.metafields.custom.specifications }}</div>
+          </div>
+        {% endif %}
+        
+        {% if product.metafields.custom.whats_included != blank %}
+          <div class="product-tabs__panel" data-panel="included">
+            <div class="whats-included">{{ product.metafields.custom.whats_included }}</div>
+          </div>
+        {% endif %}
+        
+        {% if product.metafields.custom.warranty_info != blank %}
+          <div class="product-tabs__panel" data-panel="warranty">
+            <div class="warranty-info">{{ product.metafields.custom.warranty_info }}</div>
+          </div>
+        {% endif %}
+        
+        {% if section.settings.show_shipping_tab %}
+          <div class="product-tabs__panel" data-panel="shipping">
+            <div class="shipping-info">
+              {{ section.settings.shipping_content }}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sticky Add to Cart (Mobile) -->
+<div class="sticky-cart" data-sticky-cart>
+  <div class="sticky-cart__inner">
+    <div class="sticky-cart__info">
+      <span class="sticky-cart__title">{{ product.title | truncate: 30 }}</span>
+      <span class="sticky-cart__price" data-sticky-price>{{ product.price | money }}</span>
+    </div>
+    <button class="btn btn--primary sticky-cart__btn" data-sticky-add {% unless product.available %}disabled{% endunless %}>
+      {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
+    </button>
+  </div>
+</div>
+
+<!-- Recently Viewed -->
+{% render 'recently-viewed', product: product %}
+
+<script type="application/json" data-product-json>
+  {{ product | json }}
+</script>
+
+{% schema %}
+{
+  "name": "Product page",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout buttons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_tab",
+      "label": "Show shipping tab",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_content",
+      "label": "Shipping tab content",
+      "default": "<p><strong>Free Shipping</strong> on orders over $500</p><p>Standard shipping: 3-5 business days</p><p>Expedited shipping: 1-2 business days</p>"
+    }
+  ]
+}
+{% endschema %}

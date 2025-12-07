@@ -1,0 +1,117 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    <div class="grid grid--2" style="gap:60px;align-items:start">
+      <div>
+        <h2>{{ section.settings.title }}</h2>
+        <div style="color:var(--color-text-light);line-height:1.8;margin-bottom:30px">{{ section.settings.text }}</div>
+        
+        <div style="display:flex;flex-direction:column;gap:20px">
+          {% if settings.contact_phone %}
+            <div style="display:flex;align-items:center;gap:15px">
+              <div style="width:50px;height:50px;background:var(--color-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff">
+                {% render 'icon', name: 'phone' %}
+              </div>
+              <div>
+                <strong>Call Us</strong>
+                <p style="margin:0"><a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone }}</a></p>
+              </div>
+            </div>
+          {% endif %}
+          {% if settings.contact_email %}
+            <div style="display:flex;align-items:center;gap:15px">
+              <div style="width:50px;height:50px;background:var(--color-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff">
+                {% render 'icon', name: 'mail' %}
+              </div>
+              <div>
+                <strong>Email Us</strong>
+                <p style="margin:0"><a href="mailto:{{ settings.contact_email }}">{{ settings.contact_email }}</a></p>
+              </div>
+            </div>
+          {% endif %}
+          {% if settings.contact_hours %}
+            <div style="display:flex;align-items:center;gap:15px">
+              <div style="width:50px;height:50px;background:var(--color-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff">
+                {% render 'icon', name: 'clock' %}
+              </div>
+              <div>
+                <strong>Business Hours</strong>
+                <p style="margin:0">{{ settings.contact_hours }}</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="quote-form">
+        <h3>Request a Quote</h3>
+        {% form 'contact' %}
+          {% if form.posted_successfully? %}
+            <p style="background:var(--color-success);color:#fff;padding:15px;margin-bottom:20px">Thank you! We'll send you a quote within 1 business day.</p>
+          {% endif %}
+          {{ form.errors | default_errors }}
+          
+          <input type="hidden" name="contact[subject]" value="Quote Request">
+          
+          <div class="form__row">
+            <div class="form__group">
+              <label for="quote-name">Name *</label>
+              <input type="text" id="quote-name" name="contact[name]" required>
+            </div>
+            <div class="form__group">
+              <label for="quote-email">Email *</label>
+              <input type="email" id="quote-email" name="contact[email]" required>
+            </div>
+          </div>
+          
+          <div class="form__row">
+            <div class="form__group">
+              <label for="quote-phone">Phone</label>
+              <input type="tel" id="quote-phone" name="contact[phone]">
+            </div>
+            <div class="form__group">
+              <label for="quote-company">Company/Organization</label>
+              <input type="text" id="quote-company" name="contact[company]">
+            </div>
+          </div>
+          
+          <div class="form__group">
+            <label for="quote-quantity">Estimated Quantity *</label>
+            <select id="quote-quantity" name="contact[quantity]" required>
+              <option value="">Select quantity range</option>
+              <option value="1-4">1-4 units</option>
+              <option value="5-9">5-9 units</option>
+              <option value="10-24">10-24 units</option>
+              <option value="25-49">25-49 units</option>
+              <option value="50+">50+ units</option>
+            </select>
+          </div>
+          
+          <div class="form__group">
+            <label for="quote-products">Products of Interest</label>
+            <textarea id="quote-products" name="contact[products]" rows="3" placeholder="List the products you're interested in, or describe your needs"></textarea>
+          </div>
+          
+          <div class="form__group">
+            <label for="quote-message">Additional Information</label>
+            <textarea id="quote-message" name="contact[body]" rows="3" placeholder="Timeline, budget considerations, special requirements, etc."></textarea>
+          </div>
+          
+          <button type="submit" class="btn btn--primary btn--large btn--full">Submit Quote Request</button>
+          <p style="font-size:.8125rem;color:var(--color-text-light);margin-top:15px;text-align:center">We typically respond within 1 business day</p>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Quote request",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading","default":"Need a Quote for Multiple Units?"},
+    {"type":"richtext","id":"text","label":"Text","default":"<p>We offer competitive volume pricing for schools, businesses, and organizations. Get a custom quote for your specific needs.</p>"},
+    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":false}
+  ],
+  "presets": [{"name":"Quote request form"}]
+}
+{% endschema %}

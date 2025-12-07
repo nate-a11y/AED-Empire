@@ -1,0 +1,135 @@
+<section class="section quote-form{% if section.settings.alt_bg %} section--alt{% endif %}" id="quote">
+  <div class="container">
+    <div class="quote-form__layout">
+      <div class="quote-form__info">
+        <h2>{{ section.settings.title }}</h2>
+        <div class="quote-form__text">{{ section.settings.text }}</div>
+        
+        {% if section.settings.show_benefits %}
+          <div class="quote-form__benefits">
+            <div class="quote-form__benefit">
+              {% render 'icon', name: 'check' %}
+              <span>Volume pricing available</span>
+            </div>
+            <div class="quote-form__benefit">
+              {% render 'icon', name: 'check' %}
+              <span>Custom training packages</span>
+            </div>
+            <div class="quote-form__benefit">
+              {% render 'icon', name: 'check' %}
+              <span>Multi-location discounts</span>
+            </div>
+            <div class="quote-form__benefit">
+              {% render 'icon', name: 'check' %}
+              <span>Program management support</span>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if settings.contact_phone != blank %}
+          <p class="quote-form__phone">
+            Or call us: <a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone }}</a>
+          </p>
+        {% endif %}
+      </div>
+
+      <div class="quote-form__form-wrap">
+        {% form 'contact', class: 'quote-form__form' %}
+          <input type="hidden" name="contact[form_type]" value="quote_request">
+          
+          {% if form.posted_successfully? %}
+            <div class="form__success">
+              <h3>Thank you for your request!</h3>
+              <p>We'll prepare your custom quote and contact you within 1 business day.</p>
+            </div>
+          {% else %}
+            {{ form.errors | default_errors }}
+            
+            <div class="form__row">
+              <div class="form__group">
+                <label for="quote-name">Your Name *</label>
+                <input type="text" id="quote-name" name="contact[name]" required>
+              </div>
+              <div class="form__group">
+                <label for="quote-company">Company/Organization *</label>
+                <input type="text" id="quote-company" name="contact[company]" required>
+              </div>
+            </div>
+            
+            <div class="form__row">
+              <div class="form__group">
+                <label for="quote-email">Email *</label>
+                <input type="email" id="quote-email" name="contact[email]" required>
+              </div>
+              <div class="form__group">
+                <label for="quote-phone">Phone *</label>
+                <input type="tel" id="quote-phone" name="contact[phone]" required>
+              </div>
+            </div>
+            
+            <div class="form__group">
+              <label for="quote-type">Organization Type</label>
+              <select id="quote-type" name="contact[organization_type]">
+                <option value="">Select...</option>
+                <option value="school">School/University</option>
+                <option value="healthcare">Healthcare Facility</option>
+                <option value="corporate">Corporate Office</option>
+                <option value="government">Government/Municipal</option>
+                <option value="fitness">Gym/Fitness Center</option>
+                <option value="church">Church/Religious Org</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            
+            <div class="form__row">
+              <div class="form__group">
+                <label for="quote-qty">Estimated Quantity</label>
+                <select id="quote-qty" name="contact[quantity]">
+                  <option value="1-5">1-5 units</option>
+                  <option value="6-10">6-10 units</option>
+                  <option value="11-25">11-25 units</option>
+                  <option value="26-50">26-50 units</option>
+                  <option value="50+">50+ units</option>
+                </select>
+              </div>
+              <div class="form__group">
+                <label for="quote-timeline">Timeline</label>
+                <select id="quote-timeline" name="contact[timeline]">
+                  <option value="asap">ASAP</option>
+                  <option value="30-days">Within 30 days</option>
+                  <option value="60-days">Within 60 days</option>
+                  <option value="planning">Just planning</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form__group">
+              <label for="quote-products">Products of Interest</label>
+              <textarea id="quote-products" name="contact[products]" rows="3" placeholder="List specific products or describe your needs..."></textarea>
+            </div>
+            
+            <div class="form__group">
+              <label for="quote-message">Additional Information</label>
+              <textarea id="quote-message" name="contact[body]" rows="3" placeholder="Training requirements, special needs, questions..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn--primary btn--large">Request Quote</button>
+          {% endif %}
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Quote Request Form",
+  "settings": [
+    {"type": "text", "id": "title", "label": "Heading", "default": "Request a Quote"},
+    {"type": "richtext", "id": "text", "label": "Text", "default": "<p>Need AEDs for your organization? Get volume pricing, custom training packages, and dedicated support for your life safety program.</p>"},
+    {"type": "checkbox", "id": "show_benefits", "label": "Show benefits list", "default": true},
+    {"type": "checkbox", "id": "alt_bg", "label": "Alternate background", "default": true}
+  ],
+  "presets": [{"name": "Quote Request Form"}]
+}
+{% endschema %}

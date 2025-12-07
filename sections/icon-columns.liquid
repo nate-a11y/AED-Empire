@@ -1,0 +1,47 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2>{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle %}<p>{{ section.settings.subtitle }}</p>{% endif %}
+        <div class="section-header__divider"></div>
+      </div>
+    {% endif %}
+    
+    <div class="grid grid--{{ section.settings.columns }}" style="text-align:center">
+      {% for block in section.blocks %}
+        <div {{ block.shopify_attributes }}>
+          <div style="width:70px;height:70px;margin:0 auto 20px;background:var(--color-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff">
+            {% render 'icon', name: block.settings.icon %}
+          </div>
+          <h4 style="margin-bottom:10px">{{ block.settings.title }}</h4>
+          <p style="color:var(--color-text-light);margin:0">{{ block.settings.text }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Icon columns",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading"},
+    {"type":"text","id":"subtitle","label":"Subtitle"},
+    {"type":"range","id":"columns","min":2,"max":4,"step":1,"label":"Columns","default":3},
+    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":true}
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        {"type":"select","id":"icon","label":"Icon","options":[{"value":"shield","label":"Shield"},{"value":"check","label":"Checkmark"},{"value":"award","label":"Award"},{"value":"heart","label":"Heart"},{"value":"truck","label":"Truck"},{"value":"phone","label":"Phone"},{"value":"clock","label":"Clock"}],"default":"shield"},
+        {"type":"text","id":"title","label":"Heading","default":"Feature"},
+        {"type":"textarea","id":"text","label":"Text","default":"Describe this feature in a few words."}
+      ]
+    }
+  ],
+  "presets": [{"name":"Icon columns","blocks":[{"type":"column"},{"type":"column"},{"type":"column"}]}]
+}
+{% endschema %}

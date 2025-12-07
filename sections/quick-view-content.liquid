@@ -1,0 +1,54 @@
+<div class="quick-view__grid">
+  <div class="quick-view__image">
+    {% if product.featured_image %}
+      <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title }}">
+    {% endif %}
+  </div>
+  <div class="quick-view__info">
+    {% if product.vendor %}
+      <p style="font-size:.75rem;text-transform:uppercase;color:var(--color-text-light);margin-bottom:5px">{{ product.vendor }}</p>
+    {% endif %}
+    <h2 style="font-size:1.5rem;margin-bottom:15px">{{ product.title }}</h2>
+    
+    <p style="font-size:1.5rem;font-weight:700;color:var(--color-primary);margin-bottom:20px">
+      {{ product.price | money }}
+      {% if product.compare_at_price > product.price %}
+        <span style="font-size:1rem;color:var(--color-text-light);text-decoration:line-through;margin-left:10px">{{ product.compare_at_price | money }}</span>
+      {% endif %}
+    </p>
+    
+    {% form 'product', product %}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      
+      {% unless product.has_only_default_variant %}
+        {% for option in product.options_with_values %}
+          <div style="margin-bottom:15px">
+            <label style="display:block;margin-bottom:5px;font-weight:600">{{ option.name }}</label>
+            <select name="options[{{ option.name | escape }}]" style="width:100%;padding:10px;border:1px solid var(--color-border)">
+              {% for value in option.values %}
+                <option value="{{ value | escape }}">{{ value }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endfor %}
+      {% endunless %}
+      
+      <div style="display:flex;gap:15px;margin-bottom:20px">
+        <div style="display:flex;border:1px solid var(--color-border)">
+          <button type="button" style="padding:10px 15px;background:none;border:none;cursor:pointer" onclick="this.nextElementSibling.stepDown()">−</button>
+          <input type="number" name="quantity" value="1" min="1" style="width:60px;text-align:center;border:none;border-left:1px solid var(--color-border);border-right:1px solid var(--color-border)">
+          <button type="button" style="padding:10px 15px;background:none;border:none;cursor:pointer" onclick="this.previousElementSibling.stepUp()">+</button>
+        </div>
+        {% if product.available %}
+          <button type="submit" class="btn btn--primary" style="flex:1">Add to Cart</button>
+        {% else %}
+          <button type="button" class="btn btn--outline" disabled style="flex:1">Sold Out</button>
+        {% endif %}
+      </div>
+    {% endform %}
+    
+    <p style="font-size:.875rem;color:var(--color-text-light);line-height:1.6">{{ product.description | strip_html | truncate: 200 }}</p>
+    
+    <a href="{{ product.url }}" style="display:inline-block;margin-top:15px;font-weight:600;color:var(--color-primary)">View Full Details →</a>
+  </div>
+</div>

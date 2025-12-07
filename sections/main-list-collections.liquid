@@ -1,0 +1,27 @@
+<section class="section">
+  <div class="container">
+    <h1 class="text-center mb-4">Collections</h1>
+    <div class="grid grid--3">
+      {% for collection in collections %}
+        {% unless collection.handle == 'all' %}
+          <a href="{{ collection.url }}" class="collection-card">
+            {% if collection.image %}
+              <img src="{{ collection.image | image_url: width: 600 }}" alt="{{ collection.title }}" loading="lazy">
+            {% elsif collection.products.first.featured_image %}
+              <img src="{{ collection.products.first.featured_image | image_url: width: 600 }}" alt="{{ collection.title }}" loading="lazy">
+            {% endif %}
+            <h3>{{ collection.title }}</h3>
+            <span>{{ collection.products_count }} products</span>
+          </a>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collections list",
+  "settings": []
+}
+{% endschema %}

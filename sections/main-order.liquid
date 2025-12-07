@@ -1,0 +1,27 @@
+<section class="section">
+  <div class="container">
+    <p><a href="{{ routes.account_url }}">&larr; Back to Account</a></p>
+    <h1>Order {{ order.name }}</h1>
+    <p>Placed on {{ order.created_at | date: '%B %d, %Y' }}</p>
+    <table class="account-table" style="margin-top:30px">
+      <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th></tr></thead>
+      <tbody>
+        {% for item in order.line_items %}
+          <tr>
+            <td>{{ item.title }}</td>
+            <td>{{ item.original_price | money }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.final_line_price | money }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div style="margin-top:30px;text-align:right">
+      <p>Subtotal: {{ order.line_items_subtotal_price | money }}</p>
+      <p>Shipping: {{ order.shipping_price | money }}</p>
+      <p>Tax: {{ order.tax_price | money }}</p>
+      <p><strong>Total: {{ order.total_price | money }}</strong></p>
+    </div>
+  </div>
+</section>
+{% schema %}{"name":"Order","settings":[]}{% endschema %}

@@ -1,0 +1,7 @@
+{
+  "sections": {
+    "main": {"type": "contact-form", "settings": {"title": "Get in Touch", "text": "<p>Have questions about AEDs or need help finding the right equipment? Our team of experts is here to help.</p>"}},
+    "faq": {"type": "faq", "settings": {"title": "Common Questions", "alt_bg": true}, "blocks": {"q1": {"type": "question", "settings": {"question": "What is an AED?", "answer": "<p>An AED (Automated External Defibrillator) is a portable device that can check heart rhythm and deliver an electric shock to restore a normal heartbeat during sudden cardiac arrest.</p>"}}, "q2": {"type": "question", "settings": {"question": "Do I need training to use an AED?", "answer": "<p>AEDs are designed to be used by anyone, with voice prompts that guide you through the process. However, we recommend basic training for confidence.</p>"}}, "q3": {"type": "question", "settings": {"question": "What warranty do you offer?", "answer": "<p>Warranty varies by manufacturer, typically ranging from 5-8 years. We'll help you understand the specific warranty for your chosen product.</p>"}}}, "block_order": ["q1", "q2", "q3"]}
+  },
+  "order": ["main", "faq"]
+}

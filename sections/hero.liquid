@@ -1,0 +1,81 @@
+<section class="hero"{% if section.settings.image %} style="background-image:url('{{ section.settings.image | image_url: width: 1920 }}')"{% endif %}>
+  <div class="hero__overlay"></div>
+  <div class="container">
+    <div class="hero__content">
+      {% if section.settings.badge %}
+        <span class="hero__badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          {{ section.settings.badge }}
+        </span>
+      {% endif %}
+      <h1 class="hero__title">{{ section.settings.title }}</h1>
+      {% if section.settings.text %}<p class="hero__text">{{ section.settings.text }}</p>{% endif %}
+      <div class="hero__buttons">
+        {% if section.settings.button_1_text %}
+          <a href="{{ section.settings.button_1_link }}" class="btn btn--primary btn--large">{{ section.settings.button_1_text }}</a>
+        {% endif %}
+        {% if section.settings.button_2_text %}
+          <a href="{{ section.settings.button_2_link }}" class="btn btn--outline-white btn--large">{{ section.settings.button_2_text }}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge text",
+      "default": "Trusted Life Safety Equipment"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "AEDs for Every School, Business & Community"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Life-saving AEDs don't have to break the budget. As authorized dealers, we make preparedness affordable and accessible."
+    },
+    {
+      "type": "text",
+      "id": "button_1_text",
+      "label": "Button 1 text",
+      "default": "Shop AEDs"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Button 1 link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_text",
+      "label": "Button 2 text",
+      "default": "Bleeding Control"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Button 2 link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero banner"
+    }
+  ]
+}
+{% endschema %}

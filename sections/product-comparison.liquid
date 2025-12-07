@@ -1,0 +1,120 @@
+<section class="section product-comparison{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2>{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle %}<p>{{ section.settings.subtitle }}</p>{% endif %}
+        <div class="section-header__divider"></div>
+      </div>
+    {% endif %}
+
+    <div class="comparison-table-wrapper">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th class="comparison-table__feature-header">Features</th>
+            {% for block in section.blocks %}
+              {% assign product = all_products[block.settings.product] %}
+              <th class="comparison-table__product-header" {{ block.shopify_attributes }}>
+                {% if product %}
+                  <a href="{{ product.url }}">
+                    <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title }}" loading="lazy">
+                    <span class="comparison-table__product-title">{{ product.title }}</span>
+                    <span class="comparison-table__product-price">{{ product.price | money }}</span>
+                  </a>
+                {% endif %}
+              </th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% if section.settings.compare_price %}
+            <tr>
+              <td>Price</td>
+              {% for block in section.blocks %}
+                {% assign product = all_products[block.settings.product] %}
+                <td>{% if product %}{{ product.price | money }}{% endif %}</td>
+              {% endfor %}
+            </tr>
+          {% endif %}
+          
+          {% for i in (1..8) %}
+            {% assign feature_label = 'feature_' | append: i | append: '_label' %}
+            {% if section.settings[feature_label] != blank %}
+              <tr>
+                <td>{{ section.settings[feature_label] }}</td>
+                {% for block in section.blocks %}
+                  {% assign feature_value = 'feature_' | append: i %}
+                  <td>
+                    {% if block.settings[feature_value] == 'yes' %}
+                      <span class="comparison-check">✓</span>
+                    {% elsif block.settings[feature_value] == 'no' %}
+                      <span class="comparison-x">✗</span>
+                    {% else %}
+                      {{ block.settings[feature_value] }}
+                    {% endif %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            {% for block in section.blocks %}
+              {% assign product = all_products[block.settings.product] %}
+              <td>
+                {% if product.available %}
+                  <a href="{{ product.url }}" class="btn btn--primary btn--small">View Details</a>
+                {% else %}
+                  <span class="btn btn--outline btn--small" disabled>Sold Out</span>
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Comparison",
+  "settings": [
+    {"type": "text", "id": "title", "label": "Heading", "default": "Compare AED Models"},
+    {"type": "text", "id": "subtitle", "label": "Subtitle"},
+    {"type": "checkbox", "id": "compare_price", "label": "Show price row", "default": true},
+    {"type": "checkbox", "id": "alt_bg", "label": "Alternate background", "default": false},
+    {"type": "header", "content": "Comparison Features"},
+    {"type": "text", "id": "feature_1_label", "label": "Feature 1 label", "default": "FDA Approved"},
+    {"type": "text", "id": "feature_2_label", "label": "Feature 2 label", "default": "Battery Life"},
+    {"type": "text", "id": "feature_3_label", "label": "Feature 3 label", "default": "Warranty"},
+    {"type": "text", "id": "feature_4_label", "label": "Feature 4 label", "default": "Weight"},
+    {"type": "text", "id": "feature_5_label", "label": "Feature 5 label", "default": "Pediatric Mode"},
+    {"type": "text", "id": "feature_6_label", "label": "Feature 6 label"},
+    {"type": "text", "id": "feature_7_label", "label": "Feature 7 label"},
+    {"type": "text", "id": "feature_8_label", "label": "Feature 8 label"}
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "limit": 4,
+      "settings": [
+        {"type": "product", "id": "product", "label": "Product"},
+        {"type": "text", "id": "feature_1", "label": "Feature 1 value", "info": "Use 'yes', 'no', or custom text"},
+        {"type": "text", "id": "feature_2", "label": "Feature 2 value"},
+        {"type": "text", "id": "feature_3", "label": "Feature 3 value"},
+        {"type": "text", "id": "feature_4", "label": "Feature 4 value"},
+        {"type": "text", "id": "feature_5", "label": "Feature 5 value"},
+        {"type": "text", "id": "feature_6", "label": "Feature 6 value"},
+        {"type": "text", "id": "feature_7", "label": "Feature 7 value"},
+        {"type": "text", "id": "feature_8", "label": "Feature 8 value"}
+      ]
+    }
+  ],
+  "presets": [{"name": "Product Comparison", "blocks": [{"type": "product"}, {"type": "product"}, {"type": "product"}]}]
+}
+{% endschema %}

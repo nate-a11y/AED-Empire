@@ -1,0 +1,54 @@
+<div class="slideshow" data-slideshow>
+  {% for block in section.blocks %}
+    <div class="slideshow__slide{% if forloop.first %} slideshow__slide--active{% endif %}" {% if block.settings.image %}style="background-image:url('{{ block.settings.image | image_url: width: 1920 }}')"{% endif %} {{ block.shopify_attributes }}>
+      <div class="hero__overlay"></div>
+      <div class="container">
+        <div class="hero__content">
+          {% if block.settings.badge %}<span class="hero__badge">{{ block.settings.badge }}</span>{% endif %}
+          <h1 class="hero__title">{{ block.settings.title }}</h1>
+          {% if block.settings.text %}<p class="hero__text">{{ block.settings.text }}</p>{% endif %}
+          <div class="hero__buttons">
+            {% if block.settings.button_text %}<a href="{{ block.settings.button_link }}" class="btn btn--primary btn--large">{{ block.settings.button_text }}</a>{% endif %}
+            {% if block.settings.button_2_text %}<a href="{{ block.settings.button_2_link }}" class="btn btn--outline-white btn--large">{{ block.settings.button_2_text }}</a>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  {% if section.blocks.size > 1 %}
+    <div class="slideshow__dots" style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:10">
+      {% for block in section.blocks %}
+        <button class="slideshow__dot{% if forloop.first %} slideshow__dot--active{% endif %}" style="width:12px;height:12px;border-radius:50%;border:2px solid #fff;background:{% if forloop.first %}#fff{% else %}transparent{% endif %};cursor:pointer" aria-label="Slide {{ forloop.index }}"></button>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+<style>
+.slideshow{position:relative;min-height:600px}
+.slideshow__slide{position:absolute;inset:0;display:flex;align-items:center;background-size:cover;background-position:center;opacity:0;transition:opacity .5s;z-index:0}
+.slideshow__slide--active{opacity:1;position:relative;z-index:1}
+</style>
+
+{% schema %}
+{
+  "name": "Slideshow",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {"type":"image_picker","id":"image","label":"Background image"},
+        {"type":"text","id":"badge","label":"Badge text"},
+        {"type":"text","id":"title","label":"Heading","default":"Slide Title"},
+        {"type":"textarea","id":"text","label":"Text"},
+        {"type":"text","id":"button_text","label":"Button 1 text"},
+        {"type":"url","id":"button_link","label":"Button 1 link"},
+        {"type":"text","id":"button_2_text","label":"Button 2 text"},
+        {"type":"url","id":"button_2_link","label":"Button 2 link"}
+      ]
+    }
+  ],
+  "presets": [{"name":"Slideshow","blocks":[{"type":"slide"},{"type":"slide"}]}]
+}
+{% endschema %}

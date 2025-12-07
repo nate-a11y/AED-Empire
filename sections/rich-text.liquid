@@ -1,0 +1,27 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container" style="max-width:{{ section.settings.width }}px">
+    <div class="{% if section.settings.center %}text-center{% endif %}">
+      {% if section.settings.title %}<h2>{{ section.settings.title }}</h2>{% endif %}
+      <div style="line-height:1.8{% if section.settings.center %};max-width:700px;margin:0 auto{% endif %}">{{ section.settings.text }}</div>
+      {% if section.settings.button_text %}
+        <a href="{{ section.settings.button_link }}" class="btn btn--primary" style="margin-top:25px">{{ section.settings.button_text }}</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Rich text",
+  "settings": [
+    {"type":"text","id":"title","label":"Heading"},
+    {"type":"richtext","id":"text","label":"Text","default":"<p>Use this section to share your story, mission, or any important information with your customers.</p>"},
+    {"type":"text","id":"button_text","label":"Button text"},
+    {"type":"url","id":"button_link","label":"Button link"},
+    {"type":"range","id":"width","min":600,"max":1200,"step":50,"label":"Content width","default":800},
+    {"type":"checkbox","id":"center","label":"Center content","default":true},
+    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":false}
+  ],
+  "presets": [{"name":"Rich text"}]
+}
+{% endschema %}

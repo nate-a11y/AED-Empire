@@ -1,0 +1,82 @@
+<section class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2>{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle %}<p>{{ section.settings.subtitle }}</p>{% endif %}
+        <div class="section-header__divider"></div>
+      </div>
+    {% endif %}
+    
+    <div class="grid grid--{{ section.settings.columns }}">
+      {% for product in collections[section.settings.collection].products limit: section.settings.limit %}
+        {% render 'product-card', product: product %}
+      {% endfor %}
+    </div>
+    
+    {% if section.settings.show_view_all %}
+      <div class="text-center mt-4">
+        <a href="{{ collections[section.settings.collection].url }}" class="btn btn--outline">View All</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Products"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "label": "Products to show",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Desktop columns",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show view all button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Use alternate background",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured collection"
+    }
+  ]
+}
+{% endschema %}

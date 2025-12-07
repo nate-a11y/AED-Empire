@@ -1,0 +1,29 @@
+{% if section.settings.enable_popup %}
+<div class="newsletter-popup" data-newsletter-popup hidden>
+  <div class="newsletter-popup__overlay" data-popup-close></div>
+  <div class="newsletter-popup__content">
+    <button class="newsletter-popup__close" data-popup-close aria-label="Close">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    
+    {% if section.settings.popup_image %}
+      <div class="newsletter-popup__image">
+        <img src="{{ section.settings.popup_image | image_url: width: 600 }}" alt="" loading="lazy">
+      </div>
+    {% endif %}
+    
+    <div class="newsletter-popup__body">
+      <h3>{{ section.settings.popup_title | default: 'Stay Prepared' }}</h3>
+      <p>{{ section.settings.popup_text | default: 'Subscribe for exclusive deals, safety tips, and new product alerts.' }}</p>
+      
+      {% form 'customer', class: 'newsletter-popup__form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter,popup">
+        <input type="email" name="contact[email]" placeholder="Enter your email" required>
+        <button type="submit" class="btn btn--primary">{{ section.settings.popup_button | default: 'Subscribe' }}</button>
+      {% endform %}
+      
+      <p class="newsletter-popup__note">{{ section.settings.popup_note | default: 'No spam. Unsubscribe anytime.' }}</p>
+    </div>
+  </div>
+</div>
+{% endif %}

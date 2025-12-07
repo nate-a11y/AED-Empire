@@ -1,0 +1,50 @@
+{% unless template.name == 'index' %}
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <div class="container">
+      <a href="/">Home</a>
+      
+      {% if template.name == 'product' %}
+        <span>›</span>
+        {% if product.collections.first %}
+          <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+          <span>›</span>
+        {% endif %}
+        <span aria-current="page">{{ product.title }}</span>
+        
+      {% elsif template.name == 'collection' %}
+        <span>›</span>
+        {% if collection.handle == 'all' %}
+          <span aria-current="page">All Products</span>
+        {% else %}
+          <span aria-current="page">{{ collection.title }}</span>
+        {% endif %}
+        
+      {% elsif template.name == 'blog' %}
+        <span>›</span>
+        <span aria-current="page">{{ blog.title }}</span>
+        
+      {% elsif template.name == 'article' %}
+        <span>›</span>
+        <a href="{{ blog.url }}">{{ blog.title }}</a>
+        <span>›</span>
+        <span aria-current="page">{{ article.title }}</span>
+        
+      {% elsif template.name == 'page' %}
+        <span>›</span>
+        <span aria-current="page">{{ page.title }}</span>
+        
+      {% elsif template.name == 'cart' %}
+        <span>›</span>
+        <span aria-current="page">Cart</span>
+        
+      {% elsif template.name == 'search' %}
+        <span>›</span>
+        <span aria-current="page">Search Results</span>
+        
+      {% elsif template.name contains 'customers' %}
+        <span>›</span>
+        <span aria-current="page">Account</span>
+      {% endif %}
+    </div>
+  </nav>
+{% endunless %}

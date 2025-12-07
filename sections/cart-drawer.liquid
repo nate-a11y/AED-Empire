@@ -1,0 +1,58 @@
+<div class="cart-drawer__overlay" data-cart-overlay></div>
+<div class="cart-drawer" data-cart-drawer>
+  <div class="cart-drawer__header">
+    <h2>Your Cart</h2>
+    <button type="button" class="cart-drawer__close" data-cart-close aria-label="Close cart">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  
+  <div class="cart-drawer__items">
+    {% if cart.items.size > 0 %}
+      {% for item in cart.items %}
+        <div class="cart-drawer__item">
+          <img src="{{ item.image | image_url: width: 100 }}" alt="{{ item.title }}" width="80" height="80" loading="lazy">
+          <div>
+            <div class="cart-drawer__item-title">{{ item.product.title }}</div>
+            {% if item.variant.title != 'Default Title' %}<small>{{ item.variant.title }}</small>{% endif %}
+            <div class="cart-drawer__item-price">{{ item.final_line_price | money }}</div>
+            <div class="cart-drawer__item-qty">Qty: {{ item.quantity }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="cart__empty">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <p>Your cart is empty</p>
+      </div>
+    {% endif %}
+  </div>
+  
+  {% if cart.items.size > 0 %}
+    <div class="cart-drawer__footer">
+      {% if settings.free_shipping_threshold > 0 %}
+        {% assign remaining = settings.free_shipping_threshold | times: 100 | minus: cart.total_price %}
+        <div class="cart-drawer__shipping">
+          {% if remaining > 0 %}
+            Add <strong>{{ remaining | money }}</strong> more for FREE shipping
+          {% else %}
+            <strong>FREE shipping</strong> unlocked!
+          {% endif %}
+        </div>
+      {% endif %}
+      <div class="cart-drawer__subtotal">
+        <span>Subtotal</span>
+        <span>{{ cart.total_price | money }}</span>
+      </div>
+      <a href="/checkout" class="btn btn--primary btn--full">Checkout</a>
+      <a href="/cart" class="btn btn--outline btn--full" style="margin-top:10px">View Cart</a>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": []
+}
+{% endschema %}
