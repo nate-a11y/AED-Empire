@@ -1,0 +1,332 @@
+{% comment %}
+  Before/After Image Slider
+  Premium feature - compare two images with a draggable slider
+  Great for product demos, transformations, comparisons
+{% endcomment %}
+
+<section class="before-after section" aria-labelledby="before-after-heading">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2 id="before-after-heading">{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle %}
+          <p>{{ section.settings.subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="before-after__container" data-before-after style="max-width: {{ section.settings.max_width }}px;">
+      <div class="before-after__wrapper">
+        {%- comment -%} After image (background) {%- endcomment -%}
+        <div class="before-after__image before-after__image--after">
+          {% if section.settings.after_image %}
+            <img
+              src="{{ section.settings.after_image | image_url: width: 1200 }}"
+              alt="{{ section.settings.after_label | default: 'After' }}"
+              loading="lazy"
+            >
+          {% else %}
+            <div class="before-after__placeholder">After Image</div>
+          {% endif %}
+          <span class="before-after__label before-after__label--after">{{ section.settings.after_label | default: 'After' }}</span>
+        </div>
+
+        {%- comment -%} Before image (foreground, clipped) {%- endcomment -%}
+        <div class="before-after__image before-after__image--before" data-before-image style="width: 50%;">
+          {% if section.settings.before_image %}
+            <img
+              src="{{ section.settings.before_image | image_url: width: 1200 }}"
+              alt="{{ section.settings.before_label | default: 'Before' }}"
+              loading="lazy"
+            >
+          {% else %}
+            <div class="before-after__placeholder">Before Image</div>
+          {% endif %}
+          <span class="before-after__label before-after__label--before">{{ section.settings.before_label | default: 'Before' }}</span>
+        </div>
+
+        {%- comment -%} Slider handle {%- endcomment -%}
+        <div class="before-after__handle" data-handle style="left: 50%;">
+          <div class="before-after__handle-line"></div>
+          <button
+            type="button"
+            class="before-after__handle-button"
+            aria-label="Drag to compare images"
+            data-handle-button
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
+          <div class="before-after__handle-line"></div>
+        </div>
+      </div>
+
+      {% if section.settings.description %}
+        <p class="before-after__description">{{ section.settings.description }}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .before-after__container {
+    margin: 0 auto;
+  }
+  .before-after__wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--card-radius);
+    user-select: none;
+    touch-action: pan-y;
+  }
+  .before-after__image {
+    position: relative;
+  }
+  .before-after__image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .before-after__image--after {
+    position: relative;
+  }
+  .before-after__image--before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+  .before-after__image--before img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: auto;
+    min-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left;
+  }
+  .before-after__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    background: var(--color-bg-alt);
+    color: var(--color-text-light);
+    font-size: 1.25rem;
+  }
+  .before-after__label {
+    position: absolute;
+    top: 20px;
+    padding: 8px 16px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+  }
+  .before-after__label--before {
+    left: 20px;
+  }
+  .before-after__label--after {
+    right: 20px;
+  }
+  .before-after__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: ew-resize;
+    z-index: 10;
+  }
+  .before-after__handle-line {
+    flex: 1;
+    width: 4px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .before-after__handle-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: ew-resize;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    color: var(--color-text);
+    transition: transform 0.2s;
+  }
+  .before-after__handle-button:hover {
+    transform: scale(1.1);
+  }
+  .before-after__handle-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.4), 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .before-after__handle-button svg:first-child {
+    margin-right: -4px;
+  }
+  .before-after__handle-button svg:last-child {
+    margin-left: -4px;
+  }
+  .before-after__description {
+    text-align: center;
+    color: var(--color-text-light);
+    margin-top: 20px;
+  }
+</style>
+
+<script>
+  (function() {
+    document.querySelectorAll('[data-before-after]').forEach(container => {
+      const wrapper = container.querySelector('.before-after__wrapper');
+      const beforeImage = container.querySelector('[data-before-image]');
+      const handle = container.querySelector('[data-handle]');
+
+      if (!wrapper || !beforeImage || !handle) return;
+
+      let isDragging = false;
+
+      function updatePosition(clientX) {
+        const rect = wrapper.getBoundingClientRect();
+        let position = ((clientX - rect.left) / rect.width) * 100;
+        position = Math.min(Math.max(position, 0), 100);
+
+        beforeImage.style.width = `${position}%`;
+        handle.style.left = `${position}%`;
+      }
+
+      // Mouse events
+      handle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        isDragging = true;
+        wrapper.style.cursor = 'ew-resize';
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        updatePosition(e.clientX);
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+        wrapper.style.cursor = '';
+      });
+
+      // Touch events
+      handle.addEventListener('touchstart', (e) => {
+        isDragging = true;
+      });
+
+      wrapper.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        updatePosition(e.touches[0].clientX);
+      });
+
+      wrapper.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+
+      // Keyboard support
+      const button = handle.querySelector('[data-handle-button]');
+      button?.addEventListener('keydown', (e) => {
+        const step = 2;
+        let currentPosition = parseFloat(handle.style.left) || 50;
+
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          currentPosition = Math.max(currentPosition - step, 0);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          currentPosition = Math.min(currentPosition + step, 100);
+        }
+
+        beforeImage.style.width = `${currentPosition}%`;
+        handle.style.left = `${currentPosition}%`;
+      });
+
+      // Click anywhere on image to move handle
+      wrapper.addEventListener('click', (e) => {
+        if (e.target.closest('[data-handle]')) return;
+        updatePosition(e.clientX);
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Before/After Slider",
+  "tag": "section",
+  "class": "section-before-after",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "See the Difference"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "image_picker",
+      "id": "before_image",
+      "label": "Before image"
+    },
+    {
+      "type": "text",
+      "id": "before_label",
+      "label": "Before label",
+      "default": "Before"
+    },
+    {
+      "type": "image_picker",
+      "id": "after_image",
+      "label": "After image"
+    },
+    {
+      "type": "text",
+      "id": "after_label",
+      "label": "After label",
+      "default": "After"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "default": 900,
+      "unit": "px"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Before/After Slider"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,106 @@
+{% comment %}
+  Back in Stock Notification Signup
+  Premium feature - allows customers to sign up for restock notifications
+  Usage: {% render 'back-in-stock', product: product %}
+{% endcomment %}
+
+{% unless product.available %}
+<div class="back-in-stock" data-back-in-stock>
+  <div class="back-in-stock__content">
+    <svg class="back-in-stock__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 01-3.46 0"/>
+    </svg>
+    <div class="back-in-stock__text">
+      <strong>Out of Stock</strong>
+      <span>Get notified when it's back</span>
+    </div>
+  </div>
+
+  <form class="back-in-stock__form" data-back-in-stock-form>
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    <input type="hidden" name="variant_id" value="{{ product.selected_or_first_available_variant.id }}">
+    <input type="hidden" name="product_title" value="{{ product.title | escape }}">
+
+    <div class="back-in-stock__input-group">
+      <label for="back-in-stock-email-{{ product.id }}" class="visually-hidden">Email address</label>
+      <input
+        type="email"
+        id="back-in-stock-email-{{ product.id }}"
+        name="email"
+        placeholder="Enter your email"
+        required
+        aria-describedby="back-in-stock-help-{{ product.id }}"
+      >
+      <button type="submit" class="btn btn--primary">
+        <span class="back-in-stock__btn-text">Notify Me</span>
+        <span class="back-in-stock__btn-loading" hidden>
+          <span class="loader" style="width:16px;height:16px;border-width:2px"></span>
+        </span>
+      </button>
+    </div>
+    <p id="back-in-stock-help-{{ product.id }}" class="back-in-stock__help">
+      We'll email you once when this product is available.
+    </p>
+  </form>
+
+  <div class="back-in-stock__success" data-back-in-stock-success hidden>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+      <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+    <p><strong>You're on the list!</strong><br>We'll notify you when this is back in stock.</p>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const form = document.querySelector('[data-back-in-stock-form]');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = form.querySelector('button[type="submit"]');
+      const btnText = btn.querySelector('.back-in-stock__btn-text');
+      const btnLoading = btn.querySelector('.back-in-stock__btn-loading');
+      const success = document.querySelector('[data-back-in-stock-success]');
+
+      btn.disabled = true;
+      btnText.hidden = true;
+      btnLoading.hidden = false;
+
+      const formData = new FormData(form);
+      const data = {
+        email: formData.get('email'),
+        product_id: formData.get('product_id'),
+        variant_id: formData.get('variant_id'),
+        product_title: formData.get('product_title')
+      };
+
+      // Store in localStorage for demo (in production, send to your backend/Klaviyo/etc)
+      try {
+        const notifications = JSON.parse(localStorage.getItem('aed_back_in_stock') || '[]');
+        notifications.push({
+          ...data,
+          created_at: new Date().toISOString()
+        });
+        localStorage.setItem('aed_back_in_stock', JSON.stringify(notifications));
+
+        // Show success
+        form.hidden = true;
+        success.hidden = false;
+
+        if (window.themeUtils) {
+          window.themeUtils.announce('You have been added to the notification list');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btnText.hidden = false;
+        btnLoading.hidden = true;
+        btnText.textContent = 'Error - Try Again';
+      }
+    });
+  })();
+</script>
+{% endunless %}
