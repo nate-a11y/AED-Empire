@@ -9,9 +9,9 @@
  */
 {
   "current": {
-    "logo": "shopify://shop_images/1000009259.png",
-    "logo_width": 180,
-    "logo_width_mobile": 120,
+    "logo": "shopify://shop_images/1000009256.png",
+    "logo_width": 150,
+    "logo_width_mobile": 150,
     "color_primary": "#A52A2A",
     "color_primary_hover": "#8B0000",
     "color_secondary": "#1a1a1a",
@@ -48,27 +48,19 @@
     "product_card_show_vendor": true,
     "product_card_show_rating": false,
     "product_card_image_ratio": "square",
-    "product_card_show_secondary_image": true,
     "search_enable_suggestions": true,
     "search_show_products": true,
     "search_show_collections": true,
     "search_show_pages": false,
+    "product_card_show_secondary_image": true,
     "sections": {
-      "announcement-bar": {
-        "type": "announcement-bar",
-        "settings": {
-          "show": false,
-          "icon": true,
-          "text": "Free Shipping on Orders Over $500 | FDA Registered AED Dealer",
-          "link": "",
-          "background_color": "#1a1a1a",
-          "text_color": "#ffffff"
-        }
-      },
       "header": {
         "type": "header",
         "settings": {
+          "announcement_show": true,
           "announcement_text": "Free shipping on orders over $500",
+          "announcement_bg": "#1a1a1a",
+          "announcement_color": "#ffffff",
           "announcement_icon": "truck",
           "announcement_link": "",
           "announcement_link_text": "Learn More",
