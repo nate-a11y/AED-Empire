@@ -1,11 +1,12 @@
-{% if section.settings.show_cookie_banner %}
-<div class="cookie-consent" data-cookie-consent hidden>
+<div class="cookie-consent" data-cookie-consent hidden role="alertdialog" aria-labelledby="cookie-title" aria-describedby="cookie-description" aria-modal="false">
   <div class="cookie-consent__inner">
-    <p>{{ section.settings.cookie_text | default: 'We use cookies to improve your experience. By continuing, you agree to our use of cookies.' }}</p>
+    <h2 id="cookie-title" class="visually-hidden">Cookie Consent</h2>
+    <p id="cookie-description">{{ settings.cookie_banner_text | default: 'We use cookies to improve your experience. By continuing, you agree to our use of cookies.' }}
+      {% if settings.cookie_policy_link %}<a href="{{ settings.cookie_policy_link }}">Learn more</a>{% endif %}
+    </p>
     <div class="cookie-consent__actions">
       <button class="btn btn--small btn--outline" data-cookie-decline>Decline</button>
       <button class="btn btn--small btn--primary" data-cookie-accept>Accept</button>
     </div>
   </div>
 </div>
-{% endif %}

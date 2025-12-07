@@ -637,3 +637,182 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 .search-page__form input { flex: 1; padding: 15px 20px; border: 2px solid var(--color-border); border-radius: 4px; font-size: 1.125rem; }
 .search-page__form input:focus { outline: none; border-color: var(--color-primary); }
 .search-results__count { margin-bottom: 30px; color: var(--color-text-light); }
+
+/* =========================================
+   ACCESSIBILITY ENHANCEMENTS
+   ========================================= */
+
+/* Enhanced Focus Styles - WCAG 2.1 AA Compliant */
+:focus { outline: none; }
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Button Focus */
+.btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(165, 42, 42, 0.2);
+}
+.btn--primary:focus-visible { outline-color: var(--color-secondary); }
+.btn--outline:focus-visible { outline-color: var(--color-primary); }
+
+/* Link Focus */
+a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Input Focus */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(165, 42, 42, 0.15);
+}
+
+/* Header Actions Focus */
+.header__search-toggle:focus-visible,
+.header__account:focus-visible,
+.header__cart:focus-visible,
+.header__menu-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Navigation Focus */
+.header__menu-item a:focus-visible,
+.header__mega-trigger:focus-visible,
+.header__dropdown-trigger:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Footer Link Focus */
+.footer a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Product Card Focus */
+.product-card:focus-within {
+  box-shadow: 0 0 0 3px var(--color-primary);
+}
+.product-card__title a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+/* Product Gallery Thumb Focus */
+.product-gallery__thumb:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Tab Focus */
+.product-tabs__tab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* FAQ Focus */
+.faq-question:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  background: var(--color-bg-alt);
+}
+
+/* Mobile Menu Focus */
+.mobile-menu__link:focus-visible,
+.mobile-menu__accordion-trigger:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Filter Focus */
+.filter-option:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Quick View Button Focus */
+.product-card__quick-view:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Social Links Focus */
+.footer__social a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  background: var(--color-primary);
+}
+
+/* Newsletter Input Focus */
+.newsletter__input:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(165, 42, 42, 0.2);
+}
+.newsletter--dark .newsletter__input:focus-visible {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+/* Cookie Consent Focus */
+.cookie-consent .btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Back to Top Focus */
+.back-to-top:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Quantity Button Focus */
+.product-quantity__btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* Cart Drawer Focus */
+.cart-drawer__close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Ensure focus is always visible for keyboard users */
+@media (prefers-reduced-motion: no-preference) {
+  :focus-visible { transition: outline-offset 0.1s ease; }
+}
+
+/* High visibility focus for Windows High Contrast Mode */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 3px solid CanvasText;
+    outline-offset: 2px;
+  }
+}
+
+/* Additional ARIA styling */
+[aria-hidden="true"] { display: none !important; }
+[aria-expanded="true"] + .faq-answer { display: block; }
+[aria-expanded="true"] + .faq-answer[aria-hidden="true"] { display: block; }
+
+/* FAQ Answer visibility controlled by ARIA */
+.faq-answer[aria-hidden="true"] { display: none; }
+.faq-answer[aria-hidden="false"],
+.faq-answer.is-open { display: block; }

@@ -1,16 +1,16 @@
 {{ 'header.css' | asset_url | stylesheet_tag }}
 
 <header class="header" data-header>
-  <div class="header__announcement">
+  <div class="header__announcement" role="region" aria-label="Promotions">
     {% if section.settings.announcement_text != blank %}
       <div class="container">
         <div class="announcement-inner">
           {% if section.settings.announcement_icon %}
-            <span class="announcement-icon">{% render 'icon', name: section.settings.announcement_icon %}</span>
+            <span class="announcement-icon" aria-hidden="true">{% render 'icon', name: section.settings.announcement_icon %}</span>
           {% endif %}
           <span>{{ section.settings.announcement_text }}</span>
           {% if section.settings.announcement_countdown and section.settings.countdown_date != blank %}
-            <span class="countdown" data-countdown="{{ section.settings.countdown_date }}"></span>
+            <span class="countdown" data-countdown="{{ section.settings.countdown_date }}" aria-live="polite" aria-atomic="true"></span>
           {% endif %}
           {% if section.settings.announcement_link != blank %}
             <a href="{{ section.settings.announcement_link }}" class="announcement-link">{{ section.settings.announcement_link_text | default: 'Learn More' }}</a>
@@ -23,15 +23,15 @@
   <div class="header__main">
     <div class="container">
       <div class="header__inner">
-        <button class="header__menu-toggle" data-menu-toggle aria-label="Menu" aria-expanded="false">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <button class="header__menu-toggle" data-menu-toggle aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+          <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
 
         <a href="/" class="header__logo">
           {% if settings.logo %}
-            <img src="{{ settings.logo | image_url: width: settings.logo_width | times: 2 }}" 
-                 alt="{{ shop.name }}" 
-                 width="{{ settings.logo_width }}" 
+            <img src="{{ settings.logo | image_url: width: settings.logo_width | times: 2 }}"
+                 alt="{{ shop.name }} - Home"
+                 width="{{ settings.logo_width }}"
                  height="{{ settings.logo_width | divided_by: settings.logo.aspect_ratio }}"
                  loading="eager">
           {% else %}
@@ -39,63 +39,64 @@
           {% endif %}
         </a>
 
-        <nav class="header__nav" data-nav>
-          <ul class="header__menu">
+        <nav class="header__nav" data-nav aria-label="Main navigation">
+          <ul class="header__menu" role="menubar">
             {% for block in section.blocks %}
               {% case block.type %}
                 {% when 'menu_item' %}
-                  <li class="header__menu-item">
-                    <a href="{{ block.settings.link }}">{{ block.settings.title }}</a>
+                  <li class="header__menu-item" role="none">
+                    <a href="{{ block.settings.link }}" role="menuitem">{{ block.settings.title }}</a>
                   </li>
                 {% when 'mega_menu' %}
-                  <li class="header__menu-item header__menu-item--mega" data-mega-menu>
-                    <button class="header__mega-trigger" aria-expanded="false">
+                  {% assign mega_id = 'mega-menu-' | append: forloop.index %}
+                  <li class="header__menu-item header__menu-item--mega" role="none" data-mega-menu>
+                    <button class="header__mega-trigger" role="menuitem" aria-haspopup="true" aria-expanded="false" aria-controls="{{ mega_id }}">
                       {{ block.settings.title }}
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                      <svg aria-hidden="true" focusable="false" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
-                    <div class="mega-menu" data-mega-panel>
+                    <div class="mega-menu" id="{{ mega_id }}" data-mega-panel role="menu" aria-label="{{ block.settings.title }} submenu">
                       <div class="container">
                         <div class="mega-menu__inner">
                           {% if block.settings.collection_1 != blank %}
                             <div class="mega-menu__column">
                               {% assign col1 = collections[block.settings.collection_1] %}
-                              <h4 class="mega-menu__heading">{{ col1.title }}</h4>
-                              <ul>
+                              <h4 class="mega-menu__heading" id="mega-col1-{{ forloop.index }}">{{ col1.title }}</h4>
+                              <ul role="group" aria-labelledby="mega-col1-{{ forloop.index }}">
                                 {% for product in col1.products limit: 6 %}
-                                  <li><a href="{{ product.url }}">{{ product.title }}</a></li>
+                                  <li role="none"><a href="{{ product.url }}" role="menuitem">{{ product.title }}</a></li>
                                 {% endfor %}
-                                <li><a href="{{ col1.url }}" class="mega-menu__view-all">View All {{ col1.title }}</a></li>
+                                <li role="none"><a href="{{ col1.url }}" class="mega-menu__view-all" role="menuitem">View All {{ col1.title }}</a></li>
                               </ul>
                             </div>
                           {% endif %}
                           {% if block.settings.collection_2 != blank %}
                             <div class="mega-menu__column">
                               {% assign col2 = collections[block.settings.collection_2] %}
-                              <h4 class="mega-menu__heading">{{ col2.title }}</h4>
-                              <ul>
+                              <h4 class="mega-menu__heading" id="mega-col2-{{ forloop.index }}">{{ col2.title }}</h4>
+                              <ul role="group" aria-labelledby="mega-col2-{{ forloop.index }}">
                                 {% for product in col2.products limit: 6 %}
-                                  <li><a href="{{ product.url }}">{{ product.title }}</a></li>
+                                  <li role="none"><a href="{{ product.url }}" role="menuitem">{{ product.title }}</a></li>
                                 {% endfor %}
-                                <li><a href="{{ col2.url }}" class="mega-menu__view-all">View All {{ col2.title }}</a></li>
+                                <li role="none"><a href="{{ col2.url }}" class="mega-menu__view-all" role="menuitem">View All {{ col2.title }}</a></li>
                               </ul>
                             </div>
                           {% endif %}
                           {% if block.settings.collection_3 != blank %}
                             <div class="mega-menu__column">
                               {% assign col3 = collections[block.settings.collection_3] %}
-                              <h4 class="mega-menu__heading">{{ col3.title }}</h4>
-                              <ul>
+                              <h4 class="mega-menu__heading" id="mega-col3-{{ forloop.index }}">{{ col3.title }}</h4>
+                              <ul role="group" aria-labelledby="mega-col3-{{ forloop.index }}">
                                 {% for product in col3.products limit: 6 %}
-                                  <li><a href="{{ product.url }}">{{ product.title }}</a></li>
+                                  <li role="none"><a href="{{ product.url }}" role="menuitem">{{ product.title }}</a></li>
                                 {% endfor %}
-                                <li><a href="{{ col3.url }}" class="mega-menu__view-all">View All {{ col3.title }}</a></li>
+                                <li role="none"><a href="{{ col3.url }}" class="mega-menu__view-all" role="menuitem">View All {{ col3.title }}</a></li>
                               </ul>
                             </div>
                           {% endif %}
                           {% if block.settings.featured_image %}
                             <div class="mega-menu__featured">
-                              <a href="{{ block.settings.featured_link }}">
-                                <img src="{{ block.settings.featured_image | image_url: width: 400 }}" alt="{{ block.settings.featured_title }}" loading="lazy">
+                              <a href="{{ block.settings.featured_link }}" role="menuitem">
+                                <img src="{{ block.settings.featured_image | image_url: width: 400 }}" alt="{{ block.settings.featured_title | default: 'Featured promotion' | escape }}" loading="lazy">
                                 {% if block.settings.featured_title %}
                                   <span class="mega-menu__featured-title">{{ block.settings.featured_title }}</span>
                                 {% endif %}
@@ -107,15 +108,16 @@
                     </div>
                   </li>
                 {% when 'dropdown' %}
-                  <li class="header__menu-item header__menu-item--dropdown">
-                    <button class="header__dropdown-trigger" aria-expanded="false">
+                  {% assign dropdown_id = 'dropdown-' | append: forloop.index %}
+                  <li class="header__menu-item header__menu-item--dropdown" role="none">
+                    <button class="header__dropdown-trigger" role="menuitem" aria-haspopup="true" aria-expanded="false" aria-controls="{{ dropdown_id }}">
                       {{ block.settings.title }}
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                      <svg aria-hidden="true" focusable="false" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
-                    <ul class="header__dropdown">
+                    <ul class="header__dropdown" id="{{ dropdown_id }}" role="menu" aria-label="{{ block.settings.title }} submenu">
                       {% assign menu = linklists[block.settings.menu] %}
                       {% for link in menu.links %}
-                        <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                        <li role="none"><a href="{{ link.url }}" role="menuitem">{{ link.title }}</a></li>
                       {% endfor %}
                     </ul>
                   </li>
@@ -125,26 +127,26 @@
         </nav>
 
         <div class="header__actions">
-          <button class="header__search-toggle" data-search-toggle aria-label="Search">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <button class="header__search-toggle" data-search-toggle aria-label="Open search" aria-expanded="false" aria-controls="predictive-search">
+            <svg aria-hidden="true" focusable="false" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </button>
 
           {% if shop.customer_accounts_enabled %}
-            <a href="{% if customer %}/account{% else %}/account/login{% endif %}" class="header__account" aria-label="Account">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <a href="{% if customer %}/account{% else %}/account/login{% endif %}" class="header__account" aria-label="{% if customer %}My account{% else %}Log in{% endif %}">
+              <svg aria-hidden="true" focusable="false" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </a>
           {% endif %}
 
           {% if settings.contact_phone != blank %}
-            <a href="tel:{{ settings.contact_phone | remove: ' ' | remove: '-' | remove: '(' | remove: ')' }}" class="header__phone">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-              <span class="header__phone-text">{{ settings.contact_phone }}</span>
+            <a href="tel:{{ settings.contact_phone | remove: ' ' | remove: '-' | remove: '(' | remove: ')' }}" class="header__phone" aria-label="Call us at {{ settings.contact_phone }}">
+              <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <span class="header__phone-text" aria-hidden="true">{{ settings.contact_phone }}</span>
             </a>
           {% endif %}
 
-          <a href="/cart" class="header__cart" data-cart-toggle>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-            <span class="header__cart-count" data-cart-count>{{ cart.item_count }}</span>
+          <a href="/cart" class="header__cart" data-cart-toggle aria-label="Cart, {{ cart.item_count }} items">
+            <svg aria-hidden="true" focusable="false" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="header__cart-count" data-cart-count aria-hidden="true">{{ cart.item_count }}</span>
           </a>
         </div>
       </div>
@@ -152,72 +154,75 @@
   </div>
 
   <!-- Predictive Search -->
-  <div class="predictive-search" data-predictive-search hidden>
+  <div class="predictive-search" id="predictive-search" data-predictive-search hidden role="dialog" aria-label="Search" aria-modal="true">
     <div class="container">
       <div class="predictive-search__inner">
-        <form action="/search" method="get" class="predictive-search__form">
-          <input type="search" name="q" placeholder="Search products, collections..." autocomplete="off" data-search-input>
+        <form action="/search" method="get" class="predictive-search__form" role="search">
+          <label for="search-input" class="visually-hidden">Search products, collections...</label>
+          <input type="search" id="search-input" name="q" placeholder="Search products, collections..." autocomplete="off" data-search-input aria-describedby="search-hint">
+          <span id="search-hint" class="visually-hidden">Type to search. Results will appear below.</span>
           <button type="button" class="predictive-search__close" data-search-close aria-label="Close search">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </form>
-        <div class="predictive-search__results" data-search-results></div>
+        <div class="predictive-search__results" data-search-results role="listbox" aria-label="Search results"></div>
       </div>
     </div>
   </div>
 
   <!-- Mobile Menu -->
-  <div class="mobile-menu" data-mobile-menu>
+  <nav class="mobile-menu" id="mobile-menu" data-mobile-menu aria-label="Mobile navigation" aria-hidden="true">
     <div class="mobile-menu__header">
-      <span>Menu</span>
-      <button class="mobile-menu__close" data-menu-close aria-label="Close menu">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <span id="mobile-menu-title">Menu</span>
+      <button class="mobile-menu__close" data-menu-close aria-label="Close navigation menu">
+        <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <nav class="mobile-menu__nav">
+    <div class="mobile-menu__nav" role="menu" aria-labelledby="mobile-menu-title">
       {% for block in section.blocks %}
         {% case block.type %}
           {% when 'menu_item' %}
-            <a href="{{ block.settings.link }}" class="mobile-menu__link">{{ block.settings.title }}</a>
+            <a href="{{ block.settings.link }}" class="mobile-menu__link" role="menuitem">{{ block.settings.title }}</a>
           {% when 'mega_menu' or 'dropdown' %}
+            {% assign accordion_id = 'mobile-accordion-' | append: forloop.index %}
             <div class="mobile-menu__accordion">
-              <button class="mobile-menu__accordion-trigger">
+              <button class="mobile-menu__accordion-trigger" aria-expanded="false" aria-controls="{{ accordion_id }}">
                 {{ block.settings.title }}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
-              <div class="mobile-menu__accordion-content">
+              <div class="mobile-menu__accordion-content" id="{{ accordion_id }}" role="menu" aria-label="{{ block.settings.title }} submenu">
                 {% if block.type == 'mega_menu' %}
                   {% if block.settings.collection_1 != blank %}
                     {% assign col = collections[block.settings.collection_1] %}
-                    <a href="{{ col.url }}">{{ col.title }}</a>
+                    <a href="{{ col.url }}" role="menuitem">{{ col.title }}</a>
                   {% endif %}
                   {% if block.settings.collection_2 != blank %}
                     {% assign col = collections[block.settings.collection_2] %}
-                    <a href="{{ col.url }}">{{ col.title }}</a>
+                    <a href="{{ col.url }}" role="menuitem">{{ col.title }}</a>
                   {% endif %}
                   {% if block.settings.collection_3 != blank %}
                     {% assign col = collections[block.settings.collection_3] %}
-                    <a href="{{ col.url }}">{{ col.title }}</a>
+                    <a href="{{ col.url }}" role="menuitem">{{ col.title }}</a>
                   {% endif %}
                 {% else %}
                   {% assign menu = linklists[block.settings.menu] %}
                   {% for link in menu.links %}
-                    <a href="{{ link.url }}">{{ link.title }}</a>
+                    <a href="{{ link.url }}" role="menuitem">{{ link.title }}</a>
                   {% endfor %}
                 {% endif %}
               </div>
             </div>
         {% endcase %}
       {% endfor %}
-    </nav>
+    </div>
     {% if settings.contact_phone != blank %}
-      <a href="tel:{{ settings.contact_phone | remove: ' ' }}" class="mobile-menu__phone">
+      <a href="tel:{{ settings.contact_phone | remove: ' ' }}" class="mobile-menu__phone" aria-label="Call {{ settings.contact_phone }}">
         {% render 'icon', name: 'phone' %}
-        {{ settings.contact_phone }}
+        <span aria-hidden="true">{{ settings.contact_phone }}</span>
       </a>
     {% endif %}
-  </div>
-  <div class="mobile-menu__overlay" data-menu-overlay></div>
+  </nav>
+  <div class="mobile-menu__overlay" data-menu-overlay aria-hidden="true"></div>
 </header>
 
 {% schema %}
