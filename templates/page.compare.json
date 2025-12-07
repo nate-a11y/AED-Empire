@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main": {
+      "type": "product-compare",
+      "settings": {
+        "title": "Compare Products",
+        "subtitle": "See how our products stack up against each other",
+        "max_products": 4
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
