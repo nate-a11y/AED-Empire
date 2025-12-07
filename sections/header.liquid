@@ -26,20 +26,30 @@
         </button>
 
         <a href="/" class="header__logo" aria-label="{{ shop.name }} - Home">
+          {%- liquid
+            assign logo_width = settings.logo_width | default: 180
+            assign logo_width_mobile = settings.logo_width_mobile | default: 120
+          -%}
           {% if settings.logo %}
-            {% assign logo_width = settings.logo_width | default: 150 %}
-            {% assign logo_aspect = settings.logo.aspect_ratio | default: 1 %}
-            {% assign logo_height = logo_width | divided_by: logo_aspect | round %}
-            <img src="{{ settings.logo | image_url: width: logo_width | times: 2 }}"
-                 alt="{{ shop.name }}"
-                 width="{{ logo_width }}"
-                 height="{{ logo_height }}"
-                 loading="eager"
-                 onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='inline';">
-            <span class="header__logo-text" style="display:none">{{ shop.name }}</span>
+            <img
+              src="{{ settings.logo | image_url: width: 400 }}"
+              srcset="{{ settings.logo | image_url: width: logo_width }} 1x, {{ settings.logo | image_url: width: logo_width | times: 2 }} 2x"
+              alt="{{ shop.name }}"
+              class="header__logo-img"
+              style="max-width: {{ logo_width }}px; height: auto;"
+              width="{{ logo_width }}"
+              loading="eager"
+              fetchpriority="high"
+              onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='inline';">
+            <span class="header__logo-text" style="display:none;">{{ shop.name }}</span>
           {% else %}
             <span class="header__logo-text">{{ shop.name }}</span>
           {% endif %}
+          <style>
+            @media (max-width: 768px) {
+              .header__logo-img { max-width: {{ logo_width_mobile }}px !important; }
+            }
+          </style>
         </a>
 
         <nav class="header__nav" data-nav aria-label="Main navigation">
@@ -252,7 +262,7 @@
       "type": "color",
       "id": "announcement_bg",
       "label": "Background color",
-      "default": "#1a1a1a"
+      "default": "#002868"
     },
     {
       "type": "color",
