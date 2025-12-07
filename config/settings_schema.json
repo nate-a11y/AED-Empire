@@ -617,6 +617,173 @@
     ]
   },
   {
+    "name": "Premium Features",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Wishlist"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_wishlist",
+        "label": "Enable wishlist",
+        "default": true,
+        "info": "Allow customers to save products to a wishlist"
+      },
+      {
+        "type": "text",
+        "id": "wishlist_button_text",
+        "label": "Wishlist button text",
+        "default": "Save"
+      },
+      {
+        "type": "checkbox",
+        "id": "wishlist_show_on_cards",
+        "label": "Show wishlist button on product cards",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Product Compare"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_compare",
+        "label": "Enable product compare",
+        "default": true,
+        "info": "Allow customers to compare products side-by-side"
+      },
+      {
+        "type": "checkbox",
+        "id": "compare_show_on_cards",
+        "label": "Show compare button on product cards",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "compare_max_products",
+        "min": 2,
+        "max": 6,
+        "step": 1,
+        "label": "Max products to compare",
+        "default": 4
+      },
+      {
+        "type": "header",
+        "content": "Quick View"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_quick_view",
+        "label": "Enable quick view",
+        "default": true,
+        "info": "Allow customers to preview products without leaving the page"
+      },
+      {
+        "type": "checkbox",
+        "id": "quick_view_show_on_cards",
+        "label": "Show quick view on product cards",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Recently Viewed"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_recently_viewed",
+        "label": "Enable recently viewed",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "recently_viewed_max",
+        "min": 4,
+        "max": 20,
+        "step": 2,
+        "label": "Max products to remember",
+        "default": 12
+      },
+      {
+        "type": "header",
+        "content": "Product Page Enhancements"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_image_zoom",
+        "label": "Enable image zoom/lightbox",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sticky_add_to_cart",
+        "label": "Enable sticky add to cart bar",
+        "default": true,
+        "info": "Shows a floating bar when scrolling past the add to cart button"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_stock_countdown",
+        "label": "Enable low stock indicator",
+        "default": true,
+        "info": "Shows urgency message when stock is low"
+      },
+      {
+        "type": "range",
+        "id": "stock_countdown_threshold",
+        "min": 3,
+        "max": 20,
+        "step": 1,
+        "label": "Low stock threshold",
+        "default": 10,
+        "info": "Show indicator when stock is at or below this number"
+      },
+      {
+        "type": "header",
+        "content": "B2B Features"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_quote_request",
+        "label": "Enable quote request button",
+        "default": false,
+        "info": "Adds a 'Request Quote' button for bulk purchases"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_quick_order",
+        "label": "Enable quick order form",
+        "default": false,
+        "info": "Allows B2B customers to order multiple variants quickly"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_volume_pricing",
+        "label": "Enable volume pricing display",
+        "default": false,
+        "info": "Shows tiered pricing table for bulk discounts"
+      },
+      {
+        "type": "header",
+        "content": "Sale & Urgency"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sale_countdown",
+        "label": "Enable sale countdown timer",
+        "default": true,
+        "info": "Shows countdown timer for products with compare-at price"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sale_badges",
+        "label": "Enable sale badges",
+        "default": true,
+        "info": "Shows percentage off badges on products"
+      }
+    ]
+  },
+  {
     "name": "Accessibility",
     "settings": [
       {

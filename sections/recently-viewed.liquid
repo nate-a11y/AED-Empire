@@ -1,21 +1,251 @@
-<section class="recently-viewed" style="display:none">
+{% comment %}
+  Recently Viewed Products
+  Premium feature - tracks viewed products in localStorage and displays them in a carousel
+  Fully accessible with keyboard navigation
+{% endcomment %}
+
+<section class="recently-viewed section {% if section.settings.background == 'alt' %}section--alt{% endif %}" aria-labelledby="recently-viewed-heading" data-recently-viewed-section>
   <div class="container">
     <div class="section-header">
-      <h2>{{ section.settings.title }}</h2>
-      <div class="section-header__divider"></div>
+      <h2 id="recently-viewed-heading">{{ section.settings.title | default: 'Recently Viewed' }}</h2>
+      {% if section.settings.subtitle %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
     </div>
-    <div class="recently-viewed__grid" data-recently-viewed data-current-product="{{ product.handle }}">
-      {% comment %} Populated by JavaScript {% endcomment %}
+
+    <div class="recently-viewed__empty" data-recently-empty hidden>
+      <p>{{ section.settings.empty_text | default: "You haven't viewed any products yet." }}</p>
+      <a href="/collections/all" class="btn btn--outline">Start Browsing</a>
+    </div>
+
+    <div class="recently-viewed__carousel" data-recently-carousel hidden>
+      <button type="button" class="recently-viewed__nav recently-viewed__nav--prev" data-recently-prev aria-label="View previous products" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="recently-viewed__track" data-recently-track data-current-product="{{ product.handle }}" role="list" aria-label="Recently viewed products">
+        {%- comment -%} Products injected by JS {%- endcomment -%}
+      </div>
+
+      <button type="button" class="recently-viewed__nav recently-viewed__nav--next" data-recently-next aria-label="View next products">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
     </div>
   </div>
 </section>
 
+<script>
+  (function() {
+    const STORAGE_KEY = 'aed_recently_viewed';
+    const MAX_ITEMS = {{ section.settings.max_products | default: 12 }};
+    const DISPLAY_COUNT = {{ section.settings.products_to_show | default: 6 }};
+
+    const section = document.querySelector('[data-recently-viewed-section]');
+    if (!section) return;
+
+    const emptyEl = section.querySelector('[data-recently-empty]');
+    const carousel = section.querySelector('[data-recently-carousel]');
+    const track = section.querySelector('[data-recently-track]');
+    const prevBtn = section.querySelector('[data-recently-prev]');
+    const nextBtn = section.querySelector('[data-recently-next]');
+    const currentProductHandle = track?.dataset.currentProduct;
+
+    // Get recently viewed products
+    function getRecentlyViewed() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    // Save recently viewed products
+    function saveRecentlyViewed(list) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, MAX_ITEMS)));
+      } catch {}
+    }
+
+    // Track current product
+    function trackCurrentProduct() {
+      const productJson = document.querySelector('[data-product-json]');
+      if (!productJson) return;
+
+      try {
+        const product = JSON.parse(productJson.textContent);
+        const list = getRecentlyViewed();
+
+        // Remove if already exists
+        const existingIndex = list.findIndex(p => p.handle === product.handle);
+        if (existingIndex > -1) {
+          list.splice(existingIndex, 1);
+        }
+
+        // Add to beginning
+        list.unshift({
+          handle: product.handle,
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          compare_at_price: product.compare_at_price,
+          image: product.featured_image,
+          url: product.url,
+          available: product.available,
+          vendor: product.vendor
+        });
+
+        saveRecentlyViewed(list);
+      } catch {}
+    }
+
+    // Render products
+    function renderProducts() {
+      const list = getRecentlyViewed();
+
+      // Exclude current product if on product page
+      const filtered = list.filter(p => p.handle !== currentProductHandle).slice(0, DISPLAY_COUNT);
+
+      if (filtered.length === 0) {
+        if (emptyEl) emptyEl.hidden = false;
+        if (carousel) carousel.hidden = true;
+        section.style.display = 'none';
+        return;
+      }
+
+      section.style.display = 'block';
+      if (emptyEl) emptyEl.hidden = true;
+      if (carousel) carousel.hidden = false;
+
+      if (track) {
+        track.innerHTML = filtered.map(p => `
+          <div class="recently-viewed__item product-card" role="listitem">
+            <a href="${p.url}" class="product-card__image-link">
+              ${p.image ? `<img src="${p.image}" alt="${p.title}" width="200" height="200" loading="lazy">` : '<div class="product-card__placeholder"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>'}
+              {% if section.settings.show_quick_view %}<button type="button" class="quick-view-btn" data-quick-view="${p.handle}">Quick View</button>{% endif %}
+            </a>
+            <div class="product-card__info">
+              ${p.vendor ? `<p class="product-card__vendor">${p.vendor}</p>` : ''}
+              <h3 class="product-card__title">
+                <a href="${p.url}">${p.title}</a>
+              </h3>
+              <p class="product-card__price">
+                ${window.themeUtils ? window.themeUtils.formatMoney(p.price) : '$' + (p.price / 100).toFixed(2)}
+                ${p.compare_at_price && p.compare_at_price > p.price ? `<span class="product-card__compare-price">${window.themeUtils ? window.themeUtils.formatMoney(p.compare_at_price) : '$' + (p.compare_at_price / 100).toFixed(2)}</span>` : ''}
+              </p>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Update nav button states
+      updateNavButtons();
+    }
+
+    // Navigation
+    const scrollAmount = 220;
+
+    function updateNavButtons() {
+      if (!track || !prevBtn || !nextBtn) return;
+      prevBtn.disabled = track.scrollLeft <= 0;
+      nextBtn.disabled = track.scrollLeft + track.offsetWidth >= track.scrollWidth - 10;
+    }
+
+    prevBtn?.addEventListener('click', () => {
+      track?.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      setTimeout(updateNavButtons, 300);
+    });
+
+    nextBtn?.addEventListener('click', () => {
+      track?.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      setTimeout(updateNavButtons, 300);
+    });
+
+    track?.addEventListener('scroll', updateNavButtons);
+
+    // Clear recently viewed
+    window.clearRecentlyViewed = function() {
+      saveRecentlyViewed([]);
+      renderProducts();
+    };
+
+    // Initialize
+    trackCurrentProduct();
+    renderProducts();
+
+    // Listen for storage changes (sync across tabs)
+    window.addEventListener('storage', (e) => {
+      if (e.key === STORAGE_KEY) {
+        renderProducts();
+      }
+    });
+  })();
+</script>
+
 {% schema %}
 {
-  "name": "Recently viewed",
+  "name": "Recently Viewed",
+  "tag": "section",
+  "class": "section-recently-viewed",
   "settings": [
-    {"type":"text","id":"title","label":"Heading","default":"Recently Viewed"}
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Recently Viewed"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Products you've looked at recently"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Empty state text",
+      "default": "You haven't viewed any products yet."
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 4,
+      "max": 12,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Max products to remember",
+      "min": 6,
+      "max": 24,
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_view",
+      "label": "Show Quick View button",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "background",
+      "label": "Background",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "alt", "label": "Alternate" }
+      ],
+      "default": "default"
+    }
   ],
-  "presets": [{"name":"Recently viewed"}]
+  "presets": [
+    {
+      "name": "Recently Viewed"
+    }
+  ]
 }
 {% endschema %}

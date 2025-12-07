@@ -1,0 +1,272 @@
+{% comment %}
+  Frequently Bought Together / Product Bundles
+  Premium feature - typically requires $50-100/month app
+{% endcomment %}
+
+<section class="product-bundles section" aria-labelledby="bundles-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 id="bundles-heading">{{ section.settings.title | default: 'Frequently Bought Together' }}</h2>
+      {% if section.settings.subtitle %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    <div class="product-bundles__container" data-bundle-container>
+      <div class="product-bundles__items" role="list" aria-label="Bundle products">
+        {%- comment -%} Main Product {%- endcomment -%}
+        <div class="product-bundles__item product-bundles__item--main" role="listitem" data-bundle-item data-product-id="{{ product.id }}" data-variant-id="{{ product.selected_or_first_available_variant.id }}" data-price="{{ product.price }}">
+          <div class="product-bundles__checkbox">
+            <input type="checkbox" id="bundle-main" checked disabled aria-label="Main product - always included">
+            <span class="product-bundles__checkmark"></span>
+          </div>
+          <div class="product-bundles__image">
+            {% if product.featured_image %}
+              <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title | escape }}" width="100" height="100" loading="lazy">
+            {% endif %}
+          </div>
+          <div class="product-bundles__info">
+            <span class="product-bundles__badge">This Item</span>
+            <h3 class="product-bundles__title">{{ product.title }}</h3>
+            <p class="product-bundles__price">{{ product.price | money }}</p>
+          </div>
+        </div>
+
+        {%- comment -%} Bundle Products {%- endcomment -%}
+        {% for block in section.blocks %}
+          {% if block.type == 'product' and block.settings.product != blank %}
+            {% assign bundle_product = block.settings.product %}
+            <div class="product-bundles__plus" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+
+            <div class="product-bundles__item" role="listitem" data-bundle-item data-product-id="{{ bundle_product.id }}" data-variant-id="{{ bundle_product.selected_or_first_available_variant.id }}" data-price="{{ bundle_product.price }}">
+              <div class="product-bundles__checkbox">
+                <input type="checkbox" id="bundle-{{ forloop.index }}" checked data-bundle-checkbox aria-label="Include {{ bundle_product.title }} in bundle">
+                <span class="product-bundles__checkmark">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+              </div>
+              <div class="product-bundles__image">
+                <a href="{{ bundle_product.url }}">
+                  {% if bundle_product.featured_image %}
+                    <img src="{{ bundle_product.featured_image | image_url: width: 200 }}" alt="{{ bundle_product.title | escape }}" width="100" height="100" loading="lazy">
+                  {% endif %}
+                </a>
+              </div>
+              <div class="product-bundles__info">
+                {% if block.settings.badge %}
+                  <span class="product-bundles__badge product-bundles__badge--recommended">{{ block.settings.badge }}</span>
+                {% endif %}
+                <h3 class="product-bundles__title">
+                  <a href="{{ bundle_product.url }}">{{ bundle_product.title }}</a>
+                </h3>
+                <p class="product-bundles__price">
+                  {{ bundle_product.price | money }}
+                  {% if bundle_product.compare_at_price > bundle_product.price %}
+                    <span class="product-bundles__compare-price">{{ bundle_product.compare_at_price | money }}</span>
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="product-bundles__summary" data-bundle-summary>
+        <div class="product-bundles__total-row">
+          <span class="product-bundles__total-label">Total price:</span>
+          <span class="product-bundles__total-compare" data-bundle-compare-total></span>
+          <span class="product-bundles__total-price" data-bundle-total></span>
+        </div>
+
+        {% if section.settings.discount_percent > 0 %}
+          <div class="product-bundles__savings" data-bundle-savings>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            Save <strong data-bundle-save-amount></strong> with this bundle!
+          </div>
+        {% endif %}
+
+        <button type="button" class="btn btn--primary btn--large btn--full product-bundles__add" data-bundle-add aria-label="Add bundle to cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Add Bundle to Cart
+        </button>
+
+        <p class="product-bundles__note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          All items ship together for free
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const container = document.querySelector('[data-bundle-container]');
+    if (!container) return;
+
+    const discountPercent = {{ section.settings.discount_percent | default: 0 }};
+    const items = container.querySelectorAll('[data-bundle-item]');
+    const checkboxes = container.querySelectorAll('[data-bundle-checkbox]');
+    const totalEl = container.querySelector('[data-bundle-total]');
+    const compareTotalEl = container.querySelector('[data-bundle-compare-total]');
+    const saveAmountEl = container.querySelector('[data-bundle-save-amount]');
+    const savingsEl = container.querySelector('[data-bundle-savings]');
+    const addBtn = container.querySelector('[data-bundle-add]');
+
+    function calculateTotal() {
+      let total = 0;
+      let itemCount = 0;
+
+      items.forEach(item => {
+        const checkbox = item.querySelector('[data-bundle-checkbox]');
+        const isMain = item.classList.contains('product-bundles__item--main');
+
+        if (isMain || (checkbox && checkbox.checked)) {
+          total += parseInt(item.dataset.price) || 0;
+          itemCount++;
+        }
+      });
+
+      const discount = discountPercent > 0 ? (total * discountPercent / 100) : 0;
+      const discountedTotal = total - discount;
+
+      if (totalEl) {
+        totalEl.textContent = window.themeUtils ? window.themeUtils.formatMoney(discountedTotal) : '$' + (discountedTotal / 100).toFixed(2);
+      }
+
+      if (compareTotalEl && discountPercent > 0) {
+        compareTotalEl.textContent = window.themeUtils ? window.themeUtils.formatMoney(total) : '$' + (total / 100).toFixed(2);
+        compareTotalEl.style.display = discount > 0 ? 'inline' : 'none';
+      }
+
+      if (saveAmountEl && savingsEl) {
+        if (discount > 0) {
+          saveAmountEl.textContent = window.themeUtils ? window.themeUtils.formatMoney(discount) : '$' + (discount / 100).toFixed(2);
+          savingsEl.style.display = 'flex';
+        } else {
+          savingsEl.style.display = 'none';
+        }
+      }
+
+      addBtn.disabled = itemCount < 2;
+    }
+
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', calculateTotal);
+    });
+
+    addBtn.addEventListener('click', async () => {
+      const itemsToAdd = [];
+
+      items.forEach(item => {
+        const checkbox = item.querySelector('[data-bundle-checkbox]');
+        const isMain = item.classList.contains('product-bundles__item--main');
+
+        if (isMain || (checkbox && checkbox.checked)) {
+          itemsToAdd.push({
+            id: parseInt(item.dataset.variantId),
+            quantity: 1
+          });
+        }
+      });
+
+      if (itemsToAdd.length === 0) return;
+
+      addBtn.disabled = true;
+      addBtn.innerHTML = '<span class="loader" style="width:20px;height:20px;border-width:2px"></span> Adding...';
+
+      try {
+        for (const item of itemsToAdd) {
+          await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: [item] })
+          });
+        }
+
+        addBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Added to Cart!';
+
+        if (window.themeUtils) {
+          window.themeUtils.announce('Bundle added to cart', 'assertive');
+        }
+
+        // Refresh cart drawer
+        document.dispatchEvent(new CustomEvent('cart:updated'));
+
+        setTimeout(() => {
+          addBtn.disabled = false;
+          addBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> Add Bundle to Cart';
+        }, 2000);
+      } catch (err) {
+        console.error('Bundle add error:', err);
+        addBtn.disabled = false;
+        addBtn.innerHTML = 'Error - Try Again';
+      }
+    });
+
+    calculateTotal();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product Bundles",
+  "tag": "section",
+  "class": "section-product-bundles",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Frequently Bought Together"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Save when you buy these items together"
+    },
+    {
+      "type": "range",
+      "id": "discount_percent",
+      "label": "Bundle discount",
+      "min": 0,
+      "max": 30,
+      "step": 5,
+      "default": 10,
+      "unit": "%"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Bundle product",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge text",
+          "default": "Recommended"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Bundles",
+      "blocks": [
+        { "type": "product" },
+        { "type": "product" }
+      ]
+    }
+  ]
+}
+{% endschema %}
