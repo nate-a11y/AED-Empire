@@ -1,7 +1,61 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "main": {"type": "contact-form", "settings": {"title": "Get in Touch", "text": "<p>Have questions about AEDs or need help finding the right equipment? Our team of experts is here to help.</p>"}},
-    "faq": {"type": "faq", "settings": {"title": "Common Questions", "alt_bg": true}, "blocks": {"q1": {"type": "question", "settings": {"question": "What is an AED?", "answer": "<p>An AED (Automated External Defibrillator) is a portable device that can check heart rhythm and deliver an electric shock to restore a normal heartbeat during sudden cardiac arrest.</p>"}}, "q2": {"type": "question", "settings": {"question": "Do I need training to use an AED?", "answer": "<p>AEDs are designed to be used by anyone, with voice prompts that guide you through the process. However, we recommend basic training for confidence.</p>"}}, "q3": {"type": "question", "settings": {"question": "What warranty do you offer?", "answer": "<p>Warranty varies by manufacturer, typically ranging from 5-8 years. We'll help you understand the specific warranty for your chosen product.</p>"}}}, "block_order": ["q1", "q2", "q3"]}
+    "main": {
+      "type": "contact-form",
+      "settings": {
+        "title": "Get in Touch",
+        "text": "<p>Have questions about AEDs or need help finding the right equipment? Our team of experts is here to help.<br/><br/>2513 River Rd Dr, Suite B<br/>Waterloo, NE 68069</p>",
+        "alt_bg": true
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "What is an AED?",
+            "answer": "<p>An AED (Automated External Defibrillator) is a portable, life-saving device that analyzes heart rhythm and delivers an electrical shock to restore normal heartbeat during sudden cardiac arrest. AEDs are designed for use by anyone—no medical background required. The device provides voice prompts and visual instructions to guide you through each step.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "Do I need training to use an AED?",
+            "answer": "<p>No formal training is required. AEDs are designed for immediate use by bystanders with no medical experience—the device walks you through every step with clear audio and visual prompts. That said, CPR/AED certification courses (typically 2-4 hours) build confidence and improve response time in emergencies. We recommend training but it's not a barrier to saving a life.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "What warranty do you offer?",
+            "answer": "<p>AED warranties vary by manufacturer, typically ranging from 5–8 years for devices. Brands like HeartSine and Philips often offer 8-year coverage, while others vary by model. Pads and batteries carry separate warranties (usually 2–5 years). We honor all manufacturer warranties and handle the coordination for you if any issues arise.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3"
+      ],
+      "settings": {
+        "title": "Common Questions",
+        "subtitle": "",
+        "alt_bg": true
+      }
+    }
   },
-  "order": ["main", "faq"]
+  "order": [
+    "main",
+    "faq"
+  ]
 }

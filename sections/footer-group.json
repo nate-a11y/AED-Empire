@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "Footer group",
   "type": "footer",
@@ -5,9 +14,16 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "show_follow_on_shop": true
+        "about_text": "Your trusted source for AEDs and life safety equipment. Authorized dealer serving schools, businesses, and communities nationwide.",
+        "show_follow_on_shop": true,
+        "menu_1_title": "Shop",
+        "menu_1": "footer-menu-nb",
+        "menu_2_title": "Company",
+        "menu_2": "company-menu-nb"
       }
     }
   },
-  "order": ["footer"]
+  "order": [
+    "footer"
+  ]
 }
