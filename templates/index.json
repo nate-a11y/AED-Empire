@@ -99,7 +99,8 @@
     "image-text": {
       "type": "image-with-text",
       "settings": {
-        "image_position": "left",
+        "image": "{{ shop.brand.logo }}",
+        "image_position": "right",
         "subheading": "Our Mission",
         "title": "Making Life Safety Accessible",
         "text": "<p>We believe every school, business, and community should have access to quality life-saving equipment without breaking the bank. That's why we partner directly with top manufacturers to offer the best prices.</p>",
