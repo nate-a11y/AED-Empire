@@ -19,6 +19,15 @@ ul, ol { margin: 0; padding-left: 1.5em; }
 button { cursor: pointer; font-family: inherit; }
 input, select, textarea { font-family: inherit; font-size: 1rem; }
 
+/* SVG Base Styles - Ensure visibility */
+svg { color: var(--color-text, #1a1a2e); }
+svg line, svg path, svg circle, svg polyline, svg rect { stroke: inherit; }
+button svg line, button svg path, button svg circle, button svg polyline { stroke: var(--color-text, #1a1a2e); }
+.cart-drawer__close svg line { stroke: #1a1a2e; }
+.mobile-menu__close svg line { stroke: #1a1a2e; }
+.quick-view-modal__close svg line { stroke: #1a1a2e; }
+.predictive-search__close svg line { stroke: #1a1a2e; }
+
 /* Utilities */
 .container { width: 100%; max-width: var(--page-width); margin: 0 auto; padding: 0 20px; }
 .visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; border: 0 !important; }

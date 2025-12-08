@@ -15,7 +15,9 @@
           <h3 class="faq-item__heading">
             <button class="faq-question" aria-expanded="false" aria-controls="{{ answer_id }}" id="faq-question-{{ forloop.index }}">
               <span>{{ block.settings.question }}</span>
-              <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" stroke="#1a1a2e"/>
+              </svg>
             </button>
           </h3>
           <div class="faq-answer" id="{{ answer_id }}" role="region" aria-labelledby="faq-question-{{ forloop.index }}" aria-hidden="true">
