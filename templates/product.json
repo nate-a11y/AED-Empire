@@ -1,21 +1,49 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-product",
       "settings": {
-        "show_upsells": true
+        "show_dynamic_checkout": true,
+        "show_payment_installments": true,
+        "show_stock_countdown": true,
+        "low_stock_threshold": 10,
+        "show_sale_countdown": false,
+        "sale_end_date": "",
+        "show_volume_pricing": false,
+        "show_quote_button": false,
+        "show_floating_quote": false,
+        "show_shipping_tab": true,
+        "shipping_content": "<p><strong>Free Shipping</strong> on orders over $500</p><p>Standard shipping: 3-5 business days</p><p>Expedited shipping: 1-2 business days</p><p><strong>Returns:</strong> 30-day return policy on unopened items.</p>",
+        "show_cross_sells": false
       }
     },
     "recently-viewed": {
       "type": "recently-viewed",
       "settings": {
-        "title": "Recently Viewed"
+        "title": "Recently Viewed",
+        "subtitle": "Products you've looked at recently",
+        "empty_text": "You haven't viewed any products yet.",
+        "products_to_show": 6,
+        "max_products": 12,
+        "show_quick_view": true,
+        "background": "default"
       }
     },
     "recommendations": {
       "type": "featured-collection",
       "settings": {
         "title": "You May Also Like",
+        "subtitle": "",
+        "collection": "",
         "limit": 4,
         "columns": 4,
         "show_view_all": false,
@@ -23,5 +51,9 @@
       }
     }
   },
-  "order": ["main", "recently-viewed", "recommendations"]
+  "order": [
+    "main",
+    "recently-viewed",
+    "recommendations"
+  ]
 }
