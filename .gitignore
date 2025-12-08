@@ -1,0 +1,18 @@
+# Reference themes (not part of main theme)
+dawn_theme/
+gravity_theme/
+rocket_theme/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Logs
+*.log

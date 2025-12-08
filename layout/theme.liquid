@@ -155,21 +155,16 @@
   {%- comment -%} Skip link for keyboard/screen reader users {%- endcomment -%}
   <a class="skip-link visually-hidden" href="#main-content">Skip to content</a>
 
-  {%- comment -%} Header (includes announcement bar) {%- endcomment -%}
-  {% section 'header' %}
+  {%- comment -%} Header Group (includes announcement bar, header, trust bar) {%- endcomment -%}
+  {% sections 'header-group' %}
 
   {%- comment -%} Main Content {%- endcomment -%}
   <main id="main-content" role="main" tabindex="-1">
     {{ content_for_layout }}
   </main>
 
-  {%- comment -%} Trust Bar {%- endcomment -%}
-  {% if settings.show_trust_badges %}
-    {% section 'trust-bar' %}
-  {% endif %}
-
-  {%- comment -%} Footer {%- endcomment -%}
-  {% section 'footer' %}
+  {%- comment -%} Footer Group {%- endcomment -%}
+  {% sections 'footer-group' %}
 
   {%- comment -%} Cart Drawer {%- endcomment -%}
   {% if settings.cart_type == 'drawer' %}

@@ -25,32 +25,44 @@
           <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
 
-        <a href="/" class="header__logo" aria-label="{{ shop.name }} - Home">
-          {%- liquid
-            assign logo_width = settings.logo_width | default: 180
-            assign logo_width_mobile = settings.logo_width_mobile | default: 120
-          -%}
-          {% if settings.logo %}
-            <img
-              src="{{ settings.logo | image_url: width: 400 }}"
-              srcset="{{ settings.logo | image_url: width: logo_width }} 1x, {{ settings.logo | image_url: width: logo_width | times: 2 }} 2x"
-              alt="{{ shop.name }}"
-              class="header__logo-img"
-              style="max-width: {{ logo_width }}px; height: auto;"
-              width="{{ logo_width }}"
-              loading="eager"
-              fetchpriority="high"
-              onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='inline';">
-            <span class="header__logo-text" style="display:none;">{{ shop.name }}</span>
-          {% else %}
+        {%- comment -%} Logo - Using Dawn best practices {%- endcomment -%}
+        {%- if request.page_type == 'index' -%}<h1 class="header__heading">{%- endif -%}
+        <a href="{{ routes.root_url }}" class="header__logo focus-inset" aria-label="{{ shop.name }} - Home">
+          {%- if settings.logo != blank -%}
+            {%- liquid
+              assign logo_width = settings.logo_width | default: 180
+              assign logo_width_mobile = settings.logo_width_mobile | default: 120
+              assign logo_alt = settings.logo.alt | default: shop.name | escape
+              assign logo_height = logo_width | divided_by: settings.logo.aspect_ratio | round
+            -%}
+            {%- capture sizes -%}(max-width: 749px) {{ logo_width_mobile }}px, {{ logo_width }}px{%- endcapture -%}
+            {%- capture widths -%}{{ logo_width_mobile }}, {{ logo_width }}, {{ logo_width | times: 1.5 | round }}, {{ logo_width | times: 2 }}{%- endcapture -%}
+            <div class="header__logo-wrapper">
+              {{
+                settings.logo
+                | image_url: width: 600
+                | image_tag:
+                  class: 'header__logo-img',
+                  widths: widths,
+                  height: logo_height,
+                  width: logo_width,
+                  alt: logo_alt,
+                  sizes: sizes,
+                  preload: true
+              }}
+            </div>
+          {%- else -%}
             <span class="header__logo-text">{{ shop.name }}</span>
-          {% endif %}
-          <style>
-            @media (max-width: 768px) {
-              .header__logo-img { max-width: {{ logo_width_mobile }}px !important; }
-            }
-          </style>
+          {%- endif -%}
         </a>
+        {%- if request.page_type == 'index' -%}</h1>{%- endif -%}
+        <style>
+          .header__logo-wrapper { max-width: {{ settings.logo_width | default: 180 }}px; }
+          .header__logo-img { width: 100%; height: auto; }
+          @media (max-width: 749px) {
+            .header__logo-wrapper { max-width: {{ settings.logo_width_mobile | default: 120 }}px; }
+          }
+        </style>
 
         <nav class="header__nav" data-nav aria-label="Main navigation">
           <ul class="header__menu" role="menubar">

@@ -169,6 +169,13 @@
         {% form 'product', product, data-product-form: '', id: 'product-form' %}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
 
+          <!-- Shop Pay Installments Banner -->
+          {%- if section.settings.show_payment_installments -%}
+            <div class="product-payment-installments">
+              {{ form | payment_terms }}
+            </div>
+          {%- endif -%}
+
           {% unless product.has_only_default_variant %}
             {% for option in product.options_with_values %}
               <div class="product-option" data-option-index="{{ forloop.index0 }}">
@@ -459,6 +466,13 @@
       "type": "checkbox",
       "id": "show_dynamic_checkout",
       "label": "Show dynamic checkout buttons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_installments",
+      "label": "Show Shop Pay installments",
+      "info": "Display 'Pay in 4 interest-free installments' message",
       "default": true
     },
     {

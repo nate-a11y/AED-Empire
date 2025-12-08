@@ -1,0 +1,13 @@
+{
+  "name": "Footer group",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "settings": {
+        "show_follow_on_shop": true
+      }
+    }
+  },
+  "order": ["footer"]
+}
