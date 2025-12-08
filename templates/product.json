@@ -23,7 +23,7 @@
         "show_floating_quote": false,
         "show_shipping_tab": true,
         "shipping_content": "<p><strong>Free Shipping</strong> on orders over $500</p><p>Standard shipping: 3-5 business days</p><p>Expedited shipping: 1-2 business days</p><p><strong>Returns:</strong> 30-day return policy on unopened items.</p>",
-        "show_cross_sells": false
+        "show_cross_sells": true
       }
     },
     "recently-viewed": {
