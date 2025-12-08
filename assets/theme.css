@@ -133,8 +133,10 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 /* Header Icons (Dawn-style) */
 .header__icon { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; color: var(--color-text, #1a1a2e); text-decoration: none; }
 .header__icon:hover { color: var(--color-primary); }
+.header__icon:hover svg path, .header__icon:hover svg line, .header__icon:hover svg circle { stroke: var(--color-primary); }
 .header__icon-wrapper { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
-.header__icon svg, .header__icon .icon { display: block; width: 24px; height: 24px; stroke: currentColor; fill: none; }
+.header__icon svg, .header__icon .icon { display: block; width: 24px; height: 24px; }
+.header__icon svg path, .header__icon svg line, .header__icon svg circle, .header__icon svg polyline { stroke: var(--color-text, #1a1a2e); fill: none; stroke-width: 2; }
 .header__icon--cart { position: relative; }
 
 /* Cart Count Bubble (Dawn-style) */
