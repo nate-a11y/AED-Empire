@@ -1,0 +1,181 @@
+{% comment %}
+  Brand Logos Bar
+  Shop by Brand - displays clickable brand logos linking to brand collections
+{% endcomment %}
+
+<section class="brand-logos{% if section.settings.alt_bg %} section--alt{% endif %}" aria-labelledby="brands-heading">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2 id="brands-heading">{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle != blank %}
+          <p>{{ section.settings.subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="brand-logos__grid" role="list">
+      {% for block in section.blocks %}
+        <a href="{{ block.settings.link | default: '#' }}" class="brand-logos__item" role="listitem" {{ block.shopify_attributes }}>
+          {% if block.settings.logo != blank %}
+            <img
+              src="{{ block.settings.logo | image_url: width: 200 }}"
+              alt="{{ block.settings.name | default: 'Brand logo' }}"
+              loading="lazy"
+              width="150"
+              height="60"
+              style="object-fit: contain;">
+          {% else %}
+            <span class="brand-logos__name">{{ block.settings.name }}</span>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
+
+    {% if section.settings.show_view_all and section.settings.view_all_link != blank %}
+      <div class="brand-logos__cta">
+        <a href="{{ section.settings.view_all_link }}" class="btn btn--outline">
+          {{ section.settings.view_all_text | default: 'View All Brands' }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .brand-logos {
+    padding: 50px 0;
+  }
+  .brand-logos__grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 30px 50px;
+  }
+  .brand-logos__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 20px;
+    min-width: 120px;
+    transition: all 0.2s ease;
+    filter: grayscale(100%);
+    opacity: 0.7;
+  }
+  .brand-logos__item:hover,
+  .brand-logos__item:focus {
+    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  .brand-logos__item img {
+    max-height: 60px;
+    width: auto;
+  }
+  .brand-logos__name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .brand-logos__cta {
+    text-align: center;
+    margin-top: 40px;
+  }
+  @media (max-width: 768px) {
+    .brand-logos__grid {
+      gap: 20px 30px;
+    }
+    .brand-logos__item {
+      min-width: 100px;
+      padding: 10px 15px;
+    }
+    .brand-logos__item img {
+      max-height: 45px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Brand Logos",
+  "tag": "section",
+  "class": "section-brand-logos",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop by Brand"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Authorized dealer for all major AED manufacturers"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Use alternate background",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show view all button",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View all link"
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View all text",
+      "default": "View All Brands"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Brand logo"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Brand name",
+          "default": "Brand Name"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link to collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Logos",
+      "blocks": [
+        { "type": "brand", "settings": { "name": "ZOLL" } },
+        { "type": "brand", "settings": { "name": "Philips" } },
+        { "type": "brand", "settings": { "name": "Defibtech" } },
+        { "type": "brand", "settings": { "name": "HeartSine" } },
+        { "type": "brand", "settings": { "name": "Cardiac Science" } },
+        { "type": "brand", "settings": { "name": "Stryker" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

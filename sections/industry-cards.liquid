@@ -1,0 +1,267 @@
+{% comment %}
+  Industry Cards / Shop by Industry
+  Grid of industry-specific collections with icons and images
+{% endcomment %}
+
+<section class="industry-cards{% if section.settings.alt_bg %} section--alt{% endif %}" aria-labelledby="industry-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 id="industry-heading">{{ section.settings.title | default: 'Shop by Industry' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+      <div class="section-header__divider"></div>
+    </div>
+
+    <div class="industry-cards__grid grid grid--{{ section.settings.columns }}">
+      {% for block in section.blocks %}
+        <a href="{{ block.settings.link | default: '#' }}" class="industry-card" {{ block.shopify_attributes }}>
+          <div class="industry-card__image">
+            {% if block.settings.image != blank %}
+              <img
+                src="{{ block.settings.image | image_url: width: 600 }}"
+                alt="{{ block.settings.title }}"
+                loading="lazy"
+                width="300"
+                height="200">
+            {% else %}
+              <div class="industry-card__placeholder">
+                {% render 'icon', name: block.settings.icon | default: 'building' %}
+              </div>
+            {% endif %}
+            <div class="industry-card__overlay"></div>
+          </div>
+          <div class="industry-card__content">
+            <div class="industry-card__icon">
+              {% render 'icon', name: block.settings.icon | default: 'building' %}
+            </div>
+            <h3 class="industry-card__title">{{ block.settings.title }}</h3>
+            {% if block.settings.description != blank %}
+              <p class="industry-card__desc">{{ block.settings.description }}</p>
+            {% endif %}
+            <span class="industry-card__link">Shop Now <span aria-hidden="true">&rarr;</span></span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .industry-cards {
+    padding: var(--spacing-sections) 0;
+  }
+  .industry-cards__grid {
+    gap: 25px;
+  }
+  .industry-card {
+    position: relative;
+    display: block;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+  .industry-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  }
+  .industry-card__image {
+    position: relative;
+    aspect-ratio: 16/10;
+    overflow: hidden;
+  }
+  .industry-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .industry-card:hover .industry-card__image img {
+    transform: scale(1.08);
+  }
+  .industry-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,40,104,0.7) 0%, transparent 60%);
+  }
+  .industry-card__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-bg-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .industry-card__placeholder svg {
+    width: 60px;
+    height: 60px;
+    color: var(--color-text-light);
+    opacity: 0.3;
+  }
+  .industry-card__content {
+    padding: 25px;
+    text-align: center;
+  }
+  .industry-card__icon {
+    width: 56px;
+    height: 56px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: -50px auto 15px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 4px 15px rgba(196,30,58,0.3);
+  }
+  .industry-card__icon svg {
+    width: 26px;
+    height: 26px;
+    color: #fff;
+  }
+  .industry-card__title {
+    font-size: 1.25rem;
+    margin: 0 0 8px;
+    color: var(--color-text);
+  }
+  .industry-card__desc {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    margin: 0 0 15px;
+    line-height: 1.5;
+  }
+  .industry-card__link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .industry-card:hover .industry-card__link {
+    color: var(--color-primary-hover);
+  }
+  @media (max-width: 768px) {
+    .industry-cards__grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .industry-card__content {
+      padding: 20px 15px;
+    }
+    .industry-card__icon {
+      width: 48px;
+      height: 48px;
+      margin-top: -40px;
+    }
+    .industry-card__title {
+      font-size: 1.1rem;
+    }
+  }
+  @media (max-width: 480px) {
+    .industry-cards__grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Industry Cards",
+  "tag": "section",
+  "class": "section-industry-cards",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop by Industry"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "AED solutions tailored for your organization"
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Use alternate background",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "industry",
+      "name": "Industry",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Background image"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "school", "label": "School" },
+            { "value": "building", "label": "Office/Business" },
+            { "value": "church", "label": "Church" },
+            { "value": "heart", "label": "Healthcare" },
+            { "value": "dumbbell", "label": "Gym/Fitness" },
+            { "value": "plane", "label": "Airport/Travel" },
+            { "value": "shield", "label": "Public Safety" },
+            { "value": "football", "label": "Sports" },
+            { "value": "home", "label": "Residential" },
+            { "value": "factory", "label": "Industrial" }
+          ],
+          "default": "building"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Schools"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Description",
+          "default": "AED packages for K-12 and higher education"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Industry Cards",
+      "blocks": [
+        { "type": "industry", "settings": { "title": "Schools & Education", "description": "AED packages for K-12 and universities", "icon": "school" } },
+        { "type": "industry", "settings": { "title": "Business & Office", "description": "Protect your workplace and employees", "icon": "building" } },
+        { "type": "industry", "settings": { "title": "Churches & Nonprofits", "description": "Affordable options for congregations", "icon": "church" } },
+        { "type": "industry", "settings": { "title": "Sports & Recreation", "description": "On-field and facility solutions", "icon": "football" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

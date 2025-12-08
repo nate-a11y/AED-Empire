@@ -1,0 +1,217 @@
+{% comment %}
+  Comparison CTA Section
+  Drives users to compare AEDs with a prominent call-to-action
+{% endcomment %}
+
+<section class="comparison-cta" style="background: {{ section.settings.bg_color }};">
+  <div class="container">
+    <div class="comparison-cta__inner">
+      <div class="comparison-cta__content">
+        <div class="comparison-cta__icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+        </div>
+        <div class="comparison-cta__text">
+          <h2>{{ section.settings.title | default: "Not Sure Which AED Is Right For You?" }}</h2>
+          <p>{{ section.settings.text | default: "Compare features, prices, and specifications side-by-side to find the perfect AED for your needs." }}</p>
+        </div>
+      </div>
+      <div class="comparison-cta__actions">
+        <a href="{{ section.settings.button_link | default: '/pages/compare' }}" class="btn btn--primary btn--large">
+          {{ section.settings.button_text | default: 'Compare AEDs' }}
+        </a>
+        {% if section.settings.secondary_button_text != blank %}
+          <a href="{{ section.settings.secondary_button_link }}" class="btn btn--outline-white btn--large">
+            {{ section.settings.secondary_button_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if section.settings.show_features %}
+      <div class="comparison-cta__features">
+        <div class="comparison-feature">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Compare up to 4 products</span>
+        </div>
+        <div class="comparison-feature">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>See specs side-by-side</span>
+        </div>
+        <div class="comparison-feature">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Expert recommendations</span>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .comparison-cta {
+    background: var(--color-secondary);
+    color: #fff;
+    padding: 60px 0;
+  }
+  .comparison-cta__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .comparison-cta__content {
+    display: flex;
+    align-items: flex-start;
+    gap: 25px;
+    flex: 1;
+    min-width: 300px;
+  }
+  .comparison-cta__icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .comparison-cta__icon svg {
+    color: #fff;
+  }
+  .comparison-cta__text h2 {
+    margin: 0 0 10px;
+    font-size: 1.75rem;
+    color: #fff;
+  }
+  .comparison-cta__text p {
+    margin: 0;
+    opacity: 0.85;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .comparison-cta__actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .comparison-cta__features {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    flex-wrap: wrap;
+  }
+  .comparison-feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9375rem;
+    opacity: 0.9;
+  }
+  .comparison-feature svg {
+    color: var(--color-success);
+    flex-shrink: 0;
+  }
+  @media (max-width: 900px) {
+    .comparison-cta__inner {
+      flex-direction: column;
+      text-align: center;
+    }
+    .comparison-cta__content {
+      flex-direction: column;
+      align-items: center;
+    }
+    .comparison-cta__actions {
+      justify-content: center;
+    }
+    .comparison-cta__features {
+      gap: 20px 40px;
+    }
+  }
+  @media (max-width: 600px) {
+    .comparison-cta__icon {
+      width: 60px;
+      height: 60px;
+    }
+    .comparison-cta__icon svg {
+      width: 32px;
+      height: 32px;
+    }
+    .comparison-cta__text h2 {
+      font-size: 1.375rem;
+    }
+    .comparison-cta__features {
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Comparison CTA",
+  "tag": "section",
+  "class": "section-comparison-cta",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Not Sure Which AED Is Right For You?"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Compare features, prices, and specifications side-by-side to find the perfect AED for your needs."
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#002868"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Compare AEDs"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_text",
+      "label": "Secondary button text"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_features",
+      "label": "Show feature highlights",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison CTA"
+    }
+  ]
+}
+{% endschema %}

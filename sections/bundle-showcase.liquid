@@ -1,0 +1,413 @@
+{% comment %}
+  Bundle / Package Showcase
+  Highlights value bundles with pricing and what's included
+{% endcomment %}
+
+<section class="bundle-showcase{% if section.settings.alt_bg %} section--alt{% endif %}" aria-labelledby="bundles-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 id="bundles-heading">{{ section.settings.title | default: 'Value Packages' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+      <div class="section-header__divider"></div>
+    </div>
+
+    <div class="bundle-showcase__grid">
+      {% for block in section.blocks %}
+        <div class="bundle-card{% if block.settings.featured %} bundle-card--featured{% endif %}" {{ block.shopify_attributes }}>
+          {% if block.settings.badge != blank %}
+            <div class="bundle-card__badge">{{ block.settings.badge }}</div>
+          {% endif %}
+
+          <div class="bundle-card__header">
+            <h3 class="bundle-card__title">{{ block.settings.title }}</h3>
+            {% if block.settings.subtitle != blank %}
+              <p class="bundle-card__subtitle">{{ block.settings.subtitle }}</p>
+            {% endif %}
+          </div>
+
+          {% if block.settings.image != blank %}
+            <div class="bundle-card__image">
+              <img
+                src="{{ block.settings.image | image_url: width: 400 }}"
+                alt="{{ block.settings.title }}"
+                loading="lazy"
+                width="200"
+                height="200">
+            </div>
+          {% endif %}
+
+          {% if block.settings.price != blank %}
+            <div class="bundle-card__price">
+              <span class="bundle-card__price-label">Starting at</span>
+              <span class="bundle-card__price-value">{{ block.settings.price }}</span>
+              {% if block.settings.compare_price != blank %}
+                <span class="bundle-card__price-compare">{{ block.settings.compare_price }}</span>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          <ul class="bundle-card__includes">
+            {% if block.settings.include_1 != blank %}
+              <li>{% render 'icon', name: 'check' %} {{ block.settings.include_1 }}</li>
+            {% endif %}
+            {% if block.settings.include_2 != blank %}
+              <li>{% render 'icon', name: 'check' %} {{ block.settings.include_2 }}</li>
+            {% endif %}
+            {% if block.settings.include_3 != blank %}
+              <li>{% render 'icon', name: 'check' %} {{ block.settings.include_3 }}</li>
+            {% endif %}
+            {% if block.settings.include_4 != blank %}
+              <li>{% render 'icon', name: 'check' %} {{ block.settings.include_4 }}</li>
+            {% endif %}
+            {% if block.settings.include_5 != blank %}
+              <li>{% render 'icon', name: 'check' %} {{ block.settings.include_5 }}</li>
+            {% endif %}
+          </ul>
+
+          <div class="bundle-card__actions">
+            <a href="{{ block.settings.link | default: '#' }}" class="btn {% if block.settings.featured %}btn--primary{% else %}btn--outline{% endif %} btn--full">
+              {{ block.settings.button_text | default: 'View Package' }}
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if section.settings.cta_text != blank %}
+      <div class="bundle-showcase__cta">
+        <p>{{ section.settings.cta_text }}</p>
+        {% if section.settings.cta_button_text != blank %}
+          <a href="{{ section.settings.cta_link }}" class="btn btn--secondary">{{ section.settings.cta_button_text }}</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .bundle-showcase {
+    padding: var(--spacing-sections) 0;
+  }
+  .bundle-showcase__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .bundle-card {
+    background: #fff;
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .bundle-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  }
+  .bundle-card--featured {
+    border-color: var(--color-primary);
+    transform: scale(1.02);
+    box-shadow: 0 15px 50px rgba(196,30,58,0.15);
+  }
+  .bundle-card__badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-primary);
+    color: #fff;
+    padding: 6px 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .bundle-card__header {
+    margin-bottom: 20px;
+  }
+  .bundle-card__title {
+    font-size: 1.5rem;
+    margin: 0 0 5px;
+    color: var(--color-text);
+  }
+  .bundle-card__subtitle {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    margin: 0;
+  }
+  .bundle-card__image {
+    margin: 20px auto;
+  }
+  .bundle-card__image img {
+    max-height: 150px;
+    width: auto;
+    margin: 0 auto;
+  }
+  .bundle-card__price {
+    margin: 20px 0;
+  }
+  .bundle-card__price-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .bundle-card__price-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1.2;
+  }
+  .bundle-card__price-compare {
+    display: block;
+    font-size: 1rem;
+    color: var(--color-text-light);
+    text-decoration: line-through;
+  }
+  .bundle-card__includes {
+    list-style: none;
+    padding: 0;
+    margin: 25px 0;
+    text-align: left;
+  }
+  .bundle-card__includes li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.9375rem;
+    color: var(--color-text);
+  }
+  .bundle-card__includes li:last-child {
+    border-bottom: none;
+  }
+  .bundle-card__includes svg {
+    width: 18px;
+    height: 18px;
+    color: var(--color-success);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .bundle-card__actions {
+    margin-top: 25px;
+  }
+  .bundle-showcase__cta {
+    text-align: center;
+    margin-top: 50px;
+    padding: 30px;
+    background: var(--color-secondary);
+    border-radius: 8px;
+    color: #fff;
+  }
+  .bundle-showcase__cta p {
+    margin: 0 0 20px;
+    font-size: 1.125rem;
+  }
+  @media (max-width: 768px) {
+    .bundle-card--featured {
+      transform: none;
+    }
+    .bundle-showcase__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Bundle Showcase",
+  "tag": "section",
+  "class": "section-bundle-showcase",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "AED Value Packages"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Everything you need in one convenient bundle"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Use alternate background",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Bottom CTA"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA text",
+      "default": "Need help choosing the right package? Our experts are here to help."
+    },
+    {
+      "type": "text",
+      "id": "cta_button_text",
+      "label": "Button text",
+      "default": "Get Expert Advice"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "bundle",
+      "name": "Bundle",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Starter Package"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "Perfect for small offices"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge text",
+          "info": "e.g., 'Most Popular', 'Best Value'"
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Featured (highlighted)",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Product image"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price",
+          "default": "$1,299"
+        },
+        {
+          "type": "text",
+          "id": "compare_price",
+          "label": "Compare at price",
+          "info": "Shows as crossed out"
+        },
+        {
+          "type": "text",
+          "id": "include_1",
+          "label": "Includes item 1",
+          "default": "AED Device with 8-year warranty"
+        },
+        {
+          "type": "text",
+          "id": "include_2",
+          "label": "Includes item 2",
+          "default": "Adult & pediatric electrode pads"
+        },
+        {
+          "type": "text",
+          "id": "include_3",
+          "label": "Includes item 3",
+          "default": "Wall mount cabinet with alarm"
+        },
+        {
+          "type": "text",
+          "id": "include_4",
+          "label": "Includes item 4",
+          "default": "AED inspection tags"
+        },
+        {
+          "type": "text",
+          "id": "include_5",
+          "label": "Includes item 5",
+          "default": "Free shipping"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "View Package"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bundle Showcase",
+      "blocks": [
+        {
+          "type": "bundle",
+          "settings": {
+            "title": "Basic Package",
+            "subtitle": "Essential protection",
+            "price": "$1,099",
+            "include_1": "Refurbished AED device",
+            "include_2": "New electrode pads",
+            "include_3": "New battery",
+            "include_4": "Carrying case",
+            "include_5": "Free shipping"
+          }
+        },
+        {
+          "type": "bundle",
+          "settings": {
+            "title": "Complete Package",
+            "subtitle": "Most popular choice",
+            "badge": "Best Seller",
+            "featured": true,
+            "price": "$1,499",
+            "compare_price": "$1,799",
+            "include_1": "New AED with 8-year warranty",
+            "include_2": "Adult & pediatric pads",
+            "include_3": "Wall cabinet with alarm",
+            "include_4": "AED/CPR signage kit",
+            "include_5": "Free shipping + training"
+          }
+        },
+        {
+          "type": "bundle",
+          "settings": {
+            "title": "Premium Package",
+            "subtitle": "Full program solution",
+            "price": "$1,999",
+            "include_1": "Premium AED with WiFi",
+            "include_2": "Dual adult & pediatric pads",
+            "include_3": "Illuminated cabinet",
+            "include_4": "Program management (1 yr)",
+            "include_5": "On-site training included"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
