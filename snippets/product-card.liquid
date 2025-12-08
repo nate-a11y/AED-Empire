@@ -35,14 +35,21 @@
         {% endif %}
       {% else %}
         <div class="product-card__placeholder">
-          <svg aria-hidden="true" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          <svg aria-hidden="true" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke-width="1">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="#9ca3af"/>
+            <circle cx="8.5" cy="8.5" r="1.5" stroke="#9ca3af"/>
+            <path d="M21 15l-5-5L5 21" stroke="#9ca3af"/>
+          </svg>
         </div>
       {% endif %}
     </a>
 
     {% if show_quick_view %}
       <button class="product-card__quick-view" data-quick-view="{{ product.handle }}" aria-label="Quick view {{ product.title | escape }}">
-        <svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="#1a1a2e"/>
+          <circle cx="12" cy="12" r="3" stroke="#1a1a2e"/>
+        </svg>
         Quick View
       </button>
     {% endif %}
