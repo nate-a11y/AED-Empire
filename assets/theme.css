@@ -452,7 +452,8 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 .footer__social { display: flex; gap: 12px; flex-wrap: wrap; }
 .footer__social a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; color: #fff; transition: all 0.2s; }
 .footer__social a:hover { background: var(--color-primary); transform: translateY(-2px); }
-.footer__social svg { width: 20px; height: 20px; flex-shrink: 0; }
+.footer__social svg { width: 20px; height: 20px; flex-shrink: 0; fill: #fff; }
+.footer__social svg path { fill: inherit; }
 .footer h2, .footer h3, .footer h4, .footer__heading { font-size: 1rem; margin-bottom: 20px; color: #fff; }
 .footer__menu { list-style: none; padding: 0; margin: 0; }
 .footer__menu li { margin-bottom: 12px; }
