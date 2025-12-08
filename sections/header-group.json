@@ -2,14 +2,21 @@
   "name": "Header group",
   "type": "header",
   "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "settings": {
+        "show_announcement": true,
+        "text": "Free shipping on orders over $500",
+        "background_color": "#002868",
+        "text_color": "#ffffff",
+        "show_icon": true,
+        "icon": "truck"
+      }
+    },
     "header": {
       "type": "header",
       "settings": {}
-    },
-    "trust-bar": {
-      "type": "trust-bar",
-      "settings": {}
     }
   },
-  "order": ["header", "trust-bar"]
+  "order": ["announcement-bar", "header"]
 }
