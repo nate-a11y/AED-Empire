@@ -295,29 +295,35 @@
       const overlay = document.querySelector('[data-cart-overlay]');
       const toggles = document.querySelectorAll('[data-cart-toggle]');
 
-      if (!drawer) return;
+      // Bind drawer events using event delegation (works even if drawer doesn't exist yet)
+      this.bindDrawerEvents();
 
+      // Cart icon click - open drawer or go to cart page
       toggles.forEach(toggle => {
         toggle.addEventListener('click', (e) => {
-          if (window.theme?.cartType === 'drawer') {
+          const currentDrawer = document.querySelector('[data-cart-drawer]');
+          if (currentDrawer && window.theme?.cartType === 'drawer') {
             e.preventDefault();
-            this.open(drawer, overlay);
+            const currentOverlay = document.querySelector('[data-cart-overlay]');
+            this.open(currentDrawer, currentOverlay);
             this.refresh();
           }
+          // If no drawer or cartType is not 'drawer', let the link go to /cart
         });
       });
 
-      overlay?.addEventListener('click', () => this.close(drawer, overlay));
+      if (drawer) {
+        overlay?.addEventListener('click', () => this.close(drawer, overlay));
 
-      // Close on escape
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && drawer.classList.contains('is-open')) {
-          this.close(drawer, overlay);
-        }
-      });
-
-      // Bind drawer events on page load
-      this.bindDrawerEvents();
+        // Close on escape
+        document.addEventListener('keydown', (e) => {
+          const currentDrawer = document.querySelector('[data-cart-drawer]');
+          if (e.key === 'Escape' && currentDrawer?.classList.contains('is-open')) {
+            const currentOverlay = document.querySelector('[data-cart-overlay]');
+            this.close(currentDrawer, currentOverlay);
+          }
+        });
+      }
     },
 
     open(drawer, overlay) {
@@ -409,7 +415,7 @@
         const currentDrawer = document.querySelector('.cart-drawer');
         if (newDrawer && currentDrawer) {
           currentDrawer.innerHTML = newDrawer.innerHTML;
-          this.bindDrawerEvents();
+          // No need to rebind events - using event delegation on document
         }
       } catch (e) {
         console.error('Drawer refresh error:', e);
@@ -417,11 +423,14 @@
     },
 
     bindDrawerEvents() {
-      // Quantity buttons
-      document.querySelectorAll('[data-qty-change]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const key = btn.dataset.qtyChange;
-          const action = btn.dataset.qtyAction;
+      // Use event delegation on document for cart drawer events
+      // This ensures events work even when drawer content is replaced
+      document.addEventListener('click', (e) => {
+        // Quantity buttons
+        const qtyBtn = e.target.closest('[data-qty-change]');
+        if (qtyBtn) {
+          const key = qtyBtn.dataset.qtyChange;
+          const action = qtyBtn.dataset.qtyAction;
           const input = document.querySelector(`[data-qty-input="${key}"]`);
           if (!input) return;
 
@@ -431,44 +440,46 @@
 
           input.value = qty;
           this.updateQuantity(key, qty);
-        });
-      });
+          return;
+        }
 
-      // Remove buttons
-      document.querySelectorAll('[data-remove-item]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const key = btn.dataset.removeItem;
+        // Remove buttons
+        const removeBtn = e.target.closest('[data-remove-item]');
+        if (removeBtn) {
+          const key = removeBtn.dataset.removeItem;
           this.updateQuantity(key, 0);
-        });
-      });
+          return;
+        }
 
-      // Quantity input change
-      document.querySelectorAll('.cart-drawer__qty-input').forEach(input => {
-        input.addEventListener('change', () => {
-          const key = input.dataset.qtyInput;
-          const qty = parseInt(input.value) || 0;
-          this.updateQuantity(key, qty);
-        });
-      });
-
-      // Order note toggle
-      const noteToggle = document.querySelector('.cart-drawer__note-toggle');
-      if (noteToggle) {
-        noteToggle.addEventListener('click', () => {
+        // Order note toggle
+        const noteToggle = e.target.closest('.cart-drawer__note-toggle');
+        if (noteToggle) {
           const field = document.querySelector('.cart-drawer__note-field');
           const isExpanded = noteToggle.getAttribute('aria-expanded') === 'true';
           noteToggle.setAttribute('aria-expanded', !isExpanded);
           if (field) field.hidden = isExpanded;
-        });
-      }
+          return;
+        }
 
-      // Close button
-      const close = document.querySelector('[data-cart-close]');
-      const drawer = document.querySelector('[data-cart-drawer]');
-      const overlay = document.querySelector('[data-cart-overlay]');
-      if (close && drawer) {
-        close.addEventListener('click', () => this.close(drawer, overlay));
-      }
+        // Close button
+        const closeBtn = e.target.closest('[data-cart-close]');
+        if (closeBtn) {
+          const drawer = document.querySelector('[data-cart-drawer]');
+          const overlay = document.querySelector('[data-cart-overlay]');
+          if (drawer) this.close(drawer, overlay);
+          return;
+        }
+      });
+
+      // Quantity input change (use event delegation)
+      document.addEventListener('change', (e) => {
+        const input = e.target.closest('.cart-drawer__qty-input');
+        if (input) {
+          const key = input.dataset.qtyInput;
+          const qty = parseInt(input.value) || 0;
+          this.updateQuantity(key, qty);
+        }
+      });
     }
   };
 
@@ -509,7 +520,10 @@
             btn.classList.add('btn--added');
           }
           utils.announce('Item added to cart', 'assertive');
+
+          // Update cart count AND refresh drawer content
           cartDrawer.refresh();
+          await cartDrawer.refreshDrawerContent();
 
           // Pulse animation on cart count
           document.querySelectorAll('[data-cart-count]').forEach(el => {
@@ -522,7 +536,7 @@
           const drawer = document.querySelector('[data-cart-drawer]');
           const overlay = document.querySelector('[data-cart-overlay]');
           if (drawer && window.theme?.cartType === 'drawer') {
-            setTimeout(() => cartDrawer.open(drawer, overlay), 300);
+            cartDrawer.open(drawer, overlay);
           }
         } catch (err) {
           console.error(err);
