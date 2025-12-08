@@ -57,6 +57,9 @@
     "search_show_products": true,
     "search_show_collections": true,
     "search_show_pages": false,
+    "enable_wishlist": false,
+    "wishlist_show_on_cards": false,
+    "enable_sticky_add_to_cart": false,
     "product_card_show_secondary_image": true,
     "sections": {
       "header": {
