@@ -1,15 +1,62 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "Header group",
   "type": "header",
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "blocks": {
+        "mega_menu_EniUqc": {
+          "type": "mega_menu",
+          "settings": {
+            "title": "Shop",
+            "collection_1": "",
+            "collection_2": "",
+            "collection_3": "",
+            "featured_title": "",
+            "featured_link": ""
+          }
+        },
+        "dropdown_bE4cfC": {
+          "type": "dropdown",
+          "settings": {
+            "title": "More",
+            "menu": "main-menu"
+          }
+        }
+      },
+      "block_order": [
+        "mega_menu_EniUqc",
+        "dropdown_bE4cfC"
+      ],
+      "settings": {
+        "announcement_show": true,
+        "announcement_text": "Free shipping on orders over $500",
+        "announcement_bg": "#002868",
+        "announcement_color": "#ffffff",
+        "announcement_icon": "shield",
+        "announcement_link": "",
+        "announcement_link_text": "Learn More",
+        "announcement_countdown": false,
+        "countdown_date": ""
+      }
     },
     "trust-bar": {
       "type": "trust-bar",
+      "disabled": true,
       "settings": {}
     }
   },
-  "order": ["header", "trust-bar"]
+  "order": [
+    "header",
+    "trust-bar"
+  ]
 }
