@@ -99,7 +99,26 @@
     </div>
 
     <div class="footer__bottom">
-      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+      <div class="footer__bottom-left">
+        <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+        {%- if section.settings.show_policy_links -%}
+          <nav class="footer__policies" aria-label="Policy links">
+            {%- for policy in shop.policies -%}
+              {%- if policy != blank -%}
+                <a href="{{ policy.url }}">{{ policy.title }}</a>
+              {%- endif -%}
+            {%- endfor -%}
+          </nav>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.show_payment_icons -%}
+        <div class="footer__payments" aria-label="Accepted payment methods">
+          <span class="visually-hidden">Payment methods</span>
+          {%- for type in shop.enabled_payment_types -%}
+            {{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
     </div>
   </div>
 </footer>
@@ -142,6 +161,24 @@
       "type": "link_list",
       "id": "menu_2",
       "label": "Menu 2"
+    },
+    {
+      "type": "header",
+      "content": "Footer bottom"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "info": "Displays accepted payment methods",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_policy_links",
+      "label": "Show policy links",
+      "info": "Display links to store policies (set up in Settings > Policies)",
+      "default": true
     }
   ]
 }

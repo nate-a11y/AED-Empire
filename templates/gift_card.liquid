@@ -19,6 +19,17 @@
     .gift-card__actions{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-top:30px}
     .gift-card__actions a,.gift-card__actions button{padding:12px 24px;font-weight:600;text-transform:uppercase;text-decoration:none;border:2px solid #fff;background:transparent;color:#fff;cursor:pointer;font-size:.875rem}
     .gift-card__actions a:hover,.gift-card__actions button:hover{background:#fff;color:var(--color-secondary)}
+
+    /* Print styles */
+    @media print {
+      body { background: #fff; color: #000; padding: 0; }
+      .gift-card { background: #fff; padding: 20px; border: 2px solid #000; max-width: 100%; }
+      .gift-card__amount { color: #000; }
+      .gift-card__code { background: #f5f5f5; color: #000; border: 1px solid #000; }
+      .gift-card__actions { display: none; }
+      .gift-card__qr { filter: none; }
+      a { color: #000; }
+    }
   </style>
 </head>
 <body>

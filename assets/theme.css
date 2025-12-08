@@ -430,7 +430,14 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 .cart-drawer__shipping { background: var(--color-bg); padding: 15px; margin-bottom: 15px; text-align: center; font-size: 0.875rem; border-radius: 4px; }
 .cart-drawer__shipping-bar { height: 4px; background: var(--color-border); border-radius: 2px; margin-top: 10px; overflow: hidden; }
 .cart-drawer__shipping-progress { height: 100%; background: var(--color-success); transition: width 0.3s; }
-.cart-drawer__subtotal { display: flex; justify-content: space-between; font-size: 1.125rem; font-weight: 700; margin-bottom: 15px; }
+.cart-drawer__order-note { margin-bottom: 15px; }
+.cart-drawer__note-toggle { display: flex; align-items: center; gap: 8px; background: none; border: none; color: var(--color-text-light); font-size: 0.875rem; cursor: pointer; padding: 0; }
+.cart-drawer__note-toggle:hover { color: var(--color-text); }
+.cart-drawer__note-toggle svg { flex-shrink: 0; }
+.cart-drawer__note-field { margin-top: 10px; }
+.cart-drawer__note-field textarea { width: 100%; min-height: 80px; padding: 12px; border: 1px solid var(--color-border); border-radius: 4px; font-family: inherit; font-size: 0.875rem; resize: vertical; }
+.cart-drawer__subtotal { display: flex; justify-content: space-between; font-size: 1.125rem; font-weight: 700; margin-bottom: 10px; }
+.cart-drawer__shipping-note { font-size: 0.8125rem; color: var(--color-text-light); margin-bottom: 15px; }
 .cart-drawer__actions { display: grid; gap: 10px; }
 
 /* =========================================
@@ -455,9 +462,14 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 .footer__contact svg { flex-shrink: 0; margin-top: 2px; opacity: 0.7; }
 .footer__contact a { color: rgba(255,255,255,0.7); }
 .footer__contact a:hover { color: #fff; }
-.footer__bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; padding: 25px 0; color: rgba(255,255,255,0.5); font-size: 0.875rem; }
-.footer__payments { display: flex; gap: 10px; }
-.footer__payments svg { height: 24px; opacity: 0.5; }
+.footer__bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; padding: 25px 0; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 40px; color: rgba(255,255,255,0.5); font-size: 0.875rem; }
+.footer__bottom-left { display: flex; flex-direction: column; gap: 10px; }
+.footer__policies { display: flex; flex-wrap: wrap; gap: 15px; }
+.footer__policies a { color: rgba(255,255,255,0.5); transition: color 0.2s; }
+.footer__policies a:hover { color: #fff; }
+.footer__payments { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.footer__payment-icon { height: 24px; width: auto; opacity: 0.7; transition: opacity 0.2s; }
+.footer__payment-icon:hover { opacity: 1; }
 
 /* =========================================
    TRUST BAR

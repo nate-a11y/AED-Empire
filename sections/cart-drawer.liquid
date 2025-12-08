@@ -72,11 +72,21 @@
 
   {% if cart.items.size > 0 %}
     <div class="cart-drawer__footer">
+      <div class="cart-drawer__order-note">
+        <button type="button" class="cart-drawer__note-toggle" aria-expanded="false" aria-controls="cart-note-field">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Add order note
+        </button>
+        <div class="cart-drawer__note-field" id="cart-note-field" hidden>
+          <label for="cart-note-input" class="visually-hidden">Order note</label>
+          <textarea id="cart-note-input" name="note" placeholder="Special instructions for your order..." data-cart-note>{{ cart.note }}</textarea>
+        </div>
+      </div>
       <div class="cart-drawer__subtotal">
         <span>Subtotal</span>
         <span data-cart-subtotal>{{ cart.total_price | money }}</span>
       </div>
-      <p class="cart-drawer__note">Shipping & taxes calculated at checkout</p>
+      <p class="cart-drawer__shipping-note">Shipping & taxes calculated at checkout</p>
       <div class="cart-drawer__actions">
         <a href="/checkout" class="btn btn--primary btn--full">
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
