@@ -14,35 +14,23 @@
     "header": {
       "type": "header",
       "blocks": {
-        "mega_menu_EniUqc": {
-          "type": "mega_menu",
+        "menu_item_LLHp87": {
+          "type": "menu_item",
           "settings": {
-            "title": "Shop",
-            "collection_1": "",
-            "collection_2": "",
-            "collection_3": "",
-            "featured_title": "",
-            "featured_link": ""
-          }
-        },
-        "dropdown_bE4cfC": {
-          "type": "dropdown",
-          "settings": {
-            "title": "More",
-            "menu": "main-menu"
+            "title": "Home",
+            "link": "shopify://collections/frontpage"
           }
         }
       },
       "block_order": [
-        "mega_menu_EniUqc",
-        "dropdown_bE4cfC"
+        "menu_item_LLHp87"
       ],
       "settings": {
-        "announcement_show": true,
+        "announcement_show": false,
         "announcement_text": "Free shipping on orders over $500",
         "announcement_bg": "#002868",
         "announcement_color": "#ffffff",
-        "announcement_icon": "shield",
+        "announcement_icon": "",
         "announcement_link": "",
         "announcement_link_text": "Learn More",
         "announcement_countdown": false,

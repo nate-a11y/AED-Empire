@@ -13,7 +13,14 @@
   "sections": {
     "footer": {
       "type": "footer",
-      "settings": {}
+      "settings": {
+        "about_text": "Your trusted source for AEDs and life safety equipment. Authorized dealer serving schools, businesses, and communities nationwide.",
+        "show_follow_on_shop": true,
+        "menu_1_title": "Shop",
+        "menu_1": "footer-menu-nb",
+        "menu_2_title": "Company",
+        "menu_2": "company-menu-nb"
+      }
     }
   },
   "order": [

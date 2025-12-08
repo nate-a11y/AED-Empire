@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -14,7 +23,6 @@
     },
     "trust-bar": {
       "type": "trust-bar",
-      "disabled": false,
       "settings": {}
     },
     "featured": {
@@ -22,25 +30,61 @@
       "settings": {
         "title": "Featured Products",
         "subtitle": "Quality life safety equipment from trusted brands",
+        "collection": "automatic-external-defibrillators-aeds",
         "limit": 4,
         "columns": 4,
-        "show_view_all": true
+        "show_view_all": true,
+        "alt_bg": false
       }
     },
     "icon-columns": {
       "type": "icon-columns",
+      "blocks": {
+        "block1": {
+          "type": "column",
+          "settings": {
+            "icon": "shield",
+            "title": "FDA Registered",
+            "text": "All products meet FDA safety standards"
+          }
+        },
+        "block2": {
+          "type": "column",
+          "settings": {
+            "icon": "award",
+            "title": "Authorized Dealer",
+            "text": "Official dealer for top AED brands"
+          }
+        },
+        "block3": {
+          "type": "column",
+          "settings": {
+            "icon": "truck",
+            "title": "Free Shipping",
+            "text": "On orders over $500"
+          }
+        },
+        "block4": {
+          "type": "column",
+          "settings": {
+            "icon": "phone",
+            "title": "Expert Support",
+            "text": "Knowledgeable team ready to help"
+          }
+        }
+      },
+      "block_order": [
+        "block1",
+        "block2",
+        "block3",
+        "block4"
+      ],
       "settings": {
         "title": "Why Choose AED Empire?",
+        "subtitle": "",
         "columns": 4,
         "alt_bg": true
-      },
-      "blocks": {
-        "block1": {"type": "column", "settings": {"icon": "shield", "title": "FDA Registered", "text": "All products meet FDA safety standards"}},
-        "block2": {"type": "column", "settings": {"icon": "award", "title": "Authorized Dealer", "text": "Official dealer for top AED brands"}},
-        "block3": {"type": "column", "settings": {"icon": "truck", "title": "Free Shipping", "text": "On orders over $500"}},
-        "block4": {"type": "column", "settings": {"icon": "phone", "title": "Expert Support", "text": "Knowledgeable team ready to help"}}
-      },
-      "block_order": ["block1", "block2", "block3", "block4"]
+      }
     },
     "cta-bar": {
       "type": "cta-bar",
@@ -60,29 +104,68 @@
         "title": "Making Life Safety Accessible",
         "text": "<p>We believe every school, business, and community should have access to quality life-saving equipment without breaking the bank. That's why we partner directly with top manufacturers to offer the best prices.</p>",
         "button_text": "About Us",
-        "button_link": "/pages/about"
+        "button_link": "/pages/about",
+        "alt_bg": false
       }
     },
     "testimonials": {
       "type": "testimonials",
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Excellent products and outstanding customer service. The AED arrived quickly and the team walked us through setup.",
+            "author": "John Smith",
+            "title": "Safety Director, ABC Company"
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Best prices I found anywhere and they made sure we got exactly what we needed for our school.",
+            "author": "Sarah Johnson",
+            "title": "Principal, Lincoln Elementary"
+          }
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Their expertise really helped us choose the right equipment for our community center.",
+            "author": "Mike Williams",
+            "title": "Recreation Director"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
       "settings": {
         "title": "What Our Customers Say",
+        "subtitle": "",
         "alt_bg": true
-      },
-      "blocks": {
-        "t1": {"type": "testimonial", "settings": {"quote": "Excellent products and outstanding customer service. The AED arrived quickly and the team walked us through setup.", "author": "John Smith", "title": "Safety Director, ABC Company"}},
-        "t2": {"type": "testimonial", "settings": {"quote": "Best prices I found anywhere and they made sure we got exactly what we needed for our school.", "author": "Sarah Johnson", "title": "Principal, Lincoln Elementary"}},
-        "t3": {"type": "testimonial", "settings": {"quote": "Their expertise really helped us choose the right equipment for our community center.", "author": "Mike Williams", "title": "Recreation Director"}}
-      },
-      "block_order": ["t1", "t2", "t3"]
+      }
     },
     "newsletter": {
       "type": "newsletter",
       "settings": {
         "title": "Stay Prepared",
-        "text": "Subscribe to receive safety tips, product updates, and exclusive offers."
+        "text": "Subscribe to receive safety tips, product updates, and exclusive offers.",
+        "placeholder": "Enter your email",
+        "button_text": "Subscribe",
+        "dark": false
       }
     }
   },
-  "order": ["hero", "trust-bar", "featured", "icon-columns", "cta-bar", "image-text", "testimonials", "newsletter"]
+  "order": [
+    "hero",
+    "trust-bar",
+    "featured",
+    "icon-columns",
+    "cta-bar",
+    "image-text",
+    "testimonials",
+    "newsletter"
+  ]
 }

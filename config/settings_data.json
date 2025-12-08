@@ -9,6 +9,7 @@
  */
 {
   "current": {
+    "logo": "shopify://shop_images/logo.jpg",
     "logo_width": 180,
     "logo_width_mobile": 120,
     "color_primary": "#C41E3A",
@@ -33,6 +34,7 @@
     "contact_phone": "(402) 968-3712",
     "contact_email": "jill@talackosafetysolutions.com; dustin@talackosafetysolutions.com",
     "contact_hours": "Mon-Fri 9am-5pm EST",
+    "social_facebook": "https://www.facebook.com/profile.php?id=61584132672855#",
     "show_trust_badges": true,
     "trust_badge_1": "FDA Registered",
     "trust_badge_1_icon": "shield",
