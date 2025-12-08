@@ -10,8 +10,9 @@
 {
   "current": {
     "logo": "shopify://shop_images/logo.jpg",
-    "logo_width": 180,
-    "logo_width_mobile": 120,
+    "logo_width": 100,
+    "logo_width_mobile": 80,
+    "favicon": "shopify://shop_images/logo.jpg",
     "color_primary": "#C41E3A",
     "color_primary_hover": "#A01830",
     "color_secondary": "#002868",
