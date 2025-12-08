@@ -150,37 +150,7 @@
         </div>
 
         {% paginate collection.products by section.settings.products_per_page %}
-          {% if paginate.pages > 1 %}
-            <nav class="pagination" aria-label="Pagination">
-              {% if paginate.previous %}
-                <a href="{{ paginate.previous.url }}" class="pagination__btn">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-                  Previous
-                </a>
-              {% endif %}
-              
-              <div class="pagination__pages">
-                {% for part in paginate.parts %}
-                  {% if part.is_link %}
-                    <a href="{{ part.url }}" class="pagination__page">{{ part.title }}</a>
-                  {% else %}
-                    {% if part.title == paginate.current_page %}
-                      <span class="pagination__page pagination__page--current" aria-current="page">{{ part.title }}</span>
-                    {% else %}
-                      <span class="pagination__page pagination__page--gap">{{ part.title }}</span>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </div>
-              
-              {% if paginate.next %}
-                <a href="{{ paginate.next.url }}" class="pagination__btn">
-                  Next
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                </a>
-              {% endif %}
-            </nav>
-          {% endif %}
+          {% render 'pagination', paginate: paginate, anchor: '#collection-products' %}
         {% endpaginate %}
       </div>
     </div>

@@ -20,12 +20,7 @@
       {% endfor %}
     </div>
     
-    {% if paginate.pages > 1 %}
-      <div class="pagination">
-        {% if paginate.previous %}<a href="{{ paginate.previous.url }}">Previous</a>{% endif %}
-        {% if paginate.next %}<a href="{{ paginate.next.url }}">Next</a>{% endif %}
-      </div>
-    {% endif %}
+    {% render 'pagination', paginate: paginate %}
   </div>
 </section>
 {%- endpaginate -%}
