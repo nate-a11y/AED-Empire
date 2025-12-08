@@ -312,18 +312,25 @@
         });
       });
 
-      if (drawer) {
-        overlay?.addEventListener('click', () => this.close(drawer, overlay));
-
-        // Close on escape
-        document.addEventListener('keydown', (e) => {
+      // Close on overlay click (use event delegation)
+      document.addEventListener('click', (e) => {
+        if (e.target.matches('[data-cart-overlay]')) {
           const currentDrawer = document.querySelector('[data-cart-drawer]');
-          if (e.key === 'Escape' && currentDrawer?.classList.contains('is-open')) {
-            const currentOverlay = document.querySelector('[data-cart-overlay]');
+          const currentOverlay = document.querySelector('[data-cart-overlay]');
+          if (currentDrawer?.classList.contains('is-open')) {
             this.close(currentDrawer, currentOverlay);
           }
-        });
-      }
+        }
+      });
+
+      // Close on escape
+      document.addEventListener('keydown', (e) => {
+        const currentDrawer = document.querySelector('[data-cart-drawer]');
+        if (e.key === 'Escape' && currentDrawer?.classList.contains('is-open')) {
+          const currentOverlay = document.querySelector('[data-cart-overlay]');
+          this.close(currentDrawer, currentOverlay);
+        }
+      });
     },
 
     open(drawer, overlay) {
