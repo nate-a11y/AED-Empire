@@ -520,7 +520,10 @@
             btn.classList.add('btn--added');
           }
           utils.announce('Item added to cart', 'assertive');
+
+          // Update cart count AND refresh drawer content
           cartDrawer.refresh();
+          await cartDrawer.refreshDrawerContent();
 
           // Pulse animation on cart count
           document.querySelectorAll('[data-cart-count]').forEach(el => {
@@ -533,7 +536,7 @@
           const drawer = document.querySelector('[data-cart-drawer]');
           const overlay = document.querySelector('[data-cart-overlay]');
           if (drawer && window.theme?.cartType === 'drawer') {
-            setTimeout(() => cartDrawer.open(drawer, overlay), 300);
+            cartDrawer.open(drawer, overlay);
           }
         } catch (err) {
           console.error(err);
