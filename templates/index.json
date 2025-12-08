@@ -99,7 +99,7 @@
     "image-text": {
       "type": "image-with-text",
       "settings": {
-        "image": "{{ shop.brand.logo }}",
+        "image": "shopify://shop_images/Zoll_plus2_e416ccca-79bc-495e-98a1-e4816f08a22a.jpg",
         "image_position": "right",
         "subheading": "Our Mission",
         "title": "Making Life Safety Accessible",
