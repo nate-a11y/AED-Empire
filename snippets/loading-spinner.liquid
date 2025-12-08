@@ -1,0 +1,16 @@
+{% comment %}
+  Renders a loading spinner.
+  Following Dawn theme best practices.
+
+  Accepts:
+  - class: {String} Additional CSS classes (optional)
+
+  Usage:
+  {% render 'loading-spinner' %}
+  {% render 'loading-spinner', class: 'button__spinner' %}
+{% endcomment %}
+
+<div class="loading-spinner{% if class %} {{ class }}{% endif %}">
+  <span class="visually-hidden">Loading</span>
+  {{- 'loading-spinner.svg' | inline_asset_content -}}
+</div>

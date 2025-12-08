@@ -458,6 +458,13 @@
     "name": "Cart",
     "settings": [
       {
+        "type": "checkbox",
+        "id": "currency_code_enabled",
+        "label": "Show currency codes",
+        "info": "Display currency code (e.g., USD) alongside prices",
+        "default": false
+      },
+      {
         "type": "select",
         "id": "cart_type",
         "label": "Cart type",

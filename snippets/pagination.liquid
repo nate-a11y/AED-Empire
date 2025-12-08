@@ -1,0 +1,78 @@
+{% comment %}
+  Renders pagination links. Must be used within paginate tags.
+  Following Dawn theme best practices.
+
+  Accepts:
+  - paginate: {Object} Paginate object (required)
+  - anchor: {String} Anchor link to jump to on page load (optional)
+
+  Usage:
+  {% paginate collection.products by 12 %}
+    {% render 'pagination', paginate: paginate %}
+  {% endpaginate %}
+
+  With anchor:
+  {% render 'pagination', paginate: paginate, anchor: '#products' %}
+{% endcomment %}
+
+{%- if paginate.pages > 1 -%}
+  <nav class="pagination" role="navigation" aria-label="Pagination">
+    <ul class="pagination__list" role="list">
+      {%- if paginate.previous -%}
+        <li class="pagination__item">
+          <a
+            href="{{ paginate.previous.url }}{{ anchor }}"
+            class="pagination__link pagination__link--prev"
+            aria-label="Previous page"
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+            <span class="pagination__label">Previous</span>
+          </a>
+        </li>
+      {%- endif -%}
+
+      {%- for part in paginate.parts -%}
+        <li class="pagination__item">
+          {%- if part.is_link -%}
+            <a
+              href="{{ part.url }}{{ anchor }}"
+              class="pagination__link"
+              aria-label="Page {{ part.title }}"
+            >
+              {{ part.title }}
+            </a>
+          {%- else -%}
+            {%- if part.title == paginate.current_page -%}
+              <span
+                class="pagination__link pagination__link--current"
+                aria-current="page"
+                aria-label="Page {{ part.title }}, current page"
+              >
+                {{ part.title }}
+              </span>
+            {%- else -%}
+              <span class="pagination__link pagination__link--ellipsis">{{ part.title }}</span>
+            {%- endif -%}
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+
+      {%- if paginate.next -%}
+        <li class="pagination__item">
+          <a
+            href="{{ paginate.next.url }}{{ anchor }}"
+            class="pagination__link pagination__link--next"
+            aria-label="Next page"
+          >
+            <span class="pagination__label">Next</span>
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </a>
+        </li>
+      {%- endif -%}
+    </ul>
+  </nav>
+{%- endif -%}
