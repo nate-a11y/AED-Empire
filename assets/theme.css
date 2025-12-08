@@ -221,9 +221,22 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
    COLLECTION PAGE
    ========================================= */
 .collection-page { padding: 40px 0 80px; }
-.collection-header { margin-bottom: 40px; }
+.collection-header { margin-bottom: 30px; }
 .collection-header h1 { margin-bottom: 10px; }
-.collection-header__desc { color: var(--color-text-light); max-width: 800px; }
+
+/* Collapsible Collection Description */
+.collection-description { max-width: 900px; margin-top: 10px; }
+.collection-description__preview,
+.collection-description__content { color: var(--color-text-light); line-height: 1.6; font-size: 0.9375rem; }
+.collection-description__full { color: var(--color-text-light); line-height: 1.7; font-size: 0.9375rem; margin-top: 8px; }
+.collection-description__full[hidden] { display: none; }
+.collection-description__toggle { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 0; background: none; border: none; color: var(--color-primary); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: color 0.2s; }
+.collection-description__toggle:hover { color: var(--color-primary-dark, #001a4d); }
+.collection-description__toggle svg { transition: transform 0.2s; }
+.collection-description__toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+.collection-description__toggle .toggle-less[hidden],
+.collection-description__toggle .toggle-more[hidden] { display: none; }
+
 .collection-layout { display: grid; grid-template-columns: 250px 1fr; gap: 40px; }
 @media (max-width: 1024px) { .collection-layout { grid-template-columns: 1fr; } }
 

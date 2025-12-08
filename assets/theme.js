@@ -715,6 +715,26 @@
         const currentSort = new URL(window.location).searchParams.get('sort_by');
         if (currentSort) sortSelect.value = currentSort;
       }
+
+      // Collection description toggle
+      const descToggle = document.querySelector('[data-description-toggle]');
+      if (descToggle) {
+        descToggle.addEventListener('click', () => {
+          const container = descToggle.closest('[data-collection-description]');
+          const preview = container.querySelector('.collection-description__preview');
+          const full = container.querySelector('.collection-description__full');
+          const moreText = descToggle.querySelector('.toggle-more');
+          const lessText = descToggle.querySelector('.toggle-less');
+
+          const isExpanded = descToggle.getAttribute('aria-expanded') === 'true';
+
+          descToggle.setAttribute('aria-expanded', !isExpanded);
+          preview.hidden = !isExpanded;
+          full.hidden = isExpanded;
+          moreText.hidden = !isExpanded;
+          lessText.hidden = isExpanded;
+        });
+      }
     }
   };
 
