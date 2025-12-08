@@ -10,7 +10,27 @@
     <header class="collection-header">
       <h1>{{ collection.title }}</h1>
       {% if collection.description != blank %}
-        <div class="collection-header__desc">{{ collection.description }}</div>
+        {% assign desc_text = collection.description | strip_html %}
+        {% assign desc_length = desc_text | size %}
+        <div class="collection-description" data-collection-description>
+          {% if desc_length > 200 %}
+            <div class="collection-description__preview">
+              {{ desc_text | truncate: 200, '...' }}
+            </div>
+            <div class="collection-description__full" hidden>
+              {{ collection.description }}
+            </div>
+            <button type="button" class="collection-description__toggle" data-description-toggle aria-expanded="false">
+              <span class="toggle-more">Read more about this collection</span>
+              <span class="toggle-less" hidden>Show less</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          {% else %}
+            <div class="collection-description__content">
+              {{ collection.description }}
+            </div>
+          {% endif %}
+        </div>
       {% endif %}
     </header>
 

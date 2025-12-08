@@ -293,7 +293,6 @@
     init() {
       const drawer = document.querySelector('[data-cart-drawer]');
       const overlay = document.querySelector('[data-cart-overlay]');
-      const close = document.querySelector('[data-cart-close]');
       const toggles = document.querySelectorAll('[data-cart-toggle]');
 
       if (!drawer) return;
@@ -308,7 +307,6 @@
         });
       });
 
-      close?.addEventListener('click', () => this.close(drawer, overlay));
       overlay?.addEventListener('click', () => this.close(drawer, overlay));
 
       // Close on escape
@@ -317,6 +315,9 @@
           this.close(drawer, overlay);
         }
       });
+
+      // Bind drawer events on page load
+      this.bindDrawerEvents();
     },
 
     open(drawer, overlay) {
@@ -351,9 +352,123 @@
     updateUI(cart) {
       // Update cart count badges
       document.querySelectorAll('[data-cart-count]').forEach(el => {
-        el.textContent = cart.item_count;
+        el.textContent = cart.item_count > 0 ? cart.item_count : '';
+        el.setAttribute('data-count', cart.item_count);
         el.setAttribute('aria-label', `${cart.item_count} items in cart`);
       });
+
+      // Update subtotal
+      const subtotal = document.querySelector('[data-cart-subtotal]');
+      if (subtotal) {
+        subtotal.textContent = this.formatMoney(cart.total_price);
+      }
+
+      // Update drawer count text
+      const countText = document.querySelector('.cart-drawer__count');
+      if (countText) {
+        countText.textContent = `(${cart.item_count} ${cart.item_count === 1 ? 'item' : 'items'})`;
+      }
+    },
+
+    formatMoney(cents) {
+      const format = window.theme?.moneyFormat || '${{amount}}';
+      const amount = (cents / 100).toFixed(2);
+      return format.replace('{{amount}}', amount).replace('{{amount_no_decimals}}', Math.round(cents / 100));
+    },
+
+    async updateQuantity(key, quantity) {
+      try {
+        const response = await fetch('/cart/change.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: key, quantity: quantity })
+        });
+        if (!response.ok) throw new Error('Update failed');
+        const cart = await response.json();
+        this.updateUI(cart);
+        document.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
+
+        // Refresh drawer content if item was removed
+        if (quantity === 0) {
+          this.refreshDrawerContent();
+        }
+      } catch (e) {
+        console.error('Cart update error:', e);
+        utils.announce('Could not update cart', 'assertive');
+      }
+    },
+
+    async refreshDrawerContent() {
+      try {
+        const response = await fetch('/?section_id=cart-drawer');
+        if (!response.ok) return;
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newDrawer = doc.querySelector('.cart-drawer');
+        const currentDrawer = document.querySelector('.cart-drawer');
+        if (newDrawer && currentDrawer) {
+          currentDrawer.innerHTML = newDrawer.innerHTML;
+          this.bindDrawerEvents();
+        }
+      } catch (e) {
+        console.error('Drawer refresh error:', e);
+      }
+    },
+
+    bindDrawerEvents() {
+      // Quantity buttons
+      document.querySelectorAll('[data-qty-change]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.qtyChange;
+          const action = btn.dataset.qtyAction;
+          const input = document.querySelector(`[data-qty-input="${key}"]`);
+          if (!input) return;
+
+          let qty = parseInt(input.value) || 1;
+          if (action === 'minus') qty = Math.max(0, qty - 1);
+          if (action === 'plus') qty = Math.min(99, qty + 1);
+
+          input.value = qty;
+          this.updateQuantity(key, qty);
+        });
+      });
+
+      // Remove buttons
+      document.querySelectorAll('[data-remove-item]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.removeItem;
+          this.updateQuantity(key, 0);
+        });
+      });
+
+      // Quantity input change
+      document.querySelectorAll('.cart-drawer__qty-input').forEach(input => {
+        input.addEventListener('change', () => {
+          const key = input.dataset.qtyInput;
+          const qty = parseInt(input.value) || 0;
+          this.updateQuantity(key, qty);
+        });
+      });
+
+      // Order note toggle
+      const noteToggle = document.querySelector('.cart-drawer__note-toggle');
+      if (noteToggle) {
+        noteToggle.addEventListener('click', () => {
+          const field = document.querySelector('.cart-drawer__note-field');
+          const isExpanded = noteToggle.getAttribute('aria-expanded') === 'true';
+          noteToggle.setAttribute('aria-expanded', !isExpanded);
+          if (field) field.hidden = isExpanded;
+        });
+      }
+
+      // Close button
+      const close = document.querySelector('[data-cart-close]');
+      const drawer = document.querySelector('[data-cart-drawer]');
+      const overlay = document.querySelector('[data-cart-overlay]');
+      if (close && drawer) {
+        close.addEventListener('click', () => this.close(drawer, overlay));
+      }
     }
   };
 
@@ -389,9 +504,19 @@
             throw new Error(error.description || 'Add to cart failed');
           }
 
-          if (btn) btn.textContent = 'Added!';
+          if (btn) {
+            btn.textContent = 'Added!';
+            btn.classList.add('btn--added');
+          }
           utils.announce('Item added to cart', 'assertive');
           cartDrawer.refresh();
+
+          // Pulse animation on cart count
+          document.querySelectorAll('[data-cart-count]').forEach(el => {
+            el.classList.remove('cart-count--pulse');
+            void el.offsetWidth; // Force reflow to restart animation
+            el.classList.add('cart-count--pulse');
+          });
 
           // Open cart drawer
           const drawer = document.querySelector('[data-cart-drawer]');
@@ -408,6 +533,7 @@
             if (btn) {
               btn.disabled = false;
               btn.textContent = originalText;
+              btn.classList.remove('btn--added');
               btn.setAttribute('aria-busy', 'false');
               if (originalAriaLabel) btn.setAttribute('aria-label', originalAriaLabel);
             }
@@ -633,9 +759,13 @@
         btn.addEventListener('click', () => {
           const expanded = btn.getAttribute('aria-expanded') === 'true';
           btn.setAttribute('aria-expanded', !expanded);
-          const answer = btn.nextElementSibling;
-          answer.classList.toggle('is-open');
-          answer.setAttribute('aria-hidden', expanded);
+          // Find the answer div - it's a sibling of the h3 parent, not the button
+          const faqItem = btn.closest('.faq-item');
+          const answer = faqItem ? faqItem.querySelector('.faq-answer') : null;
+          if (answer) {
+            answer.classList.toggle('is-open', !expanded);
+            answer.setAttribute('aria-hidden', expanded);
+          }
         });
       });
     }
@@ -714,6 +844,26 @@
         // Set current sort
         const currentSort = new URL(window.location).searchParams.get('sort_by');
         if (currentSort) sortSelect.value = currentSort;
+      }
+
+      // Collection description toggle
+      const descToggle = document.querySelector('[data-description-toggle]');
+      if (descToggle) {
+        descToggle.addEventListener('click', () => {
+          const container = descToggle.closest('[data-collection-description]');
+          const preview = container.querySelector('.collection-description__preview');
+          const full = container.querySelector('.collection-description__full');
+          const moreText = descToggle.querySelector('.toggle-more');
+          const lessText = descToggle.querySelector('.toggle-less');
+
+          const isExpanded = descToggle.getAttribute('aria-expanded') === 'true';
+
+          descToggle.setAttribute('aria-expanded', !isExpanded);
+          preview.hidden = !isExpanded;
+          full.hidden = isExpanded;
+          moreText.hidden = !isExpanded;
+          lessText.hidden = isExpanded;
+        });
       }
     }
   };

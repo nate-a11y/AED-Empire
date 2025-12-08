@@ -150,9 +150,9 @@
             </a>
           {% endif %}
 
-          <a href="/cart" class="header__cart" data-cart-toggle aria-label="Cart, {{ cart.item_count }} items">
+          <a href="/cart" class="header__cart" data-cart-toggle aria-label="Cart{% if cart.item_count > 0 %}, {{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %}{% endif %}">
             <svg aria-hidden="true" focusable="false" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-            <span class="header__cart-count" data-cart-count aria-hidden="true">{{ cart.item_count }}</span>
+            <span class="header__cart-count" data-cart-count data-count="{{ cart.item_count }}" aria-hidden="true">{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>
           </a>
         </div>
       </div>
