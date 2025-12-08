@@ -1350,7 +1350,7 @@
         <input type="text" class="quick-order-form__input" placeholder="SKU or Product Name" aria-label="SKU or Product Name" required>
         <input type="number" class="quick-order-form__input" placeholder="Qty" min="1" value="1" aria-label="Quantity" required>
         <button type="button" class="quick-order-form__remove" data-quick-order-remove aria-label="Remove row">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" stroke="#1a1a2e"/><line x1="6" y1="6" x2="18" y2="18" stroke="#1a1a2e"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" style="stroke:#1a1a2e !important"/><line x1="6" y1="6" x2="18" y2="18" style="stroke:#1a1a2e !important"/></svg>
         </button>
       `;
       rows.appendChild(newRow);
@@ -1645,7 +1645,7 @@
           <div class="quick-view-modal__overlay" data-quick-view-close></div>
           <div class="quick-view-modal__content">
             <button type="button" class="quick-view-modal__close" data-quick-view-close aria-label="Close">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" stroke="#1a1a2e"/><line x1="6" y1="6" x2="18" y2="18" stroke="#1a1a2e"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" style="stroke:#1a1a2e !important"/><line x1="6" y1="6" x2="18" y2="18" style="stroke:#1a1a2e !important"/></svg>
             </button>
             <div class="quick-view-modal__image">
               <img src="${product.featured_image}" alt="${product.title}" width="450" height="450">
