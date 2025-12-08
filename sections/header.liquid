@@ -1,23 +1,4 @@
 <header class="header" data-header>
-  {%- if section.settings.announcement_show and section.settings.announcement_text != blank -%}
-    <div class="header__announcement" role="region" aria-label="Promotions" style="background: {{ section.settings.announcement_bg }}; color: {{ section.settings.announcement_color }};">
-      <div class="container">
-        <div class="announcement-inner">
-          {% if section.settings.announcement_icon %}
-            <span class="announcement-icon" aria-hidden="true">{% render 'icon', name: section.settings.announcement_icon %}</span>
-          {% endif %}
-          <span>{{ section.settings.announcement_text }}</span>
-          {% if section.settings.announcement_countdown and section.settings.countdown_date != blank %}
-            <span class="countdown" data-countdown="{{ section.settings.countdown_date }}" aria-live="polite" aria-atomic="true"></span>
-          {% endif %}
-          {% if section.settings.announcement_link != blank %}
-            <a href="{{ section.settings.announcement_link }}" class="announcement-link" style="color: {{ section.settings.announcement_color }};">{{ section.settings.announcement_link_text | default: 'Learn More' }}</a>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  {%- endif -%}
-
   <div class="header__main">
     <div class="container">
       <div class="header__inner">
@@ -253,73 +234,7 @@
 {% schema %}
 {
   "name": "Header",
-  "settings": [
-    {
-      "type": "header",
-      "content": "Announcement Bar"
-    },
-    {
-      "type": "checkbox",
-      "id": "announcement_show",
-      "label": "Show announcement bar",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "announcement_text",
-      "label": "Announcement text",
-      "default": "Free shipping on orders over $500"
-    },
-    {
-      "type": "color",
-      "id": "announcement_bg",
-      "label": "Background color",
-      "default": "#002868"
-    },
-    {
-      "type": "color",
-      "id": "announcement_color",
-      "label": "Text color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "select",
-      "id": "announcement_icon",
-      "label": "Icon",
-      "options": [
-        {"value": "", "label": "None"},
-        {"value": "shield", "label": "Shield"},
-        {"value": "truck", "label": "Truck"},
-        {"value": "heart", "label": "Heart"},
-        {"value": "clock", "label": "Clock"},
-        {"value": "check", "label": "Checkmark"}
-      ],
-      "default": "truck"
-    },
-    {
-      "type": "url",
-      "id": "announcement_link",
-      "label": "Link"
-    },
-    {
-      "type": "text",
-      "id": "announcement_link_text",
-      "label": "Link text",
-      "default": "Learn More"
-    },
-    {
-      "type": "checkbox",
-      "id": "announcement_countdown",
-      "label": "Show countdown timer",
-      "default": false
-    },
-    {
-      "type": "text",
-      "id": "countdown_date",
-      "label": "Countdown end date",
-      "info": "Format: YYYY-MM-DD HH:MM"
-    }
-  ],
+  "settings": [],
   "blocks": [
     {
       "type": "menu_item",

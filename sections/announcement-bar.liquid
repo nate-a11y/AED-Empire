@@ -1,0 +1,198 @@
+{%- if section.settings.show_announcement -%}
+  <div class="announcement-bar" role="region" aria-label="Announcement" style="background: {{ section.settings.background_color }}; color: {{ section.settings.text_color }};">
+    <div class="container">
+      <div class="announcement-bar__inner">
+        {%- if section.settings.show_icon and section.settings.icon != blank -%}
+          <span class="announcement-bar__icon" aria-hidden="true">
+            {% render 'icon', name: section.settings.icon %}
+          </span>
+        {%- endif -%}
+
+        <div class="announcement-bar__content">
+          {%- if section.settings.link != blank -%}
+            <a href="{{ section.settings.link }}" class="announcement-bar__link">
+              {{ section.settings.text }}
+            </a>
+          {%- else -%}
+            <p class="announcement-bar__text">{{ section.settings.text }}</p>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.show_countdown and section.settings.countdown_date != blank -%}
+          <div class="announcement-bar__countdown" data-countdown="{{ section.settings.countdown_date }}" aria-live="polite">
+            <span class="countdown__item"><span data-days>00</span>d</span>
+            <span class="countdown__item"><span data-hours>00</span>h</span>
+            <span class="countdown__item"><span data-minutes>00</span>m</span>
+            <span class="countdown__item"><span data-seconds>00</span>s</span>
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.show_dismiss -%}
+          <button type="button" class="announcement-bar__dismiss" aria-label="Dismiss announcement" data-announcement-dismiss>
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+<style>
+  .announcement-bar {
+    padding: 10px 0;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+  .announcement-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .announcement-bar__icon svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .announcement-bar__content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .announcement-bar__text,
+  .announcement-bar__link {
+    margin: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+  .announcement-bar__link:hover {
+    text-decoration: underline;
+  }
+  .announcement-bar__countdown {
+    display: flex;
+    gap: 8px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .countdown__item {
+    background: rgba(0,0,0,0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+  }
+  .announcement-bar__dismiss {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    margin-left: 8px;
+  }
+  .announcement-bar__dismiss:hover {
+    opacity: 1;
+  }
+  .announcement-bar[hidden] {
+    display: none;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "class": "announcement-bar-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "Free shipping on orders over $500"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#002868"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show icon",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "truck", "label": "Truck (shipping)" },
+        { "value": "shield", "label": "Shield (security)" },
+        { "value": "check", "label": "Checkmark" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "clock", "label": "Clock" },
+        { "value": "star", "label": "Star" },
+        { "value": "tag", "label": "Tag (sale)" },
+        { "value": "phone", "label": "Phone" }
+      ],
+      "default": "truck"
+    },
+    {
+      "type": "header",
+      "content": "Countdown"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show countdown timer",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "countdown_date",
+      "label": "Countdown end date",
+      "info": "Format: YYYY-MM-DD HH:MM (e.g., 2024-12-25 00:00)"
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dismiss",
+      "label": "Allow dismiss",
+      "info": "Let customers close the announcement",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar"
+    }
+  ]
+}
+{% endschema %}
