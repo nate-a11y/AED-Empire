@@ -123,7 +123,7 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 .mega-menu__featured-title { position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: #fff; font-weight: 600; }
 
 /* Header Actions */
-.header__actions { display: flex; align-items: center; gap: 15px; }
+.header__actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
 .header__search-toggle, .header__account { background: none; border: none; color: var(--color-text); padding: 8px; display: flex; transition: color 0.2s; }
 .header__search-toggle:hover, .header__account:hover { color: var(--color-primary); }
 .header__phone { display: flex; align-items: center; gap: 8px; color: var(--color-text); font-weight: 500; }
