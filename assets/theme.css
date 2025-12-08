@@ -925,7 +925,7 @@ textarea:focus-visible {
 }
 
 /* Additional ARIA styling */
-[aria-hidden="true"] { display: none !important; }
+/* Note: aria-hidden="true" on SVGs means hidden from screen readers, NOT visually hidden */
 [aria-expanded="true"] + .faq-answer { display: block; }
 [aria-expanded="true"] + .faq-answer[aria-hidden="true"] { display: block; }
 
