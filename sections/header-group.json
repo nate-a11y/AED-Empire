@@ -18,7 +18,7 @@
           "type": "menu_item",
           "settings": {
             "title": "Home",
-            "link": "shopify://collections/frontpage"
+            "link": "https://aedempire.myshopify.com/"
           }
         },
         "dropdown_YP4J6j": {
