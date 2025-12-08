@@ -1,0 +1,68 @@
+{% comment %}
+  Renders social media icons.
+  Follows Dawn theme best practices using separate SVG asset files.
+
+  Accepts:
+  - class: {String} additional class for the container (optional)
+
+  Usage:
+  {% render 'social-icons', class: 'footer__social' %}
+{% endcomment %}
+
+<nav class="social-icons{% if class %} {{ class }}{% endif %}" aria-label="Social media links">
+  {%- if settings.social_facebook != blank -%}
+    <a href="{{ settings.social_facebook }}" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook">
+      <span class="svg-wrapper">
+        {{- 'icon-facebook.svg' | inline_asset_content -}}
+      </span>
+    </a>
+  {%- endif -%}
+
+  {%- if settings.social_instagram != blank -%}
+    <a href="{{ settings.social_instagram }}" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram">
+      <span class="svg-wrapper">
+        {{- 'icon-instagram.svg' | inline_asset_content -}}
+      </span>
+    </a>
+  {%- endif -%}
+
+  {%- if settings.social_tiktok != blank -%}
+    <a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener noreferrer" aria-label="Follow us on TikTok">
+      <span class="svg-wrapper">
+        {{- 'icon-tiktok.svg' | inline_asset_content -}}
+      </span>
+    </a>
+  {%- endif -%}
+
+  {%- if settings.social_youtube != blank -%}
+    <a href="{{ settings.social_youtube }}" target="_blank" rel="noopener noreferrer" aria-label="Subscribe to our YouTube channel">
+      <span class="svg-wrapper">
+        {{- 'icon-youtube.svg' | inline_asset_content -}}
+      </span>
+    </a>
+  {%- endif -%}
+
+  {%- if settings.social_linkedin != blank -%}
+    <a href="{{ settings.social_linkedin }}" target="_blank" rel="noopener noreferrer" aria-label="Connect with us on LinkedIn">
+      <span class="svg-wrapper">
+        {{- 'icon-linkedin.svg' | inline_asset_content -}}
+      </span>
+    </a>
+  {%- endif -%}
+
+  {%- if settings.social_twitter != blank -%}
+    <a href="{{ settings.social_twitter }}" target="_blank" rel="noopener noreferrer" aria-label="Follow us on X (Twitter)">
+      <span class="svg-wrapper">
+        {{- 'icon-twitter.svg' | inline_asset_content -}}
+      </span>
+    </a>
+  {%- endif -%}
+
+  {%- if settings.social_pinterest != blank -%}
+    <a href="{{ settings.social_pinterest }}" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Pinterest">
+      <span class="svg-wrapper">
+        {{- 'icon-pinterest.svg' | inline_asset_content -}}
+      </span>
+    </a>
+  {%- endif -%}
+</nav>
