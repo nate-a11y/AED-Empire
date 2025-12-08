@@ -356,11 +356,19 @@
     },
 
     updateUI(cart) {
-      // Update cart count badges
+      // Update cart count badges (supports both old and Dawn-style markup)
       document.querySelectorAll('[data-cart-count]').forEach(el => {
-        el.textContent = cart.item_count > 0 ? cart.item_count : '';
+        // Check if it has a child span (Dawn-style) or is the text container itself
+        const textEl = el.querySelector('span[aria-hidden]') || el;
+        textEl.textContent = cart.item_count > 0 ? cart.item_count : '';
         el.setAttribute('data-count', cart.item_count);
-        el.setAttribute('aria-label', `${cart.item_count} items in cart`);
+
+        // Show/hide based on count
+        if (cart.item_count > 0) {
+          el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
       });
 
       // Update subtotal
