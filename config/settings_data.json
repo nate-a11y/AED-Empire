@@ -12,6 +12,7 @@
     "logo": "shopify://shop_images/logo.jpg",
     "logo_width": 100,
     "logo_width_mobile": 80,
+    "logo_inverted": "shopify://shop_images/logo.jpg",
     "favicon": "shopify://shop_images/logo.jpg",
     "color_primary": "#C41E3A",
     "color_primary_hover": "#A01830",
@@ -36,6 +37,7 @@
     "contact_email": "jill@talackosafetysolutions.com; dustin@talackosafetysolutions.com",
     "contact_hours": "Mon-Fri 9am-5pm EST",
     "social_facebook": "https://www.facebook.com/profile.php?id=61584132672855#",
+    "social_tiktok": "https://www.tiktok.com/@aed.empire2026?is_from_webapp=1&sender_device=pc",
     "show_trust_badges": true,
     "trust_badge_1": "FDA Registered",
     "trust_badge_1_icon": "shield",
@@ -59,17 +61,7 @@
     "sections": {
       "header": {
         "type": "header",
-        "settings": {
-          "announcement_show": true,
-          "announcement_text": "Free shipping on orders over $500",
-          "announcement_bg": "#1a1a1a",
-          "announcement_color": "#ffffff",
-          "announcement_icon": "truck",
-          "announcement_link": "",
-          "announcement_link_text": "Learn More",
-          "announcement_countdown": false,
-          "countdown_date": ""
-        }
+        "settings": {}
       },
       "trust-bar": {
         "type": "trust-bar",
