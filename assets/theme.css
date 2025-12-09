@@ -540,8 +540,17 @@ button svg line, button svg path, button svg circle, button svg polyline { strok
    ========================================= */
 .footer { background: var(--color-bg-dark, #1a1a1a); color: #fff; padding: 60px 0 0; }
 .footer__grid { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 50px; padding-bottom: 50px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-@media (max-width: 1024px) { .footer__grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 600px) { .footer__grid { grid-template-columns: 1fr; } }
+.footer__grid--6-col { grid-template-columns: 1.5fr repeat(4, 1fr) 1fr; gap: 30px; }
+@media (max-width: 1200px) { .footer__grid--6-col { grid-template-columns: repeat(3, 1fr); gap: 40px; } }
+@media (max-width: 1024px) { .footer__grid { grid-template-columns: repeat(2, 1fr); } .footer__grid--6-col { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .footer__grid { grid-template-columns: 1fr; } .footer__grid--6-col { grid-template-columns: 1fr; } }
+.footer__menu-col { min-width: 0; }
+.footer__links { list-style: none; padding: 0; margin: 0; }
+.footer__links li { margin-bottom: 12px; }
+.footer__links a { color: rgba(255,255,255,0.7); font-size: 0.9375rem; transition: color 0.2s; }
+.footer__links a:hover { color: #fff; }
+.footer__links a[aria-current="page"] { color: #fff; font-weight: 500; }
+.footer__address { white-space: pre-line; }
 .footer__about-logo { margin-bottom: 20px; max-width: 180px; }
 .footer__about-text { color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 25px; }
 .footer__social, .social-icons { display: flex; gap: 12px; flex-wrap: wrap; }

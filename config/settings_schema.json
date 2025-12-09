@@ -168,6 +168,81 @@
     ]
   },
   {
+    "name": "Navigation",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Header navigation"
+      },
+      {
+        "type": "link_list",
+        "id": "main_menu",
+        "label": "Main navigation menu",
+        "default": "main-menu",
+        "info": "Select the menu to use for main navigation. Supports one level of dropdowns."
+      },
+      {
+        "type": "checkbox",
+        "id": "menu_enable_dropdowns",
+        "label": "Enable dropdown menus",
+        "default": true,
+        "info": "Show sub-items as dropdown menus"
+      },
+      {
+        "type": "header",
+        "content": "Footer navigation"
+      },
+      {
+        "type": "text",
+        "id": "footer_menu_1_title",
+        "label": "Footer column 1 title",
+        "default": "Shop"
+      },
+      {
+        "type": "link_list",
+        "id": "footer_menu_1",
+        "label": "Footer column 1 menu",
+        "info": "Select menu for footer column 1"
+      },
+      {
+        "type": "text",
+        "id": "footer_menu_2_title",
+        "label": "Footer column 2 title",
+        "default": "Services"
+      },
+      {
+        "type": "link_list",
+        "id": "footer_menu_2",
+        "label": "Footer column 2 menu",
+        "info": "Select menu for footer column 2"
+      },
+      {
+        "type": "text",
+        "id": "footer_menu_3_title",
+        "label": "Footer column 3 title",
+        "default": "Company"
+      },
+      {
+        "type": "link_list",
+        "id": "footer_menu_3",
+        "label": "Footer column 3 menu",
+        "info": "Select menu for footer column 3"
+      },
+      {
+        "type": "text",
+        "id": "footer_menu_4_title",
+        "label": "Footer column 4 title",
+        "default": "Quick Links"
+      },
+      {
+        "type": "link_list",
+        "id": "footer_menu_4",
+        "label": "Footer column 4 menu",
+        "info": "Select menu for footer column 4"
+      }
+    ]
+  },
+  {
     "name": "Layout",
     "settings": [
       {

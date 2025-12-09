@@ -1,12 +1,17 @@
+{%- comment -%}
+  Footer with 4 menu columns
+  Configure menus in Theme Settings > Navigation
+{%- endcomment -%}
 <footer class="footer" role="contentinfo">
   <div class="container">
-    <div class="footer__grid">
+    <div class="footer__grid footer__grid--6-col">
+      {%- comment -%} About/Brand Column {%- endcomment -%}
       <div class="footer__about">
-        {% if settings.logo_inverted %}
+        {%- if settings.logo_inverted -%}
           <img src="{{ settings.logo_inverted | image_url: width: 150 }}" alt="{{ shop.name }}" class="footer__logo" loading="lazy" width="150">
-        {% elsif settings.logo %}
+        {%- elsif settings.logo -%}
           <img src="{{ settings.logo | image_url: width: 150 }}" alt="{{ shop.name }}" class="footer__logo" loading="lazy" width="150">
-        {% endif %}
+        {%- endif -%}
         <p class="footer__about-text">{{ section.settings.about_text }}</p>
         {% render 'social-icons', class: 'footer__social' %}
         {%- if section.settings.show_follow_on_shop -%}
@@ -16,36 +21,80 @@
         {%- endif -%}
       </div>
 
-      <nav aria-label="{{ section.settings.menu_1_title }}">
-        <h2 class="footer__heading">{{ section.settings.menu_1_title }}</h2>
-        <ul class="footer__links" role="list">
-          {% for link in linklists[section.settings.menu_1].links %}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {% endfor %}
-        </ul>
-      </nav>
+      {%- comment -%} Footer Menu 1 - Shop {%- endcomment -%}
+      {%- if settings.footer_menu_1 != blank -%}
+        <nav class="footer__menu-col" aria-label="{{ settings.footer_menu_1_title | default: 'Shop' }}">
+          <h2 class="footer__heading">{{ settings.footer_menu_1_title | default: 'Shop' }}</h2>
+          <ul class="footer__links" role="list">
+            {%- for link in linklists[settings.footer_menu_1].links -%}
+              <li><a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </nav>
+      {%- endif -%}
 
-      <nav aria-label="{{ section.settings.menu_2_title }}">
-        <h2 class="footer__heading">{{ section.settings.menu_2_title }}</h2>
-        <ul class="footer__links" role="list">
-          {% for link in linklists[section.settings.menu_2].links %}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {% endfor %}
-        </ul>
-      </nav>
+      {%- comment -%} Footer Menu 2 - Services {%- endcomment -%}
+      {%- if settings.footer_menu_2 != blank -%}
+        <nav class="footer__menu-col" aria-label="{{ settings.footer_menu_2_title | default: 'Services' }}">
+          <h2 class="footer__heading">{{ settings.footer_menu_2_title | default: 'Services' }}</h2>
+          <ul class="footer__links" role="list">
+            {%- for link in linklists[settings.footer_menu_2].links -%}
+              <li><a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </nav>
+      {%- endif -%}
 
-      <div class="footer__contact">
-        <h2 class="footer__heading">Contact</h2>
-        {% if settings.contact_phone %}
-          <p><a href="tel:{{ settings.contact_phone | remove: ' ' }}" aria-label="Phone: {{ settings.contact_phone }}">{{ settings.contact_phone }}</a></p>
-        {% endif %}
-        {% if settings.contact_email %}
-          <p><a href="mailto:{{ settings.contact_email }}" aria-label="Email: {{ settings.contact_email }}">{{ settings.contact_email }}</a></p>
-        {% endif %}
-        {% if settings.contact_hours %}
-          <p class="footer__hours">{{ settings.contact_hours }}</p>
-        {% endif %}
-      </div>
+      {%- comment -%} Footer Menu 3 - Company {%- endcomment -%}
+      {%- if settings.footer_menu_3 != blank -%}
+        <nav class="footer__menu-col" aria-label="{{ settings.footer_menu_3_title | default: 'Company' }}">
+          <h2 class="footer__heading">{{ settings.footer_menu_3_title | default: 'Company' }}</h2>
+          <ul class="footer__links" role="list">
+            {%- for link in linklists[settings.footer_menu_3].links -%}
+              <li><a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </nav>
+      {%- endif -%}
+
+      {%- comment -%} Footer Menu 4 - Quick Links {%- endcomment -%}
+      {%- if settings.footer_menu_4 != blank -%}
+        <nav class="footer__menu-col" aria-label="{{ settings.footer_menu_4_title | default: 'Quick Links' }}">
+          <h2 class="footer__heading">{{ settings.footer_menu_4_title | default: 'Quick Links' }}</h2>
+          <ul class="footer__links" role="list">
+            {%- for link in linklists[settings.footer_menu_4].links -%}
+              <li><a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </nav>
+      {%- endif -%}
+
+      {%- comment -%} Contact Column {%- endcomment -%}
+      {%- if settings.contact_phone != blank or settings.contact_email != blank or settings.contact_hours != blank -%}
+        <div class="footer__contact">
+          <h2 class="footer__heading">Contact</h2>
+          {%- if settings.contact_phone -%}
+            <p>
+              <a href="tel:{{ settings.contact_phone | remove: ' ' | remove: '-' | remove: '(' | remove: ')' }}" aria-label="Phone: {{ settings.contact_phone }}">
+                {{ settings.contact_phone }}
+              </a>
+            </p>
+          {%- endif -%}
+          {%- if settings.contact_email -%}
+            <p>
+              <a href="mailto:{{ settings.contact_email }}" aria-label="Email: {{ settings.contact_email }}">
+                {{ settings.contact_email }}
+              </a>
+            </p>
+          {%- endif -%}
+          {%- if settings.contact_hours -%}
+            <p class="footer__hours">{{ settings.contact_hours }}</p>
+          {%- endif -%}
+          {%- if settings.contact_address -%}
+            <p class="footer__address">{{ settings.contact_address }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
     </div>
 
     <div class="footer__bottom">
@@ -78,6 +127,14 @@
   "name": "Footer",
   "settings": [
     {
+      "type": "paragraph",
+      "content": "Configure footer menus in Theme Settings > Navigation."
+    },
+    {
+      "type": "header",
+      "content": "About section"
+    },
+    {
       "type": "textarea",
       "id": "about_text",
       "label": "About text",
@@ -89,28 +146,6 @@
       "label": "Show Follow on Shop button",
       "info": "Allow customers to follow your store on Shop",
       "default": true
-    },
-    {
-      "type": "text",
-      "id": "menu_1_title",
-      "label": "Menu 1 title",
-      "default": "Shop"
-    },
-    {
-      "type": "link_list",
-      "id": "menu_1",
-      "label": "Menu 1"
-    },
-    {
-      "type": "text",
-      "id": "menu_2_title",
-      "label": "Menu 2 title",
-      "default": "Company"
-    },
-    {
-      "type": "link_list",
-      "id": "menu_2",
-      "label": "Menu 2"
     },
     {
       "type": "header",
