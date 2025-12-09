@@ -106,6 +106,11 @@
       {% endif %}
     </p>
 
+    {%- comment -%} Description - visible in list view {%- endcomment -%}
+    {% if product.description != blank %}
+      <p class="product-card__description">{{ product.description | strip_html | truncate: 200 }}</p>
+    {% endif %}
+
     {% if settings.product_card_show_rating %}
       <div class="product-card__rating" data-rating-placeholder aria-label="Product rating">
         <!-- Rating populated by app/JS -->
