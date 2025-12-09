@@ -1,0 +1,299 @@
+{% comment %}
+  Product Comparison Section - Pulls from Product Comparison metaobjects
+
+  Metaobject Definition: Product Comparison
+  Expected fields: title, products (list of product refs), features (list), highlight_product
+{% endcomment %}
+
+<section class="section comparison-mo{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ section.settings.title | default: 'Compare AED Models' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+      <div class="section-header__divider"></div>
+    </div>
+
+    {% assign comparison_handle = section.settings.metaobject_type | default: 'product_comparison' %}
+    {% assign comparisons = shop.metaobjects[comparison_handle].values %}
+
+    {% if comparisons.size > 0 %}
+      {% comment %} Show selector if multiple comparisons {% endcomment %}
+      {% if comparisons.size > 1 and section.settings.show_selector %}
+        <div class="comparison-mo__selector">
+          <label for="comparison-select">Select comparison:</label>
+          <select id="comparison-select" data-comparison-select>
+            {% for comp in comparisons %}
+              <option value="{{ comp.system.handle }}">{{ comp.title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+
+      {% for comparison in comparisons limit: section.settings.limit %}
+        <div class="comparison-mo__table-wrap" data-comparison="{{ comparison.system.handle }}" {% unless forloop.first %}hidden{% endunless %}>
+          {% if comparisons.size > 1 %}
+            <h3 class="comparison-mo__title">{{ comparison.title }}</h3>
+          {% endif %}
+
+          {% assign products = comparison.products.value %}
+          {% if products.size > 0 %}
+            <div class="comparison-mo__table-container">
+              <table class="comparison-mo__table">
+                <thead>
+                  <tr>
+                    <th class="comparison-mo__feature-col">Feature</th>
+                    {% for prod in products %}
+                      <th class="comparison-mo__product-col{% if comparison.highlight_product.value.id == prod.id %} comparison-mo__product-col--highlight{% endif %}">
+                        {% if comparison.highlight_product.value.id == prod.id %}
+                          <span class="comparison-mo__highlight-badge">Recommended</span>
+                        {% endif %}
+                        {% if prod.featured_image %}
+                          <img src="{{ prod.featured_image | image_url: width: 150 }}" alt="{{ prod.title }}" loading="lazy">
+                        {% endif %}
+                        <span class="comparison-mo__product-title">{{ prod.title }}</span>
+                        <span class="comparison-mo__product-price">{{ prod.price | money }}</span>
+                      </th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% comment %} Standard product attributes {% endcomment %}
+                  <tr>
+                    <td>Brand</td>
+                    {% for prod in products %}
+                      <td>{{ prod.vendor }}</td>
+                    {% endfor %}
+                  </tr>
+
+                  {% comment %} Dynamic features from metaobject {% endcomment %}
+                  {% assign features = comparison.features | newline_to_br | split: '<br />' %}
+                  {% for feature in features %}
+                    {% assign feature_clean = feature | strip %}
+                    {% if feature_clean != blank %}
+                      {% assign feature_parts = feature_clean | split: ':' %}
+                      {% assign feature_name = feature_parts[0] | strip %}
+                      <tr>
+                        <td>{{ feature_name }}</td>
+                        {% for prod in products %}
+                          {% comment %} Try to get value from product metafield {% endcomment %}
+                          {% assign feature_handle = feature_name | handleize | replace: '-', '_' %}
+                          {% assign feature_value = prod.metafields.custom[feature_handle] %}
+                          <td>
+                            {% if feature_value != blank %}
+                              {% if feature_value == true or feature_value == 'true' or feature_value == 'yes' %}
+                                <svg class="comparison-mo__check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                              {% elsif feature_value == false or feature_value == 'false' or feature_value == 'no' %}
+                                <svg class="comparison-mo__x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                              {% else %}
+                                {{ feature_value }}
+                              {% endif %}
+                            {% else %}
+                              —
+                            {% endif %}
+                          </td>
+                        {% endfor %}
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+
+                  {% comment %} Action row {% endcomment %}
+                  <tr class="comparison-mo__actions-row">
+                    <td></td>
+                    {% for prod in products %}
+                      <td>
+                        <a href="{{ prod.url }}" class="btn btn--primary btn--small">View Details</a>
+                      </td>
+                    {% endfor %}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="comparison-mo__empty">No comparisons available.</p>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.comparison-mo__selector {
+  max-width: 300px;
+  margin: 0 auto 30px;
+  text-align: center;
+}
+.comparison-mo__selector label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.comparison-mo__selector select {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.comparison-mo__title {
+  text-align: center;
+  margin: 0 0 20px;
+}
+.comparison-mo__table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.comparison-mo__table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+.comparison-mo__table th,
+.comparison-mo__table td {
+  padding: 15px 20px;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+}
+.comparison-mo__feature-col {
+  text-align: left !important;
+  font-weight: 600;
+  background: var(--color-bg-alt);
+  width: 200px;
+}
+.comparison-mo__product-col {
+  vertical-align: bottom;
+  padding: 20px;
+  position: relative;
+}
+.comparison-mo__product-col--highlight {
+  background: linear-gradient(to bottom, rgba(var(--color-primary-rgb, 59, 130, 246), 0.05), transparent);
+  border-left: 2px solid var(--color-primary);
+  border-right: 2px solid var(--color-primary);
+}
+.comparison-mo__highlight-badge {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-primary);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.comparison-mo__product-col img {
+  max-width: 120px;
+  max-height: 100px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+.comparison-mo__product-title {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  margin-bottom: 5px;
+}
+.comparison-mo__product-price {
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.comparison-mo__table tbody td {
+  font-size: 0.9375rem;
+}
+.comparison-mo__table tbody tr:hover {
+  background: var(--color-bg-alt);
+}
+.comparison-mo__check {
+  color: var(--color-success, #22c55e);
+}
+.comparison-mo__x {
+  color: var(--color-text-light);
+  opacity: 0.5;
+}
+.comparison-mo__actions-row td {
+  padding: 20px;
+  border-bottom: none;
+}
+.comparison-mo__empty {
+  text-align: center;
+  color: var(--color-text-light);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const select = document.querySelector('[data-comparison-select]');
+  if (!select) return;
+
+  const tables = document.querySelectorAll('[data-comparison]');
+
+  select.addEventListener('change', function() {
+    const value = this.value;
+    tables.forEach(table => {
+      table.hidden = table.dataset.comparison !== value;
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Comparison (Metaobjects)",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Compare AED Models"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Side-by-side comparison to help you choose"
+    },
+    {
+      "type": "text",
+      "id": "metaobject_type",
+      "label": "Metaobject handle",
+      "default": "product_comparison",
+      "info": "The handle of your Product Comparison metaobject definition"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_selector",
+      "label": "Show comparison selector",
+      "default": true,
+      "info": "If multiple comparisons, show dropdown to switch"
+    },
+    {
+      "type": "number",
+      "id": "limit",
+      "label": "Maximum comparisons",
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Alternate background",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison (Metaobjects)"
+    }
+  ]
+}
+{% endschema %}

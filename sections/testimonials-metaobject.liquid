@@ -1,0 +1,264 @@
+{% comment %}
+  Testimonials Section - Pulls from Testimonial metaobjects
+
+  Metaobject Definition: Testimonial
+  Expected fields: quote, author, title/role, company, image, rating, product (optional ref)
+{% endcomment %}
+
+<section class="section testimonials-mo{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ section.settings.title | default: 'What Our Customers Say' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+      <div class="section-header__divider"></div>
+    </div>
+
+    {% assign testimonial_handle = section.settings.metaobject_type | default: 'testimonial' %}
+    {% assign testimonials = shop.metaobjects[testimonial_handle].values %}
+
+    {% if testimonials.size > 0 %}
+      <div class="testimonials-mo__grid testimonials-mo__grid--{{ section.settings.layout }}">
+        {% for testimonial in testimonials limit: section.settings.limit %}
+          <blockquote class="testimonial-card">
+            {% if testimonial.rating != blank %}
+              <div class="testimonial-card__rating" aria-label="{{ testimonial.rating }} out of 5 stars">
+                {% for i in (1..5) %}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="{% if i <= testimonial.rating %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="1">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <p class="testimonial-card__quote">{{ testimonial.quote }}</p>
+
+            <footer class="testimonial-card__footer">
+              {% if testimonial.image != blank %}
+                <div class="testimonial-card__avatar">
+                  {{ testimonial.image | image_url: width: 80 | image_tag: loading: 'lazy', alt: testimonial.author }}
+                </div>
+              {% endif %}
+
+              <div class="testimonial-card__author">
+                <cite class="testimonial-card__name">{{ testimonial.author }}</cite>
+                {% if testimonial.title != blank or testimonial.company != blank %}
+                  <span class="testimonial-card__role">
+                    {% if testimonial.title != blank %}{{ testimonial.title }}{% endif %}
+                    {% if testimonial.title != blank and testimonial.company != blank %}, {% endif %}
+                    {% if testimonial.company != blank %}{{ testimonial.company }}{% endif %}
+                  </span>
+                {% endif %}
+              </div>
+            </footer>
+
+            {% if testimonial.product.value != blank %}
+              <a href="{{ testimonial.product.value.url }}" class="testimonial-card__product">
+                {% if testimonial.product.value.featured_image %}
+                  <img src="{{ testimonial.product.value.featured_image | image_url: width: 60 }}" alt="" loading="lazy">
+                {% endif %}
+                <span>{{ testimonial.product.value.title }}</span>
+              </a>
+            {% endif %}
+          </blockquote>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.show_cta and section.settings.cta_text != blank %}
+        <div class="testimonials-mo__cta">
+          <a href="{{ section.settings.cta_link }}" class="btn btn--outline">{{ section.settings.cta_text }}</a>
+        </div>
+      {% endif %}
+    {% else %}
+      <p class="testimonials-mo__empty">No testimonials yet.</p>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.testimonials-mo__grid {
+  display: grid;
+  gap: 30px;
+}
+.testimonials-mo__grid--grid {
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+.testimonials-mo__grid--carousel {
+  grid-template-columns: repeat(3, 1fr);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 10px;
+}
+.testimonials-mo__grid--carousel .testimonial-card {
+  scroll-snap-align: start;
+  min-width: 350px;
+}
+@media (max-width: 768px) {
+  .testimonials-mo__grid--grid {
+    grid-template-columns: 1fr;
+  }
+}
+.testimonial-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.testimonial-card__rating {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 15px;
+  color: #f59e0b;
+}
+.testimonial-card__quote {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  margin: 0 0 20px;
+  flex-grow: 1;
+}
+.testimonial-card__quote::before {
+  content: '"';
+  font-size: 2rem;
+  color: var(--color-primary);
+  opacity: 0.3;
+  line-height: 0;
+  vertical-align: -0.4em;
+  margin-right: 5px;
+}
+.testimonial-card__footer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.testimonial-card__avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.testimonial-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.testimonial-card__author {
+  display: flex;
+  flex-direction: column;
+}
+.testimonial-card__name {
+  font-weight: 600;
+  font-style: normal;
+  color: var(--color-heading);
+}
+.testimonial-card__role {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+.testimonial-card__product {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  text-decoration: none;
+}
+.testimonial-card__product:hover {
+  color: var(--color-primary);
+}
+.testimonial-card__product img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: var(--color-bg-alt);
+}
+.testimonials-mo__cta {
+  text-align: center;
+  margin-top: 40px;
+}
+.testimonials-mo__empty {
+  text-align: center;
+  color: var(--color-text-light);
+}
+</style>
+
+{% schema %}
+{
+  "name": "Testimonials (Metaobjects)",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "text",
+      "id": "metaobject_type",
+      "label": "Metaobject handle",
+      "default": "testimonial",
+      "info": "The handle of your Testimonial metaobject definition"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Scrollable row" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "number",
+      "id": "limit",
+      "label": "Maximum testimonials",
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show CTA button",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA text",
+      "default": "Read More Reviews"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA link"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Alternate background",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials (Metaobjects)"
+    }
+  ]
+}
+{% endschema %}
