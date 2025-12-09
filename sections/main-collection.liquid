@@ -17,113 +17,151 @@
     </header>
 
     <div class="collection-layout">
-      <!-- Sidebar Filters -->
-      <aside class="collection-filters" data-filters>
+      <!-- Sidebar Filters - Using Shopify Storefront Filtering -->
+      <aside class="collection-filters" data-filters aria-label="Collection filters">
         <div class="collection-filters__header">
           <h3>Filters</h3>
-          <button class="collection-filters__clear" data-clear-filters>Clear All</button>
+          {%- if collection.filters != empty -%}
+            {%- assign has_active_filters = false -%}
+            {%- for filter in collection.filters -%}
+              {%- if filter.active_values.size > 0 or filter.min_value.value or filter.max_value.value -%}
+                {%- assign has_active_filters = true -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if has_active_filters -%}
+              <a href="{{ collection.url }}?sort_by={{ collection.sort_by }}" class="collection-filters__clear">Clear All</a>
+            {%- endif -%}
+          {%- endif -%}
         </div>
 
-        <!-- Price Filter -->
-        <div class="filter-group" data-filter-group>
-          <button class="filter-group__toggle" aria-expanded="true">
-            Price
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="filter-group__content">
-            {% assign price_ranges = 'Under $500|$500 - $1000|$1000 - $2000|Over $2000' | split: '|' %}
-            {% for range in price_ranges %}
-              <label class="filter-option">
-                <input type="checkbox" name="price" value="{{ range | handleize }}" data-filter="price">
-                <span>{{ range }}</span>
-              </label>
-            {% endfor %}
-          </div>
-        </div>
-
-        <!-- Brand Filter (from vendors) -->
-        {% assign vendors = collection.products | map: 'vendor' | uniq | sort %}
-        {% if vendors.size > 1 %}
-          <div class="filter-group" data-filter-group>
-            <button class="filter-group__toggle" aria-expanded="true">
-              Brand
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="filter-group__content">
-              {% for vendor in vendors %}
-                <label class="filter-option">
-                  <input type="checkbox" name="vendor" value="{{ vendor | handleize }}" data-filter="vendor">
-                  <span>{{ vendor }}</span>
-                </label>
-              {% endfor %}
+        <form id="CollectionFiltersForm" data-collection-filters-form>
+          {%- for filter in collection.filters -%}
+            <div class="filter-group" data-filter-group>
+              <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="filter-{{ filter.param_name | handleize }}">
+                {{ filter.label }}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="filter-group__content" id="filter-{{ filter.param_name | handleize }}">
+                {%- case filter.type -%}
+                  {%- when 'list' or 'boolean' -%}
+                    {%- for value in filter.values -%}
+                      <label class="filter-option{% if value.active %} filter-option--active{% endif %}">
+                        <input
+                          type="checkbox"
+                          name="{{ value.param_name }}"
+                          value="{{ value.value }}"
+                          {% if value.active %}checked{% endif %}
+                          {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                          data-filter-checkbox
+                        >
+                        <span>{{ value.label }}</span>
+                        <span class="filter-option__count">({{ value.count }})</span>
+                      </label>
+                    {%- endfor -%}
+                  {%- when 'price_range' -%}
+                    <div class="filter-price-range">
+                      <div class="filter-price-range__inputs">
+                        <div class="filter-price-range__field">
+                          <label for="Filter-{{ filter.param_name }}-GTE">Min</label>
+                          <span class="filter-price-range__currency">{{ cart.currency.symbol }}</span>
+                          <input
+                            type="number"
+                            id="Filter-{{ filter.param_name }}-GTE"
+                            name="{{ filter.min_value.param_name }}"
+                            value="{{ filter.min_value.value | divided_by: 100.0 | round }}"
+                            min="0"
+                            max="{{ filter.range_max | divided_by: 100.0 | ceil }}"
+                            placeholder="{{ filter.range_min | divided_by: 100.0 | floor }}"
+                            data-filter-price
+                          >
+                        </div>
+                        <span class="filter-price-range__separator">-</span>
+                        <div class="filter-price-range__field">
+                          <label for="Filter-{{ filter.param_name }}-LTE">Max</label>
+                          <span class="filter-price-range__currency">{{ cart.currency.symbol }}</span>
+                          <input
+                            type="number"
+                            id="Filter-{{ filter.param_name }}-LTE"
+                            name="{{ filter.max_value.param_name }}"
+                            value="{{ filter.max_value.value | divided_by: 100.0 | round }}"
+                            min="0"
+                            max="{{ filter.range_max | divided_by: 100.0 | ceil }}"
+                            placeholder="{{ filter.range_max | divided_by: 100.0 | ceil }}"
+                            data-filter-price
+                          >
+                        </div>
+                      </div>
+                      <button type="button" class="filter-price-range__apply btn btn--small" data-apply-price-filter>Apply</button>
+                    </div>
+                  {%- endcase -%}
+              </div>
             </div>
-          </div>
-        {% endif %}
+          {%- endfor -%}
 
-        <!-- Tag-based Filters -->
-        {% assign all_tags = collection.all_tags %}
-        {% assign feature_tags = '' | split: '' %}
-        {% assign type_tags = '' | split: '' %}
-        {% for tag in all_tags %}
-          {% if tag contains 'feature:' %}
-            {% assign feature_tags = feature_tags | push: tag %}
-          {% elsif tag contains 'type:' %}
-            {% assign type_tags = type_tags | push: tag %}
-          {% endif %}
-        {% endfor %}
-
-        {% if feature_tags.size > 0 %}
-          <div class="filter-group" data-filter-group>
-            <button class="filter-group__toggle" aria-expanded="true">
-              Features
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="filter-group__content">
-              {% for tag in feature_tags %}
-                {% assign clean_tag = tag | remove: 'feature:' %}
+          {%- comment -%} Fallback if no native filters available {%- endcomment -%}
+          {%- if collection.filters.size == 0 -%}
+            <!-- Availability Filter (fallback) -->
+            <div class="filter-group" data-filter-group>
+              <button type="button" class="filter-group__toggle" aria-expanded="true">
+                Availability
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="filter-group__content">
                 <label class="filter-option">
-                  <input type="checkbox" name="tag" value="{{ tag | handleize }}" data-filter="tag">
-                  <span>{{ clean_tag }}</span>
+                  <input type="checkbox" name="filter.v.availability" value="1" data-filter-checkbox>
+                  <span>In Stock</span>
                 </label>
-              {% endfor %}
+              </div>
             </div>
-          </div>
-        {% endif %}
 
-        <!-- Availability Filter -->
-        <div class="filter-group" data-filter-group>
-          <button class="filter-group__toggle" aria-expanded="true">
-            Availability
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="filter-group__content">
-            <label class="filter-option">
-              <input type="checkbox" name="availability" value="in-stock" data-filter="availability">
-              <span>In Stock</span>
-            </label>
-          </div>
-        </div>
+            <!-- Vendor/Brand Filter (fallback) -->
+            {%- assign vendors = collection.products | map: 'vendor' | uniq | sort -%}
+            {%- if vendors.size > 1 -%}
+              <div class="filter-group" data-filter-group>
+                <button type="button" class="filter-group__toggle" aria-expanded="true">
+                  Brand
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="filter-group__content">
+                  {%- for vendor in vendors -%}
+                    <label class="filter-option">
+                      <input type="checkbox" name="filter.p.vendor" value="{{ vendor }}" data-filter-checkbox>
+                      <span>{{ vendor }}</span>
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+        </form>
       </aside>
 
+      <!-- Filter Overlay for Mobile -->
+      <div class="collection-filter-overlay" data-filter-overlay></div>
+
       <!-- Mobile Filter Toggle -->
-      <button class="collection-filter-toggle" data-filter-toggle>
+      <button class="collection-filter-toggle" data-filter-toggle aria-expanded="false" aria-controls="collection-filters">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
         Filters
+        {%- if has_active_filters -%}
+          <span class="collection-filter-toggle__count">Active</span>
+        {%- endif -%}
       </button>
 
       <!-- Products Grid -->
-      <div class="collection-main">
+      <div class="collection-main" id="collection-products">
         <div class="collection-toolbar">
           <p class="collection-toolbar__count">
             <span data-product-count>{{ collection.products_count }}</span> products
           </p>
-          
+
           <div class="collection-toolbar__actions">
             <div class="collection-toolbar__view">
-              <button class="view-toggle view-toggle--active" data-view="grid" aria-label="Grid view">
+              <button class="view-toggle view-toggle--active" data-view="grid" aria-label="Grid view" aria-pressed="true">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
               </button>
-              <button class="view-toggle" data-view="list" aria-label="List view">
+              <button class="view-toggle" data-view="list" aria-label="List view" aria-pressed="false">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="4"/><rect x="3" y="10" width="18" height="4"/><rect x="3" y="16" width="18" height="4"/></svg>
               </button>
             </div>
@@ -131,13 +169,13 @@
             <div class="collection-toolbar__sort">
               <label for="sort-by" class="visually-hidden">Sort by</label>
               <select id="sort-by" data-sort-select>
-                <option value="manual">Featured</option>
-                <option value="best-selling">Best Selling</option>
-                <option value="title-ascending">A-Z</option>
-                <option value="title-descending">Z-A</option>
-                <option value="price-ascending">Price: Low to High</option>
-                <option value="price-descending">Price: High to Low</option>
-                <option value="created-descending">Newest</option>
+                {%- assign sort_options = 'manual,best-selling,title-ascending,title-descending,price-ascending,price-descending,created-descending' | split: ',' -%}
+                {%- assign sort_labels = 'Featured,Best Selling,A-Z,Z-A,Price: Low to High,Price: High to Low,Newest' | split: ',' -%}
+                {%- for option in sort_options -%}
+                  <option value="{{ option }}"{% if collection.sort_by == option %} selected{% endif %}>
+                    {{ sort_labels[forloop.index0] }}
+                  </option>
+                {%- endfor -%}
               </select>
             </div>
           </div>
@@ -147,6 +185,8 @@
           {% paginate collection.products by section.settings.products_per_page %}
             {% for product in collection.products %}
               {% render 'product-card', product: product, show_quick_view: true %}
+            {% else %}
+              <p class="collection-empty">No products found matching your filters. <a href="{{ collection.url }}">Clear all filters</a></p>
             {% endfor %}
           {% endpaginate %}
         </div>

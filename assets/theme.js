@@ -905,10 +905,12 @@
       const filters = document.querySelector('[data-filters]');
       const overlay = document.querySelector('[data-filter-overlay]');
 
+      // Mobile filter toggle
       if (toggle && filters) {
         toggle.addEventListener('click', () => {
           const isOpen = filters.classList.contains('is-open');
           filters.classList.toggle('is-open');
+          toggle.setAttribute('aria-expanded', !isOpen);
           filters.setAttribute('aria-hidden', isOpen);
           overlay?.classList.toggle('is-open');
 
@@ -924,17 +926,42 @@
         overlay?.addEventListener('click', () => {
           filters.classList.remove('is-open');
           overlay.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
           document.body.style.overflow = '';
           focusTrap.release();
         });
       }
 
-      // Filter group toggles
+      // Filter group toggles (accordion)
       document.querySelectorAll('.filter-group__toggle').forEach(btn => {
         btn.addEventListener('click', () => {
           const expanded = btn.getAttribute('aria-expanded') === 'true';
           btn.setAttribute('aria-expanded', !expanded);
           btn.nextElementSibling.style.display = expanded ? 'none' : 'block';
+        });
+      });
+
+      // Filter checkbox changes - apply filters via URL
+      document.querySelectorAll('[data-filter-checkbox]').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          this.applyFilters();
+        });
+      });
+
+      // Price filter apply button
+      document.querySelectorAll('[data-apply-price-filter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          this.applyFilters();
+        });
+      });
+
+      // Price filter enter key
+      document.querySelectorAll('[data-filter-price]').forEach(input => {
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            this.applyFilters();
+          }
         });
       });
 
@@ -990,6 +1017,35 @@
           lessText.hidden = isExpanded;
         });
       }
+    },
+
+    applyFilters() {
+      const form = document.querySelector('[data-collection-filters-form]');
+      if (!form) return;
+
+      const url = new URL(window.location);
+      const formData = new FormData(form);
+
+      // Clear existing filter params (keep sort_by)
+      const sortBy = url.searchParams.get('sort_by');
+      const keysToDelete = [];
+      url.searchParams.forEach((value, key) => {
+        if (key !== 'sort_by') keysToDelete.push(key);
+      });
+      keysToDelete.forEach(key => url.searchParams.delete(key));
+
+      // Add checked filters
+      for (const [name, value] of formData.entries()) {
+        if (value) {
+          url.searchParams.append(name, value);
+        }
+      }
+
+      // Preserve sort
+      if (sortBy) url.searchParams.set('sort_by', sortBy);
+
+      // Navigate to filtered URL
+      window.location = url.toString();
     }
   };
 

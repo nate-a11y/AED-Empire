@@ -299,7 +299,24 @@ button svg line, button svg path, button svg circle, button svg polyline { strok
 .filter-group__content { padding-top: 15px; }
 .filter-option { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; font-size: 0.9375rem; }
 .filter-option input { width: 18px; height: 18px; accent-color: var(--color-primary); }
+.filter-option input:disabled { opacity: 0.4; cursor: not-allowed; }
+.filter-option input:disabled + span { opacity: 0.4; }
+.filter-option--active { font-weight: 600; }
+.filter-option__count { color: var(--color-text-light); font-size: 0.8125rem; margin-left: auto; }
+.filter-price-range { padding: 10px 0; }
+.filter-price-range__inputs { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.filter-price-range__field { position: relative; flex: 1; }
+.filter-price-range__field label { display: block; font-size: 0.75rem; color: var(--color-text-light); margin-bottom: 4px; }
+.filter-price-range__currency { position: absolute; left: 10px; bottom: 10px; color: var(--color-text-light); font-size: 0.875rem; }
+.filter-price-range__field input { width: 100%; padding: 8px 8px 8px 24px; border: 1px solid var(--color-border); border-radius: 4px; font-size: 0.875rem; }
+.filter-price-range__separator { color: var(--color-text-light); }
+.filter-price-range__apply { width: 100%; }
 .collection-filter-toggle { display: none; align-items: center; gap: 8px; padding: 12px 20px; background: #fff; border: 1px solid var(--color-border); border-radius: 4px; font-weight: 500; margin-bottom: 20px; }
+.collection-filter-toggle__count { background: var(--color-primary); color: #fff; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; margin-left: auto; }
+.collection-empty { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--color-text-light); }
+.collection-empty a { color: var(--color-primary); font-weight: 600; }
+.collection-filter-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+.collection-filter-overlay.is-open { display: block; }
 @media (max-width: 1024px) { .collection-filter-toggle { display: flex; } }
 
 /* Collection Toolbar */
