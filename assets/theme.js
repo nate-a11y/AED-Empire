@@ -1023,29 +1023,41 @@
       const form = document.querySelector('[data-collection-filters-form]');
       if (!form) return;
 
-      const url = new URL(window.location);
-      const formData = new FormData(form);
+      // Get the base collection URL (without query params)
+      const baseUrl = window.location.pathname;
+      const params = new URLSearchParams();
 
-      // Clear existing filter params (keep sort_by)
-      const sortBy = url.searchParams.get('sort_by');
-      const keysToDelete = [];
-      url.searchParams.forEach((value, key) => {
-        if (key !== 'sort_by') keysToDelete.push(key);
-      });
-      keysToDelete.forEach(key => url.searchParams.delete(key));
-
-      // Add checked filters
-      for (const [name, value] of formData.entries()) {
-        if (value) {
-          url.searchParams.append(name, value);
+      // Get all checked checkboxes
+      const checkedBoxes = form.querySelectorAll('[data-filter-checkbox]:checked');
+      checkedBoxes.forEach(checkbox => {
+        if (checkbox.name && checkbox.value) {
+          params.append(checkbox.name, checkbox.value);
         }
+      });
+
+      // Get price filter values (convert to cents for Shopify)
+      const priceInputs = form.querySelectorAll('[data-filter-price]');
+      priceInputs.forEach(input => {
+        if (input.value && input.name) {
+          // Shopify expects price in cents (value * 100)
+          const cents = Math.round(parseFloat(input.value) * 100);
+          if (!isNaN(cents) && cents > 0) {
+            params.set(input.name, cents.toString());
+          }
+        }
+      });
+
+      // Preserve sort order
+      const currentUrl = new URL(window.location);
+      const sortBy = currentUrl.searchParams.get('sort_by');
+      if (sortBy) {
+        params.set('sort_by', sortBy);
       }
 
-      // Preserve sort
-      if (sortBy) url.searchParams.set('sort_by', sortBy);
-
-      // Navigate to filtered URL
-      window.location = url.toString();
+      // Build final URL and navigate
+      const queryString = params.toString();
+      const newUrl = queryString ? `${baseUrl}?${queryString}` : baseUrl;
+      window.location.href = newUrl;
     }
   };
 
