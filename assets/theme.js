@@ -698,6 +698,102 @@
   };
 
   // =========================================
+  // CONTENT ACCORDIONS (Auto-convert headings)
+  // =========================================
+  const contentAccordions = {
+    init() {
+      // Find all containers marked for accordion conversion
+      document.querySelectorAll('[data-content-accordion]').forEach(container => {
+        this.convertToAccordion(container);
+      });
+    },
+
+    convertToAccordion(container) {
+      const content = container.innerHTML;
+      const headingLevel = container.dataset.contentAccordion || 'h2,h3';
+
+      // Create a temporary element to parse the HTML
+      const temp = document.createElement('div');
+      temp.innerHTML = content;
+
+      // Find all headings that should become accordion triggers
+      const headings = temp.querySelectorAll(headingLevel);
+      if (headings.length === 0) return;
+
+      // Build accordion structure
+      const accordion = document.createElement('div');
+      accordion.className = 'content-accordion';
+
+      // Get content before first heading (intro text)
+      let currentNode = temp.firstChild;
+      const introContent = document.createElement('div');
+      introContent.className = 'content-accordion__intro';
+
+      while (currentNode && !currentNode.matches?.(headingLevel)) {
+        const next = currentNode.nextSibling;
+        if (currentNode.nodeType === 1 || (currentNode.nodeType === 3 && currentNode.textContent.trim())) {
+          introContent.appendChild(currentNode.cloneNode(true));
+        }
+        currentNode = next;
+      }
+
+      if (introContent.innerHTML.trim()) {
+        accordion.appendChild(introContent);
+      }
+
+      // Process each heading and its content
+      headings.forEach((heading, index) => {
+        const item = document.createElement('div');
+        item.className = 'content-accordion__item';
+
+        const id = `content-accordion-${Date.now()}-${index}`;
+
+        // Create trigger button
+        const trigger = document.createElement('button');
+        trigger.className = 'content-accordion__trigger';
+        trigger.setAttribute('aria-expanded', index === 0 ? 'true' : 'false');
+        trigger.setAttribute('aria-controls', id);
+        trigger.innerHTML = `
+          <span>${heading.textContent}</span>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" style="stroke:#1a1a2e !important"/>
+          </svg>
+        `;
+
+        // Create content panel
+        const panel = document.createElement('div');
+        panel.className = 'content-accordion__panel';
+        panel.id = id;
+        panel.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
+        if (index !== 0) panel.hidden = true;
+
+        // Get all content until next heading
+        let sibling = heading.nextElementSibling;
+        while (sibling && !sibling.matches(headingLevel)) {
+          panel.appendChild(sibling.cloneNode(true));
+          sibling = sibling.nextElementSibling;
+        }
+
+        // Add click handler
+        trigger.addEventListener('click', () => {
+          const expanded = trigger.getAttribute('aria-expanded') === 'true';
+          trigger.setAttribute('aria-expanded', !expanded);
+          panel.hidden = expanded;
+          panel.setAttribute('aria-hidden', expanded);
+        });
+
+        item.appendChild(trigger);
+        item.appendChild(panel);
+        accordion.appendChild(item);
+      });
+
+      // Replace original content
+      container.innerHTML = '';
+      container.appendChild(accordion);
+    }
+  };
+
+  // =========================================
   // STICKY ADD TO CART
   // =========================================
   const stickyCart = {
@@ -1808,6 +1904,7 @@
     quantitySelectors.init();
     productGallery.init();
     productTabs.init();
+    contentAccordions.init();
     stickyCart.init();
     quickView.init();
     faqAccordion.init();

@@ -340,7 +340,7 @@
                id="panel-description"
                aria-labelledby="tab-description"
                {% unless first_panel %}hidden{% endunless %}>
-            <div class="rte">{{ product.description }}</div>
+            <div class="rte" data-content-accordion="h2,h3">{{ product.description }}</div>
           </div>
           {% assign first_panel = false %}
         {% endif %}
