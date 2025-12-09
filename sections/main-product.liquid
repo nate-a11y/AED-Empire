@@ -378,7 +378,7 @@
 
         {% if product.metafields.custom.whats_included != blank %}
           <div class="product-tabs__panel" data-panel="included" role="tabpanel" id="panel-included" aria-labelledby="tab-included" hidden>
-            <div class="whats-included">{{ product.metafields.custom.whats_included }}</div>
+            <div class="whats-included rte">{{ product.metafields.custom.whats_included | metafield_tag }}</div>
           </div>
         {% endif %}
 
