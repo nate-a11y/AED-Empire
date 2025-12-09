@@ -1,0 +1,10 @@
+{
+  "layout": "theme.quick-view",
+  "sections": {
+    "main": {
+      "type": "quick-view-content",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}
