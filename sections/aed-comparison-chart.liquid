@@ -1,0 +1,350 @@
+{{ 'section-comparison-chart.css' | asset_url | stylesheet_tag }}
+
+<section class="section comparison-section" id="aed-comparison">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ section.settings.title | default: 'AED Comparison Chart' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="comparison-filters" data-comparison-filters>
+      <div class="comparison-filters__group">
+        <label for="filter-brand">Brand:</label>
+        <select id="filter-brand" data-filter="brand">
+          <option value="">All Brands</option>
+          {% for block in section.blocks %}
+            {% if block.type == 'aed_product' %}
+              {% assign brand = block.settings.brand %}
+              <option value="{{ brand | handleize }}">{{ brand }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <div class="comparison-filters__group">
+        <label for="filter-type">Type:</label>
+        <select id="filter-type" data-filter="type">
+          <option value="">All Types</option>
+          <option value="semi-automatic">Semi-Automatic</option>
+          <option value="fully-automatic">Fully Automatic</option>
+        </select>
+      </div>
+      <div class="comparison-filters__group">
+        <label for="filter-price">Price Range:</label>
+        <select id="filter-price" data-filter="price">
+          <option value="">All Prices</option>
+          <option value="under-1500">Under $1,500</option>
+          <option value="1500-2000">$1,500 - $2,000</option>
+          <option value="over-2000">Over $2,000</option>
+        </select>
+      </div>
+      <button type="button" class="comparison-filters__reset" data-reset-filters>Reset Filters</button>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="comparison-table-wrapper">
+      <table class="comparison-table" data-comparison-table>
+        <thead>
+          <tr>
+            <th class="comparison-table__header comparison-table__header--sticky">AED Model</th>
+            <th data-sort="price">Price <span class="sort-icon"></span></th>
+            <th data-sort="brand">Brand <span class="sort-icon"></span></th>
+            <th>Type</th>
+            <th>Shock Energy</th>
+            <th>CPR Feedback</th>
+            <th>Pad Life</th>
+            <th>Battery Life</th>
+            <th>Warranty</th>
+            <th>IP Rating</th>
+            <th>Weight</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for block in section.blocks %}
+            {% if block.type == 'aed_product' %}
+              {% assign price_value = block.settings.price | remove: '$' | remove: ',' | plus: 0 %}
+              {% if price_value < 1500 %}
+                {% assign price_range = 'under-1500' %}
+              {% elsif price_value <= 2000 %}
+                {% assign price_range = '1500-2000' %}
+              {% else %}
+                {% assign price_range = 'over-2000' %}
+              {% endif %}
+              <tr data-brand="{{ block.settings.brand | handleize }}"
+                  data-type="{{ block.settings.aed_type | handleize }}"
+                  data-price-range="{{ price_range }}"
+                  data-price-value="{{ price_value }}">
+                <td class="comparison-table__product">
+                  {% if block.settings.image != blank %}
+                    <img src="{{ block.settings.image | image_url: width: 80 }}" alt="{{ block.settings.model }}" loading="lazy">
+                  {% endif %}
+                  <div>
+                    <strong>{{ block.settings.model }}</strong>
+                    {% if block.settings.refurbished %}
+                      <span class="badge badge--refurbished">Refurbished</span>
+                    {% endif %}
+                  </div>
+                </td>
+                <td data-label="Price"><strong>{{ block.settings.price }}</strong></td>
+                <td data-label="Brand">{{ block.settings.brand }}</td>
+                <td data-label="Type">{{ block.settings.aed_type }}</td>
+                <td data-label="Shock Energy">{{ block.settings.shock_energy | default: '-' }}</td>
+                <td data-label="CPR Feedback">
+                  {% if block.settings.cpr_feedback %}
+                    <span class="check-yes">✓</span>
+                  {% else %}
+                    <span class="check-no">✗</span>
+                  {% endif %}
+                </td>
+                <td data-label="Pad Life">{{ block.settings.pad_life | default: '-' }}</td>
+                <td data-label="Battery Life">{{ block.settings.battery_life | default: '-' }}</td>
+                <td data-label="Warranty">{{ block.settings.warranty | default: '-' }}</td>
+                <td data-label="IP Rating">{{ block.settings.ip_rating | default: '-' }}</td>
+                <td data-label="Weight">{{ block.settings.weight | default: '-' }}</td>
+                <td>
+                  {% if block.settings.product_link != blank %}
+                    <a href="{{ block.settings.product_link }}" class="btn btn--small btn--primary">View</a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Legend -->
+    <div class="comparison-legend">
+      <h4>Legend</h4>
+      <ul>
+        <li><span class="check-yes">✓</span> Feature included</li>
+        <li><span class="check-no">✗</span> Feature not included</li>
+        <li><span class="badge badge--refurbished">Refurbished</span> Certified refurbished unit</li>
+      </ul>
+    </div>
+
+    {% if section.settings.bottom_text != blank %}
+      <div class="comparison-note">
+        {{ section.settings.bottom_text }}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const table = document.querySelector('[data-comparison-table]');
+  if (!table) return;
+
+  // Filtering
+  document.querySelectorAll('[data-filter]').forEach(select => {
+    select.addEventListener('change', filterTable);
+  });
+
+  document.querySelector('[data-reset-filters]')?.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(select => select.value = '');
+    filterTable();
+  });
+
+  function filterTable() {
+    const brand = document.querySelector('[data-filter="brand"]').value;
+    const type = document.querySelector('[data-filter="type"]').value;
+    const price = document.querySelector('[data-filter="price"]').value;
+
+    table.querySelectorAll('tbody tr').forEach(row => {
+      const matchBrand = !brand || row.dataset.brand === brand;
+      const matchType = !type || row.dataset.type === type;
+      const matchPrice = !price || row.dataset.priceRange === price;
+      row.style.display = (matchBrand && matchType && matchPrice) ? '' : 'none';
+    });
+  }
+
+  // Sorting
+  table.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const sortKey = th.dataset.sort;
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const isAsc = th.classList.contains('sort-asc');
+
+      table.querySelectorAll('th').forEach(t => t.classList.remove('sort-asc', 'sort-desc'));
+      th.classList.add(isAsc ? 'sort-desc' : 'sort-asc');
+
+      rows.sort((a, b) => {
+        let aVal, bVal;
+        if (sortKey === 'price') {
+          aVal = parseFloat(a.dataset.priceValue) || 0;
+          bVal = parseFloat(b.dataset.priceValue) || 0;
+        } else {
+          aVal = a.dataset[sortKey] || '';
+          bVal = b.dataset[sortKey] || '';
+        }
+        if (aVal < bVal) return isAsc ? 1 : -1;
+        if (aVal > bVal) return isAsc ? -1 : 1;
+        return 0;
+      });
+
+      rows.forEach(row => tbody.appendChild(row));
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "AED Comparison Chart",
+  "tag": "section",
+  "class": "section-comparison",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "AED Comparison Chart"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Compare features, prices, and specifications across all AED models"
+    },
+    {
+      "type": "richtext",
+      "id": "bottom_text",
+      "label": "Bottom note text"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "aed_product",
+      "name": "AED Product",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Product image"
+        },
+        {
+          "type": "text",
+          "id": "model",
+          "label": "Model name",
+          "default": "AED Model Name"
+        },
+        {
+          "type": "text",
+          "id": "brand",
+          "label": "Brand",
+          "default": "Philips"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price",
+          "default": "$1,495"
+        },
+        {
+          "type": "select",
+          "id": "aed_type",
+          "label": "Type",
+          "options": [
+            { "value": "Semi-Automatic", "label": "Semi-Automatic" },
+            { "value": "Fully-Automatic", "label": "Fully Automatic" }
+          ],
+          "default": "Semi-Automatic"
+        },
+        {
+          "type": "text",
+          "id": "shock_energy",
+          "label": "Shock energy",
+          "default": "150-200J"
+        },
+        {
+          "type": "checkbox",
+          "id": "cpr_feedback",
+          "label": "Has CPR feedback",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "pad_life",
+          "label": "Pad life",
+          "default": "2 years"
+        },
+        {
+          "type": "text",
+          "id": "battery_life",
+          "label": "Battery life",
+          "default": "4 years"
+        },
+        {
+          "type": "text",
+          "id": "warranty",
+          "label": "Warranty",
+          "default": "8 years"
+        },
+        {
+          "type": "text",
+          "id": "ip_rating",
+          "label": "IP Rating",
+          "default": "IP55"
+        },
+        {
+          "type": "text",
+          "id": "weight",
+          "label": "Weight",
+          "default": "3.3 lbs"
+        },
+        {
+          "type": "checkbox",
+          "id": "refurbished",
+          "label": "Is refurbished",
+          "default": false
+        },
+        {
+          "type": "url",
+          "id": "product_link",
+          "label": "Product link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AED Comparison Chart",
+      "blocks": [
+        {
+          "type": "aed_product",
+          "settings": {
+            "model": "Philips HeartStart OnSite",
+            "brand": "Philips",
+            "price": "$1,395",
+            "aed_type": "Semi-Automatic",
+            "shock_energy": "150J",
+            "cpr_feedback": false,
+            "pad_life": "2 years",
+            "battery_life": "4 years",
+            "warranty": "8 years"
+          }
+        },
+        {
+          "type": "aed_product",
+          "settings": {
+            "model": "ZOLL AED Plus",
+            "brand": "ZOLL",
+            "price": "$1,895",
+            "aed_type": "Semi-Automatic",
+            "shock_energy": "120-200J",
+            "cpr_feedback": true,
+            "pad_life": "5 years",
+            "battery_life": "5 years",
+            "warranty": "7 years"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
