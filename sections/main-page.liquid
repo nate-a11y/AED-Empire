@@ -1,8 +1,10 @@
 <section class="section page-section">
   <div class="container">
-    <div class="page__header">
-      <h1 class="page__title">{{ page.title }}</h1>
-    </div>
+    {%- if section.settings.show_title -%}
+      <div class="page__header">
+        <h1 class="page__title">{{ page.title }}</h1>
+      </div>
+    {%- endif -%}
     <div class="page__content rte">
       {{ page.content }}
     </div>
@@ -12,6 +14,13 @@
 {% schema %}
 {
   "name": "Page content",
-  "settings": []
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show page title",
+      "default": true
+    }
+  ]
 }
 {% endschema %}
