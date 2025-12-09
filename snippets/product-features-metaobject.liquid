@@ -1,0 +1,77 @@
+{% comment %}
+  Product Features Snippet - Displays features from Product Feature metaobjects
+
+  Usage: {% render 'product-features-metaobject', product: product %}
+
+  Requires: Product metafield linking to Product Feature metaobjects
+  Metafield: product.metafields.custom.features (list of metaobject references)
+{% endcomment %}
+
+{% assign features = product.metafields.custom.features.value %}
+
+{% if features.size > 0 %}
+<div class="product-features-mo">
+  <h3 class="product-features-mo__title">{{ title | default: 'Key Features' }}</h3>
+  <ul class="product-features-mo__list">
+    {% for feature in features %}
+      <li class="product-features-mo__item">
+        {% if feature.icon != blank %}
+          <span class="product-features-mo__icon">{{ feature.icon }}</span>
+        {% else %}
+          <span class="product-features-mo__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </span>
+        {% endif %}
+        <span class="product-features-mo__text">
+          <strong>{{ feature.title }}</strong>
+          {% if feature.description != blank %}
+            <span>{{ feature.description }}</span>
+          {% endif %}
+        </span>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<style>
+.product-features-mo__title {
+  font-size: 1.25rem;
+  margin: 0 0 20px;
+}
+.product-features-mo__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 15px;
+}
+.product-features-mo__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.product-features-mo__icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-success, #22c55e);
+}
+.product-features-mo__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.product-features-mo__text strong {
+  font-weight: 600;
+}
+.product-features-mo__text span:last-child {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+</style>
+{% endif %}

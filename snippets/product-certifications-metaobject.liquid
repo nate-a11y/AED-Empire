@@ -1,0 +1,79 @@
+{% comment %}
+  Product Certifications Snippet - Displays certifications from Certification metaobjects
+
+  Usage: {% render 'product-certifications-metaobject', product: product %}
+
+  Requires: Product metafield linking to Certification metaobjects
+  Metafield: product.metafields.custom.certifications (list of metaobject references)
+{% endcomment %}
+
+{% assign certifications = product.metafields.custom.certifications.value %}
+
+{% if certifications.size > 0 %}
+<div class="product-certs-mo">
+  <h4 class="product-certs-mo__title">{{ title | default: 'Certifications & Compliance' }}</h4>
+  <div class="product-certs-mo__list">
+    {% for cert in certifications %}
+      <div class="product-certs-mo__item" {% if cert.description != blank %}title="{{ cert.description }}"{% endif %}>
+        {% if cert.logo != blank %}
+          <div class="product-certs-mo__logo">
+            {{ cert.logo | image_url: width: 80 | image_tag: loading: 'lazy', alt: cert.name }}
+          </div>
+        {% else %}
+          <div class="product-certs-mo__badge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+        {% endif %}
+        <span class="product-certs-mo__name">{{ cert.name }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+.product-certs-mo__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-light);
+  margin: 0 0 15px;
+}
+.product-certs-mo__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.product-certs-mo__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-bg-alt);
+  border-radius: 6px;
+  cursor: default;
+}
+.product-certs-mo__logo {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-certs-mo__logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.product-certs-mo__badge {
+  color: var(--color-success, #22c55e);
+}
+.product-certs-mo__name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+</style>
+{% endif %}

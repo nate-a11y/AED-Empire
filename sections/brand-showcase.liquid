@@ -1,0 +1,241 @@
+{% comment %}
+  Brand Showcase Section - Pulls from Brand metaobjects
+
+  Metaobject Definition: Brand
+  Expected fields: name, logo, description, website (optional)
+{% endcomment %}
+
+<section class="section brand-showcase{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ section.settings.title | default: 'Trusted Brands' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+      <div class="section-header__divider"></div>
+    </div>
+
+    {% assign brand_handle = section.settings.metaobject_type | default: 'brand' %}
+    {% assign brands = shop.metaobjects[brand_handle].values %}
+
+    {% if brands.size > 0 %}
+      {% if section.settings.layout == 'grid' %}
+        <div class="brand-showcase__grid">
+          {% for brand in brands limit: section.settings.limit %}
+            <div class="brand-showcase__item">
+              {% if brand.logo != blank %}
+                <div class="brand-showcase__logo">
+                  {% if section.settings.link_to_collection and brand.collection != blank %}
+                    <a href="{{ brand.collection.url }}">
+                  {% elsif brand.website != blank %}
+                    <a href="{{ brand.website }}" target="_blank" rel="noopener">
+                  {% endif %}
+
+                  {{ brand.logo | image_url: width: 300 | image_tag: loading: 'lazy', alt: brand.name }}
+
+                  {% if section.settings.link_to_collection and brand.collection != blank %}
+                    </a>
+                  {% elsif brand.website != blank %}
+                    </a>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              {% if section.settings.show_name %}
+                <h3 class="brand-showcase__name">{{ brand.name }}</h3>
+              {% endif %}
+
+              {% if section.settings.show_description and brand.description != blank %}
+                <p class="brand-showcase__description">{{ brand.description | truncate: 150 }}</p>
+              {% endif %}
+
+              {% if section.settings.show_link %}
+                {% if brand.collection != blank %}
+                  <a href="{{ brand.collection.url }}" class="brand-showcase__link">
+                    Shop {{ brand.name }} →
+                  </a>
+                {% endif %}
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+      {% else %}
+        {% comment %} Logo strip layout {% endcomment %}
+        <div class="brand-showcase__strip">
+          {% for brand in brands limit: section.settings.limit %}
+            {% if brand.logo != blank %}
+              <div class="brand-showcase__strip-item">
+                {% if brand.collection != blank %}
+                  <a href="{{ brand.collection.url }}" title="{{ brand.name }}">
+                {% endif %}
+                {{ brand.logo | image_url: width: 200, height: 80 | image_tag: loading: 'lazy', alt: brand.name }}
+                {% if brand.collection != blank %}
+                  </a>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    {% else %}
+      <p class="brand-showcase__empty">No brands available.</p>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.brand-showcase__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+}
+.brand-showcase__item {
+  text-align: center;
+  padding: 20px;
+}
+.brand-showcase__logo {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+.brand-showcase__logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.7;
+  transition: filter 0.3s, opacity 0.3s;
+}
+.brand-showcase__item:hover .brand-showcase__logo img {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+.brand-showcase__name {
+  font-size: 1.125rem;
+  margin: 0 0 10px;
+}
+.brand-showcase__description {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  line-height: 1.6;
+  margin: 0 0 15px;
+}
+.brand-showcase__link {
+  color: var(--color-primary);
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+/* Logo strip layout */
+.brand-showcase__strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 40px 50px;
+}
+.brand-showcase__strip-item {
+  flex: 0 0 auto;
+}
+.brand-showcase__strip-item img {
+  max-height: 60px;
+  width: auto;
+  filter: grayscale(100%);
+  opacity: 0.6;
+  transition: filter 0.3s, opacity 0.3s;
+}
+.brand-showcase__strip-item:hover img {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+.brand-showcase__empty {
+  text-align: center;
+  color: var(--color-text-light);
+}
+</style>
+
+{% schema %}
+{
+  "name": "Brand Showcase",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Trusted Brands"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "We carry AEDs from the industry's leading manufacturers"
+    },
+    {
+      "type": "text",
+      "id": "metaobject_type",
+      "label": "Metaobject handle",
+      "default": "brand",
+      "info": "The handle of your Brand metaobject definition"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "strip", "label": "Logo strip" },
+        { "value": "grid", "label": "Grid with details" }
+      ],
+      "default": "strip"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_name",
+      "label": "Show brand name",
+      "default": true,
+      "info": "Only applies to grid layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show description",
+      "default": false,
+      "info": "Only applies to grid layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_link",
+      "label": "Show shop link",
+      "default": true,
+      "info": "Links to brand collection if set"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_to_collection",
+      "label": "Link logo to collection",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "limit",
+      "label": "Maximum brands to show",
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Alternate background",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Showcase"
+    }
+  ]
+}
+{% endschema %}

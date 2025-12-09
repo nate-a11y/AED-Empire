@@ -1,0 +1,268 @@
+{% comment %}
+  FAQ Section - Pulls from FAQ metaobjects
+
+  Metaobject Definition: FAQ
+  Expected fields: question, answer, category (optional)
+
+  Can be filtered by category or show all FAQs
+{% endcomment %}
+
+<section class="section faq-section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ section.settings.title | default: 'Frequently Asked Questions' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+      <div class="section-header__divider"></div>
+    </div>
+
+    {% assign faq_handle = section.settings.metaobject_type | default: 'faq' %}
+    {% assign faqs = shop.metaobjects[faq_handle].values %}
+    {% assign filter_category = section.settings.filter_category %}
+
+    {% if faqs.size > 0 %}
+      {% comment %} Collect unique categories for filtering {% endcomment %}
+      {% if section.settings.show_categories %}
+        {% assign categories = '' | split: ',' %}
+        {% for faq in faqs %}
+          {% if faq.category != blank %}
+            {% unless categories contains faq.category %}
+              {% assign categories = categories | push: faq.category %}
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
+
+        {% if categories.size > 1 %}
+          <div class="faq-section__categories" role="tablist">
+            <button class="faq-section__category active" data-faq-filter="all" role="tab" aria-selected="true">All</button>
+            {% for category in categories %}
+              <button class="faq-section__category" data-faq-filter="{{ category | handleize }}" role="tab" aria-selected="false">{{ category }}</button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      <div class="faq-section__list">
+        {% for faq in faqs limit: section.settings.limit %}
+          {% comment %} Skip if filtering by category and doesn't match {% endcomment %}
+          {% if filter_category != blank and filter_category != 'all' %}
+            {% assign faq_cat_handle = faq.category | handleize %}
+            {% unless faq_cat_handle == filter_category %}
+              {% continue %}
+            {% endunless %}
+          {% endif %}
+
+          <details class="faq-section__item" data-faq-category="{{ faq.category | handleize }}">
+            <summary class="faq-section__question">
+              {{ faq.question }}
+              <svg class="faq-section__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </summary>
+            <div class="faq-section__answer rte">
+              {{ faq.answer }}
+            </div>
+          </details>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.cta_text != blank %}
+        <div class="faq-section__cta">
+          <p>{{ section.settings.cta_intro | default: "Can't find what you're looking for?" }}</p>
+          <a href="{{ section.settings.cta_link }}" class="btn btn--primary">{{ section.settings.cta_text }}</a>
+        </div>
+      {% endif %}
+
+    {% else %}
+      <p class="faq-section__empty">No FAQs available yet.</p>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.faq-section__categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+.faq-section__category {
+  padding: 8px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 30px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  transition: all 0.2s;
+}
+.faq-section__category:hover,
+.faq-section__category.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+.faq-section__list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.faq-section__item {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.faq-section__item[open] {
+  border-color: var(--color-primary);
+}
+.faq-section__question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1.0625rem;
+  list-style: none;
+  gap: 15px;
+}
+.faq-section__question::-webkit-details-marker { display: none; }
+.faq-section__icon {
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.faq-section__item[open] .faq-section__icon {
+  transform: rotate(180deg);
+}
+.faq-section__answer {
+  padding: 0 20px 20px;
+  line-height: 1.7;
+  color: var(--color-text-light);
+}
+.faq-section__answer p:last-child {
+  margin-bottom: 0;
+}
+.faq-section__cta {
+  text-align: center;
+  margin-top: 40px;
+  padding: 30px;
+  background: var(--color-bg-alt);
+  border-radius: 8px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.faq-section__cta p {
+  margin: 0 0 15px;
+  font-size: 1.125rem;
+}
+.faq-section__empty {
+  text-align: center;
+  color: var(--color-text-light);
+}
+.faq-section__item[hidden] {
+  display: none;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const filterBtns = document.querySelectorAll('[data-faq-filter]');
+  const items = document.querySelectorAll('[data-faq-category]');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const filter = this.dataset.faqFilter;
+
+      filterBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      this.classList.add('active');
+      this.setAttribute('aria-selected', 'true');
+
+      items.forEach(item => {
+        if (filter === 'all' || item.dataset.faqCategory === filter) {
+          item.hidden = false;
+        } else {
+          item.hidden = true;
+        }
+      });
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "FAQ (Metaobjects)",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "text",
+      "id": "metaobject_type",
+      "label": "Metaobject handle",
+      "default": "faq",
+      "info": "The handle of your FAQ metaobject definition"
+    },
+    {
+      "type": "text",
+      "id": "filter_category",
+      "label": "Filter by category",
+      "info": "Leave blank to show all, or enter a category to filter"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_categories",
+      "label": "Show category filters",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "limit",
+      "label": "Maximum FAQs to show",
+      "default": 20
+    },
+    {
+      "type": "text",
+      "id": "cta_intro",
+      "label": "CTA intro text",
+      "default": "Can't find what you're looking for?"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA button text",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Alternate background",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ (Metaobjects)"
+    }
+  ]
+}
+{% endschema %}
