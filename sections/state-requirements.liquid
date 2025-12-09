@@ -1,0 +1,396 @@
+<section class="section state-requirements{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ section.settings.title | default: 'AED Requirements by State' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+      <div class="section-header__divider"></div>
+    </div>
+
+    <div class="state-requirements__lookup">
+      <div class="state-requirements__select-wrap">
+        <label for="state-select">Select your state:</label>
+        <select id="state-select" data-state-select>
+          <option value="">Choose a state...</option>
+          {% for block in section.blocks %}
+            {% if block.type == 'state' %}
+              <option value="{{ block.settings.state_code }}">{{ block.settings.state_name }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="state-requirements__results" data-state-results style="display: none;">
+        {% for block in section.blocks %}
+          {% if block.type == 'state' %}
+            <div class="state-requirements__state" data-state="{{ block.settings.state_code }}" style="display: none;" {{ block.shopify_attributes }}>
+              <h3>{{ block.settings.state_name }} AED Requirements</h3>
+
+              <div class="state-requirements__grid">
+                <div class="state-requirements__card">
+                  <h4>Required Locations</h4>
+                  <div class="state-requirements__content rte">
+                    {{ block.settings.required_locations | default: '<p>No specific location requirements.</p>' }}
+                  </div>
+                </div>
+
+                <div class="state-requirements__card">
+                  <h4>Training Requirements</h4>
+                  <div class="state-requirements__content rte">
+                    {{ block.settings.training | default: '<p>Check local regulations.</p>' }}
+                  </div>
+                </div>
+
+                <div class="state-requirements__card">
+                  <h4>Registration & Maintenance</h4>
+                  <div class="state-requirements__content rte">
+                    {{ block.settings.registration | default: '<p>Registration requirements vary.</p>' }}
+                  </div>
+                </div>
+
+                <div class="state-requirements__card">
+                  <h4>Good Samaritan Protection</h4>
+                  <div class="state-requirements__content rte">
+                    {{ block.settings.good_samaritan | default: '<p>Good Samaritan laws apply.</p>' }}
+                  </div>
+                </div>
+              </div>
+
+              {% if block.settings.notes != blank %}
+                <div class="state-requirements__notes">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                  </svg>
+                  <p>{{ block.settings.notes }}</p>
+                </div>
+              {% endif %}
+
+              {% if block.settings.source_link != blank %}
+                <a href="{{ block.settings.source_link }}" class="state-requirements__source" target="_blank" rel="noopener">
+                  View Official State Resources →
+                </a>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="state-requirements__default" data-state-default>
+        <div class="state-requirements__placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <p>Select your state above to view AED requirements and regulations</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="state-requirements__disclaimer">
+      <p>{{ section.settings.disclaimer | default: "This information is provided for general guidance only. Laws and regulations change frequently. Always verify requirements with your local authorities or legal counsel." }}</p>
+    </div>
+
+    {% if section.settings.cta_text != blank %}
+      <div class="state-requirements__cta">
+        <p>{{ section.settings.cta_intro | default: "Need help understanding your compliance requirements?" }}</p>
+        <a href="{{ section.settings.cta_link }}" class="btn btn--primary">{{ section.settings.cta_text }}</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.state-requirements__lookup {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.state-requirements__select-wrap {
+  max-width: 400px;
+  margin: 0 auto 30px;
+}
+.state-requirements__select-wrap label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.state-requirements__select-wrap select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #fff;
+}
+.state-requirements__state h3 {
+  text-align: center;
+  margin: 0 0 30px;
+  font-size: 1.5rem;
+}
+.state-requirements__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+@media (max-width: 768px) {
+  .state-requirements__grid {
+    grid-template-columns: 1fr;
+  }
+}
+.state-requirements__card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+.state-requirements__card h4 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: var(--color-primary);
+}
+.state-requirements__content {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+.state-requirements__content p {
+  margin: 0;
+}
+.state-requirements__content ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.state-requirements__notes {
+  display: flex;
+  gap: 12px;
+  background: #fff3cd;
+  padding: 15px 20px;
+  border-radius: 6px;
+  margin-top: 20px;
+  border-left: 4px solid #ffc107;
+}
+.state-requirements__notes svg {
+  flex-shrink: 0;
+  color: #856404;
+}
+.state-requirements__notes p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.state-requirements__source {
+  display: inline-block;
+  margin-top: 20px;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+.state-requirements__placeholder {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--color-bg-alt);
+  border-radius: 8px;
+}
+.state-requirements__placeholder svg {
+  color: var(--color-text-light);
+  margin-bottom: 15px;
+}
+.state-requirements__placeholder p {
+  margin: 0;
+  color: var(--color-text-light);
+}
+.state-requirements__disclaimer {
+  text-align: center;
+  max-width: 700px;
+  margin: 40px auto 0;
+  padding: 20px;
+  background: var(--color-bg-alt);
+  border-radius: 6px;
+}
+.state-requirements__disclaimer p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  line-height: 1.6;
+}
+.state-requirements__cta {
+  text-align: center;
+  margin-top: 40px;
+}
+.state-requirements__cta p {
+  margin: 0 0 15px;
+  font-size: 1.125rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const select = document.querySelector('[data-state-select]');
+  if (!select) return;
+
+  const results = document.querySelector('[data-state-results]');
+  const defaultEl = document.querySelector('[data-state-default]');
+  const states = document.querySelectorAll('[data-state]');
+
+  select.addEventListener('change', function() {
+    const value = this.value;
+
+    if (!value) {
+      results.style.display = 'none';
+      defaultEl.style.display = 'block';
+      return;
+    }
+
+    results.style.display = 'block';
+    defaultEl.style.display = 'none';
+
+    states.forEach(state => {
+      state.style.display = state.dataset.state === value ? 'block' : 'none';
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "State Requirements",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "AED Requirements by State"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Find out what AED laws and regulations apply in your state"
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Disclaimer text",
+      "default": "This information is provided for general guidance only. Laws and regulations change frequently. Always verify requirements with your local authorities or legal counsel."
+    },
+    {
+      "type": "text",
+      "id": "cta_intro",
+      "label": "CTA intro text",
+      "default": "Need help understanding your compliance requirements?"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA button text",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Alternate background",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "state",
+      "name": "State",
+      "settings": [
+        {
+          "type": "text",
+          "id": "state_name",
+          "label": "State name",
+          "default": "California"
+        },
+        {
+          "type": "text",
+          "id": "state_code",
+          "label": "State code",
+          "default": "CA"
+        },
+        {
+          "type": "richtext",
+          "id": "required_locations",
+          "label": "Required locations",
+          "default": "<ul><li>Health studios and gyms</li><li>Schools (varies by district)</li></ul>"
+        },
+        {
+          "type": "richtext",
+          "id": "training",
+          "label": "Training requirements",
+          "default": "<p>CPR/AED training recommended for designated responders</p>"
+        },
+        {
+          "type": "richtext",
+          "id": "registration",
+          "label": "Registration & maintenance",
+          "default": "<p>AEDs must be registered with local EMS</p>"
+        },
+        {
+          "type": "richtext",
+          "id": "good_samaritan",
+          "label": "Good Samaritan protection",
+          "default": "<p>Good Samaritan protection for AED users acting in good faith</p>"
+        },
+        {
+          "type": "textarea",
+          "id": "notes",
+          "label": "Additional notes"
+        },
+        {
+          "type": "url",
+          "id": "source_link",
+          "label": "Official source link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "State Requirements",
+      "blocks": [
+        {
+          "type": "state",
+          "settings": {
+            "state_name": "California",
+            "state_code": "CA",
+            "required_locations": "<ul><li>Health studios and gyms (Health & Safety Code 104113)</li><li>Certain state buildings</li></ul>",
+            "training": "<p>Training recommended but not required for general public use</p>",
+            "registration": "<p>Must notify local EMS agency of AED placement</p>",
+            "good_samaritan": "<p>Civil Code 1714.21 provides immunity for good faith AED use</p>"
+          }
+        },
+        {
+          "type": "state",
+          "settings": {
+            "state_name": "New York",
+            "state_code": "NY",
+            "required_locations": "<ul><li>Public schools</li><li>Health clubs</li><li>Dentist offices</li><li>Senior centers</li></ul>",
+            "training": "<p>Training required for designated responders in mandated locations</p>",
+            "registration": "<p>Must register with regional EMS council</p>",
+            "good_samaritan": "<p>Good Samaritan law covers trained and untrained users</p>"
+          }
+        },
+        {
+          "type": "state",
+          "settings": {
+            "state_name": "Texas",
+            "state_code": "TX",
+            "required_locations": "<ul><li>No statewide mandates</li><li>Local jurisdictions may have requirements</li></ul>",
+            "training": "<p>No state training requirements</p>",
+            "registration": "<p>No state registration requirement</p>",
+            "good_samaritan": "<p>Good Samaritan protection under Civil Practice & Remedies Code</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

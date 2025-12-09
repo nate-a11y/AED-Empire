@@ -1,0 +1,28 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-buyers-guide",
+      "settings": {}
+    },
+    "comparison": {
+      "type": "aed-comparison-chart",
+      "settings": {
+        "title": "Compare AED Models",
+        "subtitle": "Side-by-side comparison of features and specifications"
+      },
+      "blocks": {}
+    },
+    "calculator": {
+      "type": "cost-calculator",
+      "settings": {
+        "title": "Calculate Your Total Cost",
+        "alt_bg": true
+      }
+    },
+    "help": {
+      "type": "need-help-cta",
+      "settings": {}
+    }
+  },
+  "order": ["main", "comparison", "calculator", "help"]
+}

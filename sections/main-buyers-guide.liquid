@@ -1,0 +1,349 @@
+<section class="section buyers-guide">
+  <div class="container">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span aria-current="page">{{ page.title }}</span></li>
+      </ol>
+    </nav>
+
+    <div class="page__header">
+      <h1 class="page__title">{{ page.title }}</h1>
+      {% if section.settings.intro != blank %}
+        <p class="page__intro">{{ section.settings.intro }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Quick Navigation -->
+    <nav class="buyers-guide__nav" aria-label="Guide sections">
+      <h2 class="visually-hidden">Jump to section</h2>
+      <ul>
+        {% for block in section.blocks %}
+          {% if block.type == 'guide_section' %}
+            <li>
+              <a href="#section-{{ forloop.index }}">{{ block.settings.nav_title | default: block.settings.title }}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <!-- Guide Content -->
+    <div class="buyers-guide__content">
+      {% for block in section.blocks %}
+        {% if block.type == 'guide_section' %}
+          <article class="buyers-guide__section" id="section-{{ forloop.index }}" {{ block.shopify_attributes }}>
+            <h2>{{ block.settings.title }}</h2>
+
+            {% if block.settings.image != blank %}
+              <div class="buyers-guide__image">
+                {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy' }}
+              </div>
+            {% endif %}
+
+            <div class="buyers-guide__text rte">
+              {{ block.settings.content }}
+            </div>
+
+            {% if block.settings.tip != blank %}
+              <div class="buyers-guide__tip">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 16v-4"/>
+                  <path d="M12 8h.01"/>
+                </svg>
+                <p><strong>Pro Tip:</strong> {{ block.settings.tip }}</p>
+              </div>
+            {% endif %}
+          </article>
+        {% elsif block.type == 'checklist' %}
+          <article class="buyers-guide__section buyers-guide__checklist" id="section-{{ forloop.index }}" {{ block.shopify_attributes }}>
+            <h2>{{ block.settings.title }}</h2>
+            <ul class="buyers-guide__checklist-items">
+              {% assign items = block.settings.items | split: '|' %}
+              {% for item in items %}
+                <li>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  {{ item }}
+                </li>
+              {% endfor %}
+            </ul>
+          </article>
+        {% elsif block.type == 'faq' %}
+          <article class="buyers-guide__section buyers-guide__faq" id="section-{{ forloop.index }}" {{ block.shopify_attributes }}>
+            <h2>{{ block.settings.title }}</h2>
+            <div class="buyers-guide__faq-list">
+              {% assign questions = block.settings.questions | split: '||' %}
+              {% for qa in questions %}
+                {% assign parts = qa | split: '|' %}
+                {% if parts.size >= 2 %}
+                  <details class="buyers-guide__faq-item">
+                    <summary>{{ parts[0] }}</summary>
+                    <div class="buyers-guide__faq-answer">
+                      {{ parts[1] }}
+                    </div>
+                  </details>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Page Content (from Shopify page editor) -->
+    {% if page.content != blank %}
+      <div class="buyers-guide__page-content rte" data-content-accordion="h2,h3">
+        {{ page.content }}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.buyers-guide__nav {
+  background: var(--color-bg-alt);
+  padding: 20px 25px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+.buyers-guide__nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.buyers-guide__nav a {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: none;
+  padding: 5px 0;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.buyers-guide__nav a:hover {
+  border-bottom-color: var(--color-primary);
+}
+.buyers-guide__content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.buyers-guide__section {
+  padding: 40px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.buyers-guide__section:last-child {
+  border-bottom: none;
+}
+.buyers-guide__section h2 {
+  font-size: 1.5rem;
+  margin: 0 0 20px;
+}
+.buyers-guide__image {
+  margin: 20px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.buyers-guide__image img {
+  width: 100%;
+  height: auto;
+}
+.buyers-guide__text {
+  line-height: 1.8;
+}
+.buyers-guide__tip {
+  display: flex;
+  gap: 15px;
+  background: #e8f5e9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 25px;
+  border-left: 4px solid #4caf50;
+}
+.buyers-guide__tip svg {
+  flex-shrink: 0;
+  color: #4caf50;
+}
+.buyers-guide__tip p {
+  margin: 0;
+  line-height: 1.6;
+}
+.buyers-guide__checklist-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.buyers-guide__checklist-items li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+  line-height: 1.5;
+}
+.buyers-guide__checklist-items li:last-child {
+  border-bottom: none;
+}
+.buyers-guide__checklist-items svg {
+  flex-shrink: 0;
+  color: #4caf50;
+  margin-top: 2px;
+}
+.buyers-guide__faq-item {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+.buyers-guide__faq-item summary {
+  padding: 15px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.buyers-guide__faq-item summary::-webkit-details-marker { display: none; }
+.buyers-guide__faq-item summary::after {
+  content: '+';
+  font-size: 1.25rem;
+  font-weight: 300;
+}
+.buyers-guide__faq-item[open] summary::after {
+  content: '−';
+}
+.buyers-guide__faq-answer {
+  padding: 0 20px 20px;
+  line-height: 1.7;
+  color: var(--color-text-light);
+}
+.buyers-guide__page-content {
+  max-width: 800px;
+  margin: 50px auto 0;
+  padding-top: 40px;
+  border-top: 1px solid var(--color-border);
+}
+</style>
+
+{% schema %}
+{
+  "name": "Buyers Guide",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Introduction text",
+      "default": "Everything you need to know about choosing the right AED for your needs"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "guide_section",
+      "name": "Guide Section",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Section title",
+          "default": "Understanding AEDs"
+        },
+        {
+          "type": "text",
+          "id": "nav_title",
+          "label": "Navigation title (shorter)",
+          "info": "Optional shorter title for navigation"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "textarea",
+          "id": "tip",
+          "label": "Pro tip"
+        }
+      ]
+    },
+    {
+      "type": "checklist",
+      "name": "Checklist",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "AED Buying Checklist"
+        },
+        {
+          "type": "textarea",
+          "id": "items",
+          "label": "Checklist items",
+          "info": "Separate items with | character",
+          "default": "Consider your environment (indoor/outdoor)|Check state compliance requirements|Compare warranty lengths|Factor in ongoing maintenance costs|Verify training is included"
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ Section",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Frequently Asked Questions"
+        },
+        {
+          "type": "textarea",
+          "id": "questions",
+          "label": "Questions & Answers",
+          "info": "Format: Question|Answer||Question|Answer",
+          "default": "How long do AED batteries last?|Most AED batteries last 4-5 years in standby mode. Check your specific model for exact specifications.||Do I need training to use an AED?|AEDs are designed for use by anyone, with voice prompts guiding you. However, CPR/AED training is recommended and may be required in some settings."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Buyers Guide",
+      "blocks": [
+        {
+          "type": "guide_section",
+          "settings": {
+            "title": "What is an AED?",
+            "nav_title": "What is an AED",
+            "content": "<p>An Automated External Defibrillator (AED) is a portable device that can detect cardiac arrhythmias and deliver an electrical shock to restore a normal heart rhythm. AEDs are designed to be used by laypeople with minimal training.</p>"
+          }
+        },
+        {
+          "type": "guide_section",
+          "settings": {
+            "title": "Semi-Automatic vs Fully Automatic",
+            "nav_title": "Types",
+            "content": "<p><strong>Semi-Automatic AEDs</strong> analyze the heart rhythm and prompt the user to press a button to deliver the shock. This gives the rescuer control over when the shock is delivered.</p><p><strong>Fully Automatic AEDs</strong> analyze and deliver the shock automatically without requiring user intervention. These are ideal for users who may hesitate in an emergency.</p>",
+            "tip": "For schools and public spaces, fully automatic AEDs are often preferred as they reduce hesitation during emergencies."
+          }
+        },
+        {
+          "type": "checklist",
+          "settings": {
+            "title": "AED Buying Checklist"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -19,6 +19,9 @@
     {% if product.tags contains 'bestseller' %}
       <span class="product-card__badge product-card__badge--bestseller">Bestseller</span>
     {% endif %}
+    {% if product.tags contains 'refurbished' %}
+      <span class="product-card__badge product-card__badge--refurbished">Certified Refurbished</span>
+    {% endif %}
   </div>
 
   <div class="product-card__image">
