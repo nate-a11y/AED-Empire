@@ -1,0 +1,246 @@
+<section class="section why-buy{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ section.settings.title | default: 'Why Buy From AED Empire?' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+      <div class="section-header__divider"></div>
+    </div>
+
+    <div class="why-buy__grid why-buy__grid--{{ section.blocks.size }}">
+      {% for block in section.blocks %}
+        <div class="why-buy__item" {{ block.shopify_attributes }}>
+          {% if block.settings.icon != blank %}
+            <div class="why-buy__icon">
+              {{ block.settings.icon | image_url: width: 80 | image_tag: loading: 'lazy' }}
+            </div>
+          {% elsif block.settings.icon_svg != blank %}
+            <div class="why-buy__icon why-buy__icon--svg">
+              {{ block.settings.icon_svg }}
+            </div>
+          {% else %}
+            <div class="why-buy__icon why-buy__icon--default">
+              {% case block.settings.icon_type %}
+                {% when 'shipping' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                {% when 'support' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                {% when 'warranty' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                {% when 'certified' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                {% when 'price' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                {% when 'training' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                {% when 'heart' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                {% else %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+              {% endcase %}
+            </div>
+          {% endif %}
+
+          <h3 class="why-buy__title">{{ block.settings.title }}</h3>
+
+          {% if block.settings.description != blank %}
+            <p class="why-buy__description">{{ block.settings.description }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if section.settings.cta_text != blank %}
+      <div class="why-buy__cta">
+        <a href="{{ section.settings.cta_link }}" class="btn btn--primary btn--large">
+          {{ section.settings.cta_text }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.why-buy__grid {
+  display: grid;
+  gap: 40px 30px;
+  margin-top: 40px;
+}
+.why-buy__grid--3 { grid-template-columns: repeat(3, 1fr); }
+.why-buy__grid--4 { grid-template-columns: repeat(4, 1fr); }
+.why-buy__grid--5 { grid-template-columns: repeat(5, 1fr); }
+.why-buy__grid--6 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 992px) {
+  .why-buy__grid--4,
+  .why-buy__grid--5,
+  .why-buy__grid--6 { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .why-buy__grid { grid-template-columns: repeat(2, 1fr); gap: 30px 20px; }
+}
+@media (max-width: 480px) {
+  .why-buy__grid { grid-template-columns: 1fr; }
+}
+.why-buy__item {
+  text-align: center;
+  padding: 20px;
+}
+.why-buy__icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.why-buy__icon img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.why-buy__icon--svg svg,
+.why-buy__icon--default svg {
+  width: 48px;
+  height: 48px;
+  color: var(--color-primary);
+}
+.why-buy__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: var(--color-text);
+}
+.why-buy__description {
+  font-size: 0.9375rem;
+  color: var(--color-text-light);
+  line-height: 1.6;
+  margin: 0;
+}
+.why-buy__cta {
+  text-align: center;
+  margin-top: 50px;
+}
+</style>
+
+{% schema %}
+{
+  "name": "Why Buy From Us",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Why Buy From AED Empire?"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "We're committed to making AEDs accessible and keeping your devices ready when you need them most"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA button text"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Alternate background",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "reason",
+      "name": "Reason",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Free Shipping"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Free ground shipping on all AED orders within the continental US"
+        },
+        {
+          "type": "select",
+          "id": "icon_type",
+          "label": "Icon",
+          "options": [
+            { "value": "check", "label": "Checkmark" },
+            { "value": "shipping", "label": "Shipping Truck" },
+            { "value": "support", "label": "Phone Support" },
+            { "value": "warranty", "label": "Warranty Shield" },
+            { "value": "certified", "label": "Certified Badge" },
+            { "value": "price", "label": "Price/Dollar" },
+            { "value": "training", "label": "Training/Book" },
+            { "value": "heart", "label": "Heart" }
+          ],
+          "default": "check"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Custom icon image"
+        },
+        {
+          "type": "html",
+          "id": "icon_svg",
+          "label": "Custom SVG icon"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Why Buy From Us",
+      "blocks": [
+        {
+          "type": "reason",
+          "settings": {
+            "title": "Free Shipping",
+            "description": "Free ground shipping on all AED orders within the continental US",
+            "icon_type": "shipping"
+          }
+        },
+        {
+          "type": "reason",
+          "settings": {
+            "title": "Expert Support",
+            "description": "Our AED specialists are here to help you choose the right device",
+            "icon_type": "support"
+          }
+        },
+        {
+          "type": "reason",
+          "settings": {
+            "title": "Price Match Guarantee",
+            "description": "Found a lower price? We'll match it on identical products",
+            "icon_type": "price"
+          }
+        },
+        {
+          "type": "reason",
+          "settings": {
+            "title": "Warranty Protection",
+            "description": "All AEDs come with full manufacturer warranty coverage",
+            "icon_type": "warranty"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

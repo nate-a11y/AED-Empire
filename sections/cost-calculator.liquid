@@ -1,0 +1,257 @@
+<section class="section cost-calculator{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ section.settings.title | default: 'Total Cost of Ownership Calculator' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+      <div class="section-header__divider"></div>
+    </div>
+
+    <div class="cost-calculator__grid">
+      <div class="cost-calculator__form">
+        <div class="cost-calculator__field">
+          <label for="calc-aed-price">AED Purchase Price</label>
+          <div class="cost-calculator__input-wrap">
+            <span class="cost-calculator__currency">$</span>
+            <input type="number" id="calc-aed-price" value="1495" min="0" step="1" data-calc-input>
+          </div>
+        </div>
+
+        <div class="cost-calculator__field">
+          <label for="calc-pad-cost">Replacement Pads Cost</label>
+          <div class="cost-calculator__input-wrap">
+            <span class="cost-calculator__currency">$</span>
+            <input type="number" id="calc-pad-cost" value="150" min="0" step="1" data-calc-input>
+          </div>
+        </div>
+
+        <div class="cost-calculator__field">
+          <label for="calc-pad-life">Pad Replacement Interval</label>
+          <select id="calc-pad-life" data-calc-input>
+            <option value="2">Every 2 years</option>
+            <option value="2.5">Every 2.5 years</option>
+            <option value="3">Every 3 years</option>
+            <option value="4">Every 4 years</option>
+            <option value="5">Every 5 years</option>
+          </select>
+        </div>
+
+        <div class="cost-calculator__field">
+          <label for="calc-battery-cost">Replacement Battery Cost</label>
+          <div class="cost-calculator__input-wrap">
+            <span class="cost-calculator__currency">$</span>
+            <input type="number" id="calc-battery-cost" value="200" min="0" step="1" data-calc-input>
+          </div>
+        </div>
+
+        <div class="cost-calculator__field">
+          <label for="calc-battery-life">Battery Replacement Interval</label>
+          <select id="calc-battery-life" data-calc-input>
+            <option value="2">Every 2 years</option>
+            <option value="3">Every 3 years</option>
+            <option value="4" selected>Every 4 years</option>
+            <option value="5">Every 5 years</option>
+          </select>
+        </div>
+
+        <div class="cost-calculator__field">
+          <label for="calc-years">Ownership Period</label>
+          <select id="calc-years" data-calc-input>
+            <option value="3">3 Years</option>
+            <option value="5" selected>5 Years</option>
+            <option value="7">7 Years</option>
+            <option value="10">10 Years</option>
+          </select>
+        </div>
+
+        <div class="cost-calculator__field">
+          <label for="calc-cabinet">Include Cabinet?</label>
+          <div class="cost-calculator__checkbox-wrap">
+            <input type="checkbox" id="calc-cabinet" data-calc-input>
+            <label for="calc-cabinet">Add wall cabinet (+$<span data-cabinet-price>150</span>)</label>
+          </div>
+        </div>
+
+        <div class="cost-calculator__field">
+          <label for="calc-cabinet-price" class="cost-calculator__sub-label">Cabinet Price</label>
+          <div class="cost-calculator__input-wrap">
+            <span class="cost-calculator__currency">$</span>
+            <input type="number" id="calc-cabinet-price" value="150" min="0" step="1" data-calc-input>
+          </div>
+        </div>
+      </div>
+
+      <div class="cost-calculator__results">
+        <h3>5-Year Cost Breakdown</h3>
+
+        <div class="cost-calculator__breakdown">
+          <div class="cost-calculator__line">
+            <span>Initial AED Cost</span>
+            <span data-result="aed">$1,495</span>
+          </div>
+          <div class="cost-calculator__line">
+            <span>Cabinet (if selected)</span>
+            <span data-result="cabinet">$0</span>
+          </div>
+          <div class="cost-calculator__line">
+            <span>Pad Replacements</span>
+            <span data-result="pads">$300</span>
+          </div>
+          <div class="cost-calculator__line">
+            <span>Battery Replacements</span>
+            <span data-result="batteries">$200</span>
+          </div>
+        </div>
+
+        <div class="cost-calculator__total">
+          <span>Total <span data-result-years>5</span>-Year Cost</span>
+          <span data-result="total">$1,995</span>
+        </div>
+
+        <div class="cost-calculator__per-year">
+          <span>Cost Per Year</span>
+          <span data-result="yearly">$399</span>
+        </div>
+
+        <div class="cost-calculator__per-month">
+          <span>Cost Per Month</span>
+          <span data-result="monthly">$33.25</span>
+        </div>
+
+        <p class="cost-calculator__note">
+          {{ section.settings.note | default: "* Costs may vary based on usage and manufacturer recommendations. This calculator provides estimates only." }}
+        </p>
+
+        {% if section.settings.cta_text != blank %}
+          <a href="{{ section.settings.cta_link }}" class="btn btn--primary btn--full">
+            {{ section.settings.cta_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.cost-calculator__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; max-width: 1000px; margin: 0 auto; }
+@media (max-width: 768px) { .cost-calculator__grid { grid-template-columns: 1fr; } }
+.cost-calculator__form { display: flex; flex-direction: column; gap: 20px; }
+.cost-calculator__field label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9375rem; }
+.cost-calculator__sub-label { font-size: 0.8125rem !important; color: var(--color-text-light); }
+.cost-calculator__input-wrap { position: relative; }
+.cost-calculator__currency { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-light); }
+.cost-calculator__input-wrap input { padding-left: 28px; }
+.cost-calculator__field input, .cost-calculator__field select { width: 100%; padding: 12px 15px; border: 1px solid var(--color-border); border-radius: 4px; font-size: 1rem; }
+.cost-calculator__field input:focus, .cost-calculator__field select:focus { outline: none; border-color: var(--color-primary); }
+.cost-calculator__checkbox-wrap { display: flex; align-items: center; gap: 10px; }
+.cost-calculator__checkbox-wrap input[type="checkbox"] { width: 20px; height: 20px; }
+.cost-calculator__checkbox-wrap label { margin: 0; font-weight: 400; }
+.cost-calculator__results { background: var(--color-bg-alt); padding: 30px; border-radius: 8px; }
+.cost-calculator__results h3 { margin: 0 0 25px; font-size: 1.25rem; }
+.cost-calculator__breakdown { border-bottom: 1px solid var(--color-border); padding-bottom: 20px; margin-bottom: 20px; }
+.cost-calculator__line { display: flex; justify-content: space-between; padding: 8px 0; font-size: 0.9375rem; }
+.cost-calculator__total { display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 700; padding: 15px 0; border-bottom: 1px solid var(--color-border); }
+.cost-calculator__per-year, .cost-calculator__per-month { display: flex; justify-content: space-between; padding: 10px 0; color: var(--color-text-light); }
+.cost-calculator__note { font-size: 0.8125rem; color: var(--color-text-light); margin: 20px 0; line-height: 1.5; }
+.cost-calculator__results .btn { margin-top: 10px; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const calculator = document.querySelector('.cost-calculator');
+  if (!calculator) return;
+
+  const inputs = calculator.querySelectorAll('[data-calc-input]');
+  const cabinetPriceSpan = calculator.querySelector('[data-cabinet-price]');
+
+  function calculate() {
+    const aedPrice = parseFloat(document.getElementById('calc-aed-price').value) || 0;
+    const padCost = parseFloat(document.getElementById('calc-pad-cost').value) || 0;
+    const padLife = parseFloat(document.getElementById('calc-pad-life').value) || 2;
+    const batteryCost = parseFloat(document.getElementById('calc-battery-cost').value) || 0;
+    const batteryLife = parseFloat(document.getElementById('calc-battery-life').value) || 4;
+    const years = parseFloat(document.getElementById('calc-years').value) || 5;
+    const includeCabinet = document.getElementById('calc-cabinet').checked;
+    const cabinetPrice = parseFloat(document.getElementById('calc-cabinet-price').value) || 0;
+
+    // Calculate replacements needed
+    const padReplacements = Math.floor(years / padLife);
+    const batteryReplacements = Math.floor(years / batteryLife);
+
+    const totalPads = padReplacements * padCost;
+    const totalBatteries = batteryReplacements * batteryCost;
+    const totalCabinet = includeCabinet ? cabinetPrice : 0;
+    const total = aedPrice + totalCabinet + totalPads + totalBatteries;
+    const yearly = total / years;
+    const monthly = yearly / 12;
+
+    // Update display
+    calculator.querySelector('[data-result="aed"]').textContent = '$' + aedPrice.toLocaleString();
+    calculator.querySelector('[data-result="cabinet"]').textContent = '$' + totalCabinet.toLocaleString();
+    calculator.querySelector('[data-result="pads"]').textContent = '$' + totalPads.toLocaleString();
+    calculator.querySelector('[data-result="batteries"]').textContent = '$' + totalBatteries.toLocaleString();
+    calculator.querySelector('[data-result="total"]').textContent = '$' + total.toLocaleString();
+    calculator.querySelector('[data-result="yearly"]').textContent = '$' + yearly.toLocaleString(undefined, {maximumFractionDigits: 0});
+    calculator.querySelector('[data-result="monthly"]').textContent = '$' + monthly.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    calculator.querySelector('[data-result-years]').textContent = years;
+
+    if (cabinetPriceSpan) {
+      cabinetPriceSpan.textContent = cabinetPrice;
+    }
+  }
+
+  inputs.forEach(input => input.addEventListener('input', calculate));
+  inputs.forEach(input => input.addEventListener('change', calculate));
+  calculate();
+});
+</script>
+
+{% schema %}
+{
+  "name": "Cost Calculator",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Total Cost of Ownership Calculator"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "See the true 5-year cost of owning an AED, including replacement pads and batteries"
+    },
+    {
+      "type": "textarea",
+      "id": "note",
+      "label": "Disclaimer note",
+      "default": "* Costs may vary based on usage and manufacturer recommendations. This calculator provides estimates only."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA button text",
+      "default": "Shop AEDs"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Alternate background",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cost Calculator"
+    }
+  ]
+}
+{% endschema %}

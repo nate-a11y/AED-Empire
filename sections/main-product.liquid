@@ -265,6 +265,12 @@
           </div>
         {% endif %}
 
+        <!-- Product Features (from metaobjects) -->
+        {% render 'product-features-metaobject', product: product %}
+
+        <!-- Certifications (from metaobjects) -->
+        {% render 'product-certifications-metaobject', product: product %}
+
         <!-- SKU & Availability -->
         <div class="product-meta">
           {% if product.selected_or_first_available_variant.sku != blank %}
@@ -311,7 +317,11 @@
                   id="tab-description">Description</button>
           {% assign first_tab = false %}
         {% endif %}
+        {% assign has_specs = false %}
         {% if product.metafields.custom.specifications != blank %}
+          {% assign has_specs = true %}
+        {% endif %}
+        {% if has_specs %}
           <button class="product-tabs__tab{% if first_tab %} product-tabs__tab--active{% endif %}"
                   data-tab="specs"
                   role="tab"
@@ -323,8 +333,11 @@
         {% if product.metafields.custom.whats_included != blank %}
           <button class="product-tabs__tab" data-tab="included" role="tab" aria-selected="false" aria-controls="panel-included" id="tab-included">What's Included</button>
         {% endif %}
-        {% if product.metafields.custom.warranty_info != blank %}
+        {% if product.metafields.custom.warranty_info.value != blank %}
           <button class="product-tabs__tab" data-tab="warranty" role="tab" aria-selected="false" aria-controls="panel-warranty" id="tab-warranty">Warranty</button>
+        {% endif %}
+        {% if product.metafields.custom.maintenance_schedule.value != blank %}
+          <button class="product-tabs__tab" data-tab="maintenance" role="tab" aria-selected="false" aria-controls="panel-maintenance" id="tab-maintenance">Maintenance</button>
         {% endif %}
         {% if section.settings.show_shipping_tab %}
           <button class="product-tabs__tab" data-tab="shipping" role="tab" aria-selected="false" aria-controls="panel-shipping" id="tab-shipping">Shipping & Returns</button>
@@ -352,7 +365,13 @@
                id="panel-specs"
                aria-labelledby="tab-specs"
                {% unless first_panel %}hidden{% endunless %}>
-            <div class="specs-table">{{ product.metafields.custom.specifications }}</div>
+            {% if product.metafields.custom.specifications.value.system %}
+              {% comment %} It's a metaobject reference {% endcomment %}
+              {% render 'product-specs-metaobject', product: product, title: 'Technical Specifications' %}
+            {% else %}
+              {% comment %} It's a plain text/richtext metafield {% endcomment %}
+              <div class="specs-table">{{ product.metafields.custom.specifications }}</div>
+            {% endif %}
           </div>
           {% assign first_panel = false %}
         {% endif %}
@@ -363,9 +382,15 @@
           </div>
         {% endif %}
 
-        {% if product.metafields.custom.warranty_info != blank %}
+        {% if product.metafields.custom.warranty_info.value != blank %}
           <div class="product-tabs__panel" data-panel="warranty" role="tabpanel" id="panel-warranty" aria-labelledby="tab-warranty" hidden>
-            <div class="warranty-info">{{ product.metafields.custom.warranty_info }}</div>
+            {% render 'product-warranty-metaobject', product: product %}
+          </div>
+        {% endif %}
+
+        {% if product.metafields.custom.maintenance_schedule.value != blank %}
+          <div class="product-tabs__panel" data-panel="maintenance" role="tabpanel" id="panel-maintenance" aria-labelledby="tab-maintenance" hidden>
+            {% render 'product-maintenance-metaobject', product: product %}
           </div>
         {% endif %}
 

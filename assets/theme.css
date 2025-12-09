@@ -1718,6 +1718,10 @@ textarea:focus-visible {
   background: #8b5cf6;
   color: #fff;
 }
+.product-card__badge--refurbished {
+  background: #0891b2;
+  color: #fff;
+}
 
 /* Product Card Swatches */
 .product-card__swatches {

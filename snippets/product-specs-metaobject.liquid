@@ -1,0 +1,115 @@
+{% comment %}
+  Product Specifications Snippet - Displays specs from Product Specification metaobjects
+
+  Usage: {% render 'product-specs-metaobject', product: product %}
+
+  Requires: Product metafield linking to Product Specification metaobject
+  Metafield: product.metafields.custom.specifications (metaobject reference)
+{% endcomment %}
+
+{% assign specs = product.metafields.custom.specifications.value %}
+
+{% if specs %}
+<div class="product-specs-mo">
+  <h3 class="product-specs-mo__title">{{ title | default: 'Technical Specifications' }}</h3>
+  <table class="product-specs-mo__table">
+    <tbody>
+      {% if specs.weight != blank %}
+        <tr>
+          <th>Weight</th>
+          <td>{{ specs.weight }}</td>
+        </tr>
+      {% endif %}
+      {% if specs.dimensions != blank %}
+        <tr>
+          <th>Dimensions</th>
+          <td>{{ specs.dimensions }}</td>
+        </tr>
+      {% endif %}
+      {% if specs.battery_type != blank %}
+        <tr>
+          <th>Battery Type</th>
+          <td>{{ specs.battery_type }}</td>
+        </tr>
+      {% endif %}
+      {% if specs.battery_life != blank %}
+        <tr>
+          <th>Battery Life</th>
+          <td>{{ specs.battery_life }}</td>
+        </tr>
+      {% endif %}
+      {% if specs.shock_energy != blank %}
+        <tr>
+          <th>Shock Energy</th>
+          <td>{{ specs.shock_energy }}</td>
+        </tr>
+      {% endif %}
+      {% if specs.ip_rating != blank %}
+        <tr>
+          <th>IP Rating</th>
+          <td>{{ specs.ip_rating }}</td>
+        </tr>
+      {% endif %}
+      {% if specs.operating_temp != blank %}
+        <tr>
+          <th>Operating Temperature</th>
+          <td>{{ specs.operating_temp }}</td>
+        </tr>
+      {% endif %}
+      {% if specs.warranty != blank %}
+        <tr>
+          <th>Warranty</th>
+          <td>{{ specs.warranty }}</td>
+        </tr>
+      {% endif %}
+      {% if specs.certifications != blank %}
+        <tr>
+          <th>Certifications</th>
+          <td>{{ specs.certifications }}</td>
+        </tr>
+      {% endif %}
+      {% comment %} Additional specs from rich text field {% endcomment %}
+      {% if specs.additional_specs != blank %}
+        <tr class="product-specs-mo__additional">
+          <td colspan="2">{{ specs.additional_specs }}</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<style>
+.product-specs-mo__title {
+  font-size: 1.25rem;
+  margin: 0 0 20px;
+}
+.product-specs-mo__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.product-specs-mo__table th,
+.product-specs-mo__table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+.product-specs-mo__table th {
+  font-weight: 500;
+  color: var(--color-text-light);
+  width: 40%;
+}
+.product-specs-mo__table td {
+  font-weight: 500;
+}
+.product-specs-mo__table tr:last-child th,
+.product-specs-mo__table tr:last-child td {
+  border-bottom: none;
+}
+.product-specs-mo__additional td {
+  padding-top: 20px;
+}
+.product-specs-mo__additional td p:first-child {
+  margin-top: 0;
+}
+</style>
+{% endif %}

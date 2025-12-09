@@ -1,0 +1,251 @@
+<section class="section need-help-cta{% if section.settings.style == 'dark' %} need-help-cta--dark{% endif %}{% if section.settings.style == 'primary' %} need-help-cta--primary{% endif %}">
+  <div class="container">
+    <div class="need-help-cta__inner">
+      {% if section.settings.icon_type != 'none' %}
+        <div class="need-help-cta__icon">
+          {% case section.settings.icon_type %}
+            {% when 'phone' %}
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            {% when 'chat' %}
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            {% when 'help' %}
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            {% when 'expert' %}
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+          {% endcase %}
+        </div>
+      {% endif %}
+
+      <div class="need-help-cta__content">
+        <h2>{{ section.settings.title | default: "Need Help Choosing the Right AED?" }}</h2>
+        {% if section.settings.description != blank %}
+          <p>{{ section.settings.description }}</p>
+        {% endif %}
+
+        {% if section.settings.phone != blank %}
+          <p class="need-help-cta__phone">
+            <a href="tel:{{ section.settings.phone | remove: ' ' | remove: '-' | remove: '(' | remove: ')' }}">{{ section.settings.phone }}</a>
+          </p>
+        {% endif %}
+      </div>
+
+      <div class="need-help-cta__actions">
+        {% if section.settings.primary_btn_text != blank %}
+          <a href="{{ section.settings.primary_btn_link }}" class="btn btn--primary btn--large">
+            {{ section.settings.primary_btn_text }}
+          </a>
+        {% endif %}
+        {% if section.settings.secondary_btn_text != blank %}
+          <a href="{{ section.settings.secondary_btn_link }}" class="btn btn--outline btn--large{% if section.settings.style == 'dark' or section.settings.style == 'primary' %} btn--white{% endif %}">
+            {{ section.settings.secondary_btn_text }}
+          </a>
+        {% endif %}
+      </div>
+
+      {% if section.settings.show_hours and section.settings.hours != blank %}
+        <p class="need-help-cta__hours">{{ section.settings.hours }}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+.need-help-cta {
+  padding: 60px 0;
+  background: var(--color-bg-alt);
+}
+.need-help-cta--dark {
+  background: var(--color-heading);
+  color: #fff;
+}
+.need-help-cta--primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+.need-help-cta__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.need-help-cta__icon svg {
+  color: var(--color-primary);
+}
+.need-help-cta--dark .need-help-cta__icon svg,
+.need-help-cta--primary .need-help-cta__icon svg {
+  color: #fff;
+}
+.need-help-cta__content {
+  flex: 1;
+  min-width: 280px;
+}
+.need-help-cta__content h2 {
+  margin: 0 0 10px;
+  font-size: 1.75rem;
+}
+.need-help-cta--dark .need-help-cta__content h2,
+.need-help-cta--primary .need-help-cta__content h2 {
+  color: #fff;
+}
+.need-help-cta__content p {
+  margin: 0;
+  font-size: 1.0625rem;
+  opacity: 0.9;
+}
+.need-help-cta__phone {
+  margin-top: 10px !important;
+}
+.need-help-cta__phone a {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.need-help-cta--dark .need-help-cta__phone a,
+.need-help-cta--primary .need-help-cta__phone a {
+  color: #fff;
+}
+.need-help-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+.need-help-cta--dark .btn--primary,
+.need-help-cta--primary .btn--primary {
+  background: #fff;
+  color: var(--color-heading);
+}
+.need-help-cta--dark .btn--primary:hover,
+.need-help-cta--primary .btn--primary:hover {
+  background: #f0f0f0;
+}
+.btn--white {
+  border-color: #fff;
+  color: #fff;
+}
+.btn--white:hover {
+  background: #fff;
+  color: var(--color-heading);
+}
+.need-help-cta__hours {
+  width: 100%;
+  margin: 10px 0 0;
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+@media (max-width: 768px) {
+  .need-help-cta__inner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .need-help-cta__content h2 {
+    font-size: 1.5rem;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Need Help CTA",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Need Help Choosing the Right AED?"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Our AED specialists are here to help you find the perfect device for your needs"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone number",
+      "default": "(800) 555-1234"
+    },
+    {
+      "type": "select",
+      "id": "icon_type",
+      "label": "Icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "phone", "label": "Phone" },
+        { "value": "chat", "label": "Chat" },
+        { "value": "help", "label": "Help/Question" },
+        { "value": "expert", "label": "Expert/Person" }
+      ],
+      "default": "help"
+    },
+    {
+      "type": "text",
+      "id": "primary_btn_text",
+      "label": "Primary button text",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "primary_btn_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_btn_text",
+      "label": "Secondary button text",
+      "default": "Live Chat"
+    },
+    {
+      "type": "url",
+      "id": "secondary_btn_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hours",
+      "label": "Show hours",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Hours text",
+      "default": "Mon-Fri 8am-6pm EST"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Style",
+      "options": [
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" },
+        { "value": "primary", "label": "Primary color" }
+      ],
+      "default": "light"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Need Help CTA"
+    }
+  ]
+}
+{% endschema %}
