@@ -69,7 +69,9 @@
                             type="number"
                             id="Filter-{{ filter.param_name }}-GTE"
                             name="{{ filter.min_value.param_name }}"
+                            {%- if filter.min_value.value != blank and filter.min_value.value != 0 %}
                             value="{{ filter.min_value.value | divided_by: 100.0 | round }}"
+                            {%- endif %}
                             min="0"
                             max="{{ filter.range_max | divided_by: 100.0 | ceil }}"
                             placeholder="{{ filter.range_min | divided_by: 100.0 | floor }}"
@@ -84,7 +86,9 @@
                             type="number"
                             id="Filter-{{ filter.param_name }}-LTE"
                             name="{{ filter.max_value.param_name }}"
+                            {%- if filter.max_value.value != blank and filter.max_value.value != 0 %}
                             value="{{ filter.max_value.value | divided_by: 100.0 | round }}"
+                            {%- endif %}
                             min="0"
                             max="{{ filter.range_max | divided_by: 100.0 | ceil }}"
                             placeholder="{{ filter.range_max | divided_by: 100.0 | ceil }}"

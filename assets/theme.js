@@ -965,21 +965,37 @@
         });
       });
 
-      // View toggles
-      document.querySelectorAll('[data-view]').forEach(btn => {
+      // View toggles - with localStorage persistence
+      const grid = document.querySelector('[data-collection-grid]');
+      const viewBtns = document.querySelectorAll('[data-view]');
+
+      // Apply saved view preference on page load
+      const savedView = localStorage.getItem('collectionView');
+      if (savedView && grid) {
+        grid.classList.toggle('collection-grid--list', savedView === 'list');
+        viewBtns.forEach(b => {
+          const isActive = b.dataset.view === savedView;
+          b.classList.toggle('view-toggle--active', isActive);
+          b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+      }
+
+      viewBtns.forEach(btn => {
         btn.addEventListener('click', () => {
           const view = btn.dataset.view;
-          document.querySelectorAll('[data-view]').forEach(b => {
+          viewBtns.forEach(b => {
             b.classList.remove('view-toggle--active');
             b.setAttribute('aria-pressed', 'false');
           });
           btn.classList.add('view-toggle--active');
           btn.setAttribute('aria-pressed', 'true');
 
-          const grid = document.querySelector('[data-collection-grid]');
           if (grid) {
             grid.classList.toggle('collection-grid--list', view === 'list');
           }
+
+          // Save preference to localStorage
+          localStorage.setItem('collectionView', view);
           utils.announce(`View changed to ${view}`);
         });
       });
