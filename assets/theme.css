@@ -217,10 +217,13 @@ button svg line, button svg path, button svg circle, button svg polyline { strok
 /* =========================================
    BREADCRUMBS
    ========================================= */
-.breadcrumbs { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: var(--color-text-light); margin-bottom: 30px; flex-wrap: wrap; }
-.breadcrumbs a { color: var(--color-text-light); }
-.breadcrumbs a:hover { color: var(--color-primary); }
-.breadcrumbs__sep { opacity: 0.5; }
+.breadcrumbs { font-size: 0.8125rem; color: var(--color-text-light); margin-bottom: 25px; }
+.breadcrumbs ol { display: flex; align-items: center; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
+.breadcrumbs li { display: flex; align-items: center; }
+.breadcrumbs li:not(:last-child)::after { content: ''; display: inline-block; width: 5px; height: 5px; border-right: 1.5px solid var(--color-text-light); border-top: 1.5px solid var(--color-text-light); transform: rotate(45deg); margin: 0 12px; opacity: 0.5; }
+.breadcrumbs a { color: var(--color-text-light); text-decoration: none; transition: color 0.2s; }
+.breadcrumbs a:hover { color: var(--color-primary); text-decoration: underline; }
+.breadcrumbs [aria-current="page"] { color: var(--color-text); font-weight: 500; }
 
 /* =========================================
    PRODUCT CARDS
