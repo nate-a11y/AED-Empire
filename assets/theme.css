@@ -255,8 +255,16 @@ button svg line, button svg path, button svg circle, button svg polyline { strok
 .collection-page { padding: 40px 0 80px; }
 .collection-header { margin-bottom: 30px; }
 .collection-header h1 { margin-bottom: 10px; }
+.collection-header__intro { color: var(--color-text-light); line-height: 1.6; font-size: 0.9375rem; max-width: 800px; margin: 0; }
 
-/* Collapsible Collection Description */
+/* Collection Info Section (below products) */
+.collection-info { margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--color-border); }
+.collection-info__title { font-size: 1.75rem; margin-bottom: 25px; }
+.collection-info__content { max-width: 900px; }
+.collection-info__content.rte:not(:has(.content-accordion)) { line-height: 1.8; }
+.collection-info__content.rte:not(:has(.content-accordion)) p { margin-bottom: 1.25em; }
+
+/* Legacy Collapsible Collection Description (kept for compatibility) */
 .collection-description { max-width: 900px; margin-top: 10px; }
 .collection-description__preview,
 .collection-description__content { color: var(--color-text-light); line-height: 1.6; font-size: 0.9375rem; }
@@ -587,6 +595,28 @@ button svg line, button svg path, button svg circle, button svg polyline { strok
 .faq-answer { display: none; }
 .faq-answer.is-open { display: block; }
 .faq-answer__inner { padding: 0 20px 20px; color: var(--color-text-light); line-height: 1.7; }
+
+/* Content Accordions (auto-generated from headings) */
+.content-accordion { margin: 0; }
+.content-accordion__intro { margin-bottom: 30px; line-height: 1.8; }
+.content-accordion__intro p:last-child { margin-bottom: 0; }
+.content-accordion__item { border: 1px solid var(--color-border); border-radius: 4px; margin-bottom: 10px; overflow: hidden; }
+.content-accordion__trigger { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 18px 20px; background: var(--color-bg-alt); border: none; text-align: left; font-size: 1.0625rem; font-weight: 600; color: var(--color-text); cursor: pointer; transition: background 0.2s; }
+.content-accordion__trigger:hover { background: var(--color-border); }
+.content-accordion__trigger span { flex: 1; padding-right: 15px; }
+.content-accordion__trigger svg { flex-shrink: 0; transition: transform 0.3s ease; }
+.content-accordion__trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
+.content-accordion__panel { padding: 20px; background: #fff; line-height: 1.8; }
+.content-accordion__panel[hidden] { display: none; }
+.content-accordion__panel p { margin-bottom: 1em; }
+.content-accordion__panel p:last-child { margin-bottom: 0; }
+.content-accordion__panel ul, .content-accordion__panel ol { margin-bottom: 1em; padding-left: 1.5em; }
+.content-accordion__panel li { margin-bottom: 0.5em; }
+.content-accordion__panel a { color: var(--color-primary); text-decoration: underline; }
+@media (max-width: 768px) {
+  .content-accordion__trigger { padding: 15px; font-size: 1rem; }
+  .content-accordion__panel { padding: 15px; }
+}
 
 /* =========================================
    CTA BAR

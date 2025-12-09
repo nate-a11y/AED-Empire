@@ -11,26 +11,7 @@
       <h1>{{ collection.title }}</h1>
       {% if collection.description != blank %}
         {% assign desc_text = collection.description | strip_html %}
-        {% assign desc_length = desc_text | size %}
-        <div class="collection-description" data-collection-description>
-          {% if desc_length > 200 %}
-            <div class="collection-description__preview">
-              {{ desc_text | truncate: 200, '...' }}
-            </div>
-            <div class="collection-description__full" hidden>
-              {{ collection.description }}
-            </div>
-            <button type="button" class="collection-description__toggle" data-description-toggle aria-expanded="false">
-              <span class="toggle-more">Read more about this collection</span>
-              <span class="toggle-less" hidden>Show less</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-          {% else %}
-            <div class="collection-description__content">
-              {{ collection.description }}
-            </div>
-          {% endif %}
-        </div>
+        <p class="collection-header__intro">{{ desc_text | truncate: 160, '...' }}</p>
       {% endif %}
     </header>
 
@@ -174,6 +155,29 @@
         {% endpaginate %}
       </div>
     </div>
+
+    <!-- Collection Description (below products, accordion format) -->
+    {% if collection.description != blank %}
+      {% assign desc_has_headings = collection.description | split: '<h2' | size | minus: 1 %}
+      {% assign desc_has_h3 = collection.description | split: '<h3' | size | minus: 1 %}
+      {% assign total_headings = desc_has_headings | plus: desc_has_h3 %}
+
+      {% if total_headings > 0 %}
+        <section class="collection-info">
+          <h2 class="collection-info__title">About {{ collection.title }}</h2>
+          <div class="collection-info__content rte" data-content-accordion="h2,h3">
+            {{ collection.description }}
+          </div>
+        </section>
+      {% else %}
+        <section class="collection-info">
+          <h2 class="collection-info__title">About {{ collection.title }}</h2>
+          <div class="collection-info__content rte">
+            {{ collection.description }}
+          </div>
+        </section>
+      {% endif %}
+    {% endif %}
   </div>
 </div>
 
