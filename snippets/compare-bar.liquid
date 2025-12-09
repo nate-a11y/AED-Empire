@@ -1,0 +1,236 @@
+{% comment %}
+  Floating Compare Bar - Shows selected products for comparison
+  Requires: settings.enable_compare to be true
+{% endcomment %}
+
+<div class="compare-bar" data-compare-bar hidden aria-live="polite">
+  <div class="container">
+    <div class="compare-bar__inner">
+      <div class="compare-bar__products" data-compare-bar-products>
+        {%- comment -%} Product thumbnails injected by JS {%- endcomment -%}
+      </div>
+      <div class="compare-bar__actions">
+        <span class="compare-bar__count"><span data-compare-count>0</span> products selected</span>
+        <a href="/pages/compare" class="btn btn--primary btn--small" data-compare-view>
+          Compare Now
+        </a>
+        <button type="button" class="compare-bar__clear" data-compare-clear-all aria-label="Clear all">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const STORAGE_KEY = 'aed_compare_products';
+  const MAX_COMPARE = {{ settings.compare_max_products | default: 4 }};
+
+  const compareBar = document.querySelector('[data-compare-bar]');
+  const compareCount = document.querySelector('[data-compare-count]');
+  const compareBarProducts = document.querySelector('[data-compare-bar-products]');
+
+  // Get compare list from storage
+  function getCompareList() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  // Save compare list
+  function saveCompareList(list) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    } catch {}
+  }
+
+  // Add product to compare
+  window.addToCompare = async function(handle) {
+    const list = getCompareList();
+    if (list.find(p => p.handle === handle)) {
+      window.removeFromCompare(handle);
+      return;
+    }
+    if (list.length >= MAX_COMPARE) {
+      alert(`Maximum ${MAX_COMPARE} products can be compared`);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/products/${handle}.js`);
+      const product = await response.json();
+
+      list.push({
+        handle: product.handle,
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        compare_at_price: product.compare_at_price,
+        vendor: product.vendor,
+        type: product.type,
+        image: product.featured_image,
+        url: product.url,
+        available: product.available,
+        variants: product.variants,
+        description: product.description ? product.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...' : ''
+      });
+
+      saveCompareList(list);
+      updateCompareUI();
+      updateCompareButtons();
+    } catch (err) {
+      console.error('Error adding to compare:', err);
+    }
+  };
+
+  // Remove product from compare
+  window.removeFromCompare = function(handle) {
+    let list = getCompareList();
+    list = list.filter(p => p.handle !== handle);
+    saveCompareList(list);
+    updateCompareUI();
+    updateCompareButtons();
+  };
+
+  // Check if product is in compare
+  window.isInCompare = function(handle) {
+    return getCompareList().some(p => p.handle === handle);
+  };
+
+  // Update compare buttons on page
+  function updateCompareButtons() {
+    document.querySelectorAll('[data-compare-add]').forEach(btn => {
+      const handle = btn.dataset.compareAdd;
+      const isInList = window.isInCompare(handle);
+      btn.classList.toggle('is-active', isInList);
+      btn.setAttribute('aria-pressed', isInList);
+      const textEl = btn.querySelector('.compare-btn__text');
+      if (textEl) {
+        textEl.textContent = isInList ? 'Remove' : 'Compare';
+      }
+    });
+  }
+
+  // Update floating bar
+  function updateCompareUI() {
+    const list = getCompareList();
+
+    // Update count
+    if (compareCount) {
+      compareCount.textContent = list.length;
+    }
+
+    // Show/hide bar
+    if (compareBar) {
+      compareBar.hidden = list.length === 0;
+    }
+
+    // Update bar thumbnails
+    if (compareBarProducts) {
+      compareBarProducts.innerHTML = list.map(p => `
+        <div class="compare-bar__product">
+          <img src="${p.image}" alt="${p.title}" width="40" height="40">
+          <button type="button" class="compare-bar__remove" onclick="removeFromCompare('${p.handle}')" aria-label="Remove ${p.title}">×</button>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Clear all
+  document.querySelector('[data-compare-clear-all]')?.addEventListener('click', () => {
+    saveCompareList([]);
+    updateCompareUI();
+    updateCompareButtons();
+  });
+
+  // Initialize
+  updateCompareUI();
+  updateCompareButtons();
+
+  // Listen for compare button clicks
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-compare-add]');
+    if (btn) {
+      e.preventDefault();
+      window.addToCompare(btn.dataset.compareAdd);
+    }
+  });
+})();
+</script>
+
+<style>
+.compare-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  z-index: 100;
+  padding: 15px 0;
+}
+.compare-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.compare-bar__products {
+  display: flex;
+  gap: 10px;
+}
+.compare-bar__product {
+  position: relative;
+}
+.compare-bar__product img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+}
+.compare-bar__remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.compare-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.compare-bar__count {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+.compare-bar__clear {
+  background: none;
+  border: none;
+  color: var(--color-text-light);
+  cursor: pointer;
+  padding: 5px;
+}
+.compare-bar__clear:hover {
+  color: var(--color-primary);
+}
+@media (max-width: 600px) {
+  .compare-bar__count {
+    display: none;
+  }
+}
+</style>

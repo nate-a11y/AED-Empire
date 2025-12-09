@@ -187,6 +187,11 @@
     {% render 'newsletter-popup' %}
   {% endif %}
 
+  {%- comment -%} Product Compare Bar {%- endcomment -%}
+  {% if settings.enable_compare %}
+    {% render 'compare-bar' %}
+  {% endif %}
+
   {%- comment -%} JSON-LD Structured Data {%- endcomment -%}
   {% render 'json-ld' %}
 
