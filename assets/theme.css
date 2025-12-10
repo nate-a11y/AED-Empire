@@ -34,6 +34,17 @@ button svg line, button svg path, button svg circle, button svg polyline { strok
 .text-center { text-align: center; }
 .text-success { color: var(--color-success); }
 .text-error { color: var(--color-error); }
+.text-light { color: #fff; }
+
+/* Dark background sections - automatically makes text white */
+.bg-dark, .section--dark { --color-text: #fff; --color-text-light: rgba(255,255,255,0.8); color: #fff; }
+.bg-dark h1, .bg-dark h2, .bg-dark h3, .bg-dark h4, .bg-dark h5, .bg-dark h6,
+.section--dark h1, .section--dark h2, .section--dark h3, .section--dark h4, .section--dark h5, .section--dark h6 { color: #fff; }
+.bg-dark p, .bg-dark li, .bg-dark span, .section--dark p, .section--dark li, .section--dark span { color: rgba(255,255,255,0.9); }
+.bg-dark a, .section--dark a { color: #fff; }
+.bg-dark a:hover, .section--dark a:hover { color: rgba(255,255,255,0.8); }
+.bg-dark .section-header p, .section--dark .section-header p { color: rgba(255,255,255,0.8); }
+
 .rte a { text-decoration: underline; }
 .rte img { margin: 1.5em 0; }
 .rte ul, .rte ol { margin-bottom: 1em; }
@@ -104,9 +115,11 @@ button svg line, button svg path, button svg circle, button svg polyline { strok
 
 /* Desktop Navigation */
 .header__nav { flex: 1; display: flex; justify-content: center; }
-.header__menu { display: flex; list-style: none; margin: 0; padding: 0; gap: 5px; }
-.header__menu-item > a, .header__mega-trigger, .header__dropdown-trigger { display: flex; align-items: center; gap: 4px; padding: 10px 16px; font-size: 0.9375rem; font-weight: 500; color: var(--color-text); background: none; border: none; cursor: pointer; transition: color 0.2s; }
+.header__menu { display: flex; align-items: center; list-style: none; margin: 0; padding: 0; gap: 5px; }
+.header__menu-item { display: flex; align-items: center; }
+.header__menu-item > a, .header__mega-trigger, .header__dropdown-trigger { display: flex; align-items: center; gap: 4px; padding: 10px 16px; font-size: 0.9375rem; font-weight: 500; line-height: 1.4; color: var(--color-text); background: none; border: none; cursor: pointer; transition: color 0.2s; font-family: inherit; white-space: nowrap; }
 .header__menu-item > a:hover, .header__mega-trigger:hover, .header__dropdown-trigger:hover { color: var(--color-primary); }
+.header__dropdown-icon { flex-shrink: 0; margin-left: 2px; }
 .header__menu-toggle { display: none; background: none; border: none; padding: 8px; color: var(--color-text); }
 
 /* Dropdown Menu */
