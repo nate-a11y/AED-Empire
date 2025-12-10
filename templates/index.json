@@ -24,6 +24,7 @@
     },
     "trust-bar": {
       "type": "trust-bar",
+      "disabled": true,
       "settings": {}
     },
     "featured": {
@@ -116,25 +117,25 @@
         "t1": {
           "type": "testimonial",
           "settings": {
-            "quote": "Excellent products and outstanding customer service. The AED arrived quickly and the team walked us through setup.",
-            "author": "John Smith",
-            "title": "Safety Director, ABC Company"
+            "quote": "Dustin goes above and beyond with customer service. Because Dustin has personally used these products in the field, I know that my students are using battle tested products during training, and purchasing the best for themselves and their families.",
+            "author": "Curtis DeBerg",
+            "title": ""
           }
         },
         "t2": {
           "type": "testimonial",
           "settings": {
-            "quote": "Best prices I found anywhere and they made sure we got exactly what we needed for our school.",
-            "author": "Sarah Johnson",
-            "title": "Principal, Lincoln Elementary"
+            "quote": "Dustin Talacko is hands down one of the best people we've ever worked with. He takes care of all our Stop the Bleed training, inspections, safety services, and more, and he absolutely nails it every time. His attention to detail is next level. Whether it's placing orders, doing inspections, following up, or delivering equipment, he’s always on top of it. No need to remind him or double check anything. He just gets it done, and done right. He's also incredibly easy to work with. Communication is clear, he's super reliable, and he genuinely cares about what he does...",
+            "author": "Shane Docken",
+            "title": ""
           }
         },
         "t3": {
           "type": "testimonial",
           "settings": {
-            "quote": "Their expertise really helped us choose the right equipment for our community center.",
-            "author": "Mike Williams",
-            "title": "Recreation Director"
+            "quote": "As a landscape business owner safety is priority one. When we were in need of a compact bleeding control kit Talacko had the exact product to fit our needs. Working outdoors there is a multitude of scenarios where these kits are useful.",
+            "author": "Will K.",
+            "title": ""
           }
         }
       },
