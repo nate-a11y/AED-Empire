@@ -12,11 +12,12 @@
     "hero": {
       "type": "hero",
       "settings": {
+        "image": "shopify://shop_images/Family-of-AEDs3-e1665437623756.png",
         "badge": "Trusted Life Safety Equipment",
         "title": "AEDs for Every School, Business & Community",
         "text": "Life-saving AEDs don't have to break the budget. As authorized dealers, we make preparedness affordable and accessible.",
-        "button_1_text": "Shop AEDs",
-        "button_1_link": "shopify://collections/all",
+        "button_1_text": "Shop Now",
+        "button_1_link": "shopify://collections",
         "button_2_text": "Contact Us",
         "button_2_link": "/pages/contact"
       }
