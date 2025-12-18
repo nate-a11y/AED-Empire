@@ -1,7 +1,6 @@
 {% comment %}
-  Product Comparison Tool
-  Premium feature - allows side-by-side product comparison
-  Fully accessible with keyboard navigation
+  Enhanced Product Comparison Tool - Pulls ALL Metaobject Data
+  Compares: specs, warranty, features, lifecycle, everything!
 {% endcomment %}
 
 <section class="product-compare section" id="product-compare" aria-labelledby="compare-heading">
@@ -15,7 +14,7 @@
 
     {%- comment -%} Empty State {%- endcomment -%}
     <div class="product-compare__empty" data-compare-empty>
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
       </svg>
       <h3>No products to compare</h3>
@@ -68,7 +67,7 @@
       </div>
       <div class="compare-bar__actions">
         <span class="compare-bar__count"><span data-compare-count>0</span> products selected</span>
-        <a href="#product-compare" class="btn btn--primary btn--small" data-compare-view>
+        <a href="/pages/compare" class="btn btn--primary btn--small" data-compare-view">
           Compare Now
         </a>
       </div>
@@ -88,13 +87,40 @@
     const compareCount = document.querySelector('[data-compare-count]');
     const compareBarProducts = document.querySelector('[data-compare-bar-products]');
 
+    // COMPREHENSIVE COMPARISON FEATURES - ALL METAOBJECT DATA
     const compareFeatures = [
-      { key: 'price', label: 'Price' },
-      { key: 'vendor', label: 'Brand' },
-      { key: 'type', label: 'Type' },
-      { key: 'sku', label: 'SKU' },
-      { key: 'availability', label: 'Availability' },
-      { key: 'description', label: 'Description' }
+      // BASIC INFO
+      { section: 'Basic Information', rows: [
+        { key: 'price', label: 'Price', format: 'money' },
+        { key: 'vendor', label: 'Manufacturer' },
+        { key: 'shock_type', label: 'Shock Type', path: 'custom.shock_type' },
+        { key: 'available', label: 'Availability', format: v => v ? '✓ In Stock' : '✗ Out of Stock' }
+      ]},
+      
+      // KEY FEATURES
+      { section: 'Key Features', rows: [
+        { key: 'has_cpr_feedback', label: 'CPR Feedback', path: 'custom.has_cpr_feedback', format: v => v ? '<span style="color:#22c55e;font-size:20px">✓</span>' : '<span style="color:#ef4444;font-size:20px">✗</span>' },
+        { key: 'has_wifi_monitoring', label: 'WiFi Monitoring', path: 'custom.has_wifi_monitoring', format: v => v ? '<span style="color:#22c55e;font-size:20px">✓</span>' : '<span style="color:#ef4444;font-size:20px">✗</span>' },
+        { key: 'has_pediatric_mode', label: 'Pediatric Mode', path: 'custom.has_pediatric_mode', format: v => v ? '<span style="color:#22c55e;font-size:20px">✓</span>' : '<span style="color:#ef4444;font-size:20px">✗</span>' }
+      ]},
+      
+      // TECHNICAL SPECS
+      { section: 'Technical Specifications', rows: [
+        { key: 'weight', label: 'Weight', path: 'custom.specifications.weight' },
+        { key: 'dimensions', label: 'Dimensions', path: 'custom.specifications.dimensions' },
+        { key: 'ip_rating', label: 'IP Rating', path: 'custom.specifications.ip_rating' },
+        { key: 'shock_energy', label: 'Shock Energy', path: 'custom.specifications.shock_energy' },
+        { key: 'analysis_time', label: 'Analysis Time', path: 'custom.specifications.analysis_time' },
+        { key: 'charge_time', label: 'Charge Time', path: 'custom.specifications.charge_time' },
+        { key: 'operating_temp', label: 'Operating Temperature', path: 'custom.specifications.operating_temp' }
+      ]},
+      
+      // WARRANTY & LIFECYCLE
+      { section: 'Warranty & Lifecycle', rows: [
+        { key: 'warranty_years', label: 'Warranty Period', path: 'custom.warranty_years', format: v => v ? `${v} years` : '-' },
+        { key: 'battery_life_years', label: 'Battery Life', path: 'custom.battery_life_years', format: v => v ? `${v} years` : '-' },
+        { key: 'pad_life_years', label: 'Pad Life', path: 'custom.pad_life_years', format: v => v ? `${v} years` : '-' }
+      ]}
     ];
 
     // Get compare list from storage
@@ -102,7 +128,7 @@
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
       } catch {
-        return [];
+        return []
       }
     }
 
@@ -113,6 +139,135 @@
       } catch {}
     }
 
+    // Fetch product with ALL metafields via Storefront API
+    async function fetchProductWithMetafields(handle) {
+      const query = `
+        query getProduct($handle: String!) {
+          product(handle: $handle) {
+            id
+            handle
+            title
+            description
+            featuredImage {
+              url
+            }
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            compareAtPriceRange {
+              minVariantPrice {
+                amount
+              }
+            }
+            availableForSale
+            vendor
+            productType
+            variants(first: 1) {
+              nodes {
+                id
+              }
+            }
+            manufacturer: metafield(namespace: "custom", key: "manufacturer") {
+              value
+            }
+            shockType: metafield(namespace: "custom", key: "shock_type") {
+              value
+            }
+            hasCprFeedback: metafield(namespace: "custom", key: "has_cpr_feedback") {
+              value
+            }
+            hasWifiMonitoring: metafield(namespace: "custom", key: "has_wifi_monitoring") {
+              value
+            }
+            hasPediatricMode: metafield(namespace: "custom", key: "has_pediatric_mode") {
+              value
+            }
+            warrantyYears: metafield(namespace: "custom", key: "warranty_years") {
+              value
+            }
+            batteryLifeYears: metafield(namespace: "custom", key: "battery_life_years") {
+              value
+            }
+            padLifeYears: metafield(namespace: "custom", key: "pad_life_years") {
+              value
+            }
+            specifications: metafield(namespace: "custom", key: "specifications") {
+              reference {
+                ... on Metaobject {
+                  weight: field(key: "weight") { value }
+                  dimensions: field(key: "dimensions") { value }
+                  ipRating: field(key: "ip_rating") { value }
+                  shockEnergy: field(key: "shock_energy") { value }
+                  analysisTime: field(key: "analysis_time") { value }
+                  chargeTime: field(key: "charge_time") { value }
+                  operatingTemp: field(key: "operating_temp") { value }
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      const response = await fetch('/api/2024-10/graphql.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': '{{ shop.metafields.custom.storefront_access_token | default: "e82db003ac36f1898e52adae1c8c4eaf" }}'
+        },
+        body: JSON.stringify({
+          query: query,
+          variables: { handle: handle }
+        })
+      });
+
+      const result = await response.json();
+      const product = result.data.product;
+
+      // Transform to our format
+      return {
+        handle: product.handle,
+        id: product.id,
+        title: product.title,
+        price: parseFloat(product.priceRange.minVariantPrice.amount) * 100, // Convert to cents
+        compare_at_price: product.compareAtPriceRange?.minVariantPrice?.amount ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount) * 100 : null,
+        vendor: product.manufacturer?.value || product.vendor,
+        type: product.productType,
+        image: product.featuredImage?.url,
+        url: `/products/${product.handle}`,
+        available: product.availableForSale,
+        variantId: product.variants.nodes[0]?.id,
+        description: product.description?.replace(/<[^>]*>/g, '').substring(0, 150) + '...',
+        
+        // Metafields
+        custom: {
+          shock_type: product.shockType?.value,
+          has_cpr_feedback: product.hasCprFeedback?.value === 'true',
+          has_wifi_monitoring: product.hasWifiMonitoring?.value === 'true',
+          has_pediatric_mode: product.hasPediatricMode?.value === 'true',
+          warranty_years: product.warrantyYears?.value ? parseInt(product.warrantyYears.value) : null,
+          battery_life_years: product.batteryLifeYears?.value ? parseInt(product.batteryLifeYears.value) : null,
+          pad_life_years: product.padLifeYears?.value ? parseInt(product.padLifeYears.value) : null,
+          specifications: product.specifications?.reference ? {
+            weight: product.specifications.reference.weight?.value,
+            dimensions: product.specifications.reference.dimensions?.value,
+            ip_rating: product.specifications.reference.ipRating?.value,
+            shock_energy: product.specifications.reference.shockEnergy?.value,
+            analysis_time: product.specifications.reference.analysisTime?.value,
+            charge_time: product.specifications.reference.chargeTime?.value,
+            operating_temp: product.specifications.reference.operatingTemp?.value
+          } : {}
+        }
+      };
+    }
+
+    // Get nested value from object
+    function getNestedValue(obj, path) {
+      return path.split('.').reduce((current, key) => current?.[key], obj);
+    }
+
     // Add product to compare
     window.addToCompare = async function(handle) {
       const list = getCompareList();
@@ -121,40 +276,19 @@
         return;
       }
       if (list.length >= MAX_COMPARE) {
-        if (window.themeUtils) {
-          window.themeUtils.announce(`Maximum ${MAX_COMPARE} products can be compared`, 'assertive');
-        }
+        alert(`Maximum ${MAX_COMPARE} products can be compared`);
         return;
       }
 
       try {
-        const response = await fetch(`/products/${handle}.js`);
-        const product = await response.json();
-
-        list.push({
-          handle: product.handle,
-          id: product.id,
-          title: product.title,
-          price: product.price,
-          compare_at_price: product.compare_at_price,
-          vendor: product.vendor,
-          type: product.type,
-          image: product.featured_image,
-          url: product.url,
-          available: product.available,
-          variants: product.variants,
-          description: product.description ? product.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...' : ''
-        });
-
+        const product = await fetchProductWithMetafields(handle);
+        list.push(product);
         saveCompareList(list);
         updateCompareUI();
         updateCompareButtons();
-
-        if (window.themeUtils) {
-          window.themeUtils.announce(`${product.title} added to comparison`, 'polite');
-        }
       } catch (err) {
         console.error('Error adding to compare:', err);
+        alert('Error adding product to comparison');
       }
     };
 
@@ -179,7 +313,8 @@
         const isInList = window.isInCompare(handle);
         btn.classList.toggle('is-active', isInList);
         btn.setAttribute('aria-pressed', isInList);
-        btn.querySelector('.compare-btn__text').textContent = isInList ? 'Remove' : 'Compare';
+        const textEl = btn.querySelector('.compare-btn__text');
+        if (textEl) textEl.textContent = isInList ? 'Remove' : 'Compare';
       });
     }
 
@@ -233,36 +368,46 @@
           `;
         });
 
-        // Build body rows
+        // Build body rows WITH ALL METAOBJECT DATA
         compareBody.innerHTML = '';
 
-        // Price row
-        const priceRow = document.createElement('tr');
-        priceRow.innerHTML = '<th scope="row">Price</th>' + list.map(p => {
-          const price = window.themeUtils ? window.themeUtils.formatMoney(p.price) : '$' + (p.price / 100).toFixed(2);
-          let html = `<td><strong class="product-compare__price">${price}</strong>`;
-          if (p.compare_at_price > p.price) {
-            const compare = window.themeUtils ? window.themeUtils.formatMoney(p.compare_at_price) : '$' + (p.compare_at_price / 100).toFixed(2);
-            html += `<span class="product-compare__compare-price">${compare}</span>`;
-          }
-          return html + '</td>';
-        }).join('');
-        compareBody.appendChild(priceRow);
+        compareFeatures.forEach(featureGroup => {
+          // Add section header
+          const sectionRow = document.createElement('tr');
+          sectionRow.className = 'product-compare__section-header';
+          sectionRow.innerHTML = `<th colspan="${list.length + 1}" style="background:#f5f5f5;padding:12px 20px;font-weight:700;color:#8b1538;">${featureGroup.section}</th>`;
+          compareBody.appendChild(sectionRow);
 
-        // Other feature rows
-        [
-          { key: 'vendor', label: 'Brand' },
-          { key: 'type', label: 'Product Type' },
-          { key: 'available', label: 'Availability', format: v => v ? '✓ In Stock' : '✗ Out of Stock' },
-          { key: 'description', label: 'Description' }
-        ].forEach(feature => {
-          const row = document.createElement('tr');
-          row.innerHTML = `<th scope="row">${feature.label}</th>` + list.map(p => {
-            let value = p[feature.key] || '-';
-            if (feature.format) value = feature.format(value);
-            return `<td>${value}</td>`;
-          }).join('');
-          compareBody.appendChild(row);
+          // Add feature rows
+          featureGroup.rows.forEach(feature => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<th scope="row">${feature.label}</th>` + list.map(p => {
+              let value;
+              
+              if (feature.path) {
+                value = getNestedValue(p, feature.path);
+              } else {
+                value = p[feature.key];
+              }
+
+              if (feature.format) {
+                if (feature.format === 'money') {
+                  value = window.Shopify?.formatMoney ? window.Shopify.formatMoney(value, window.theme.moneyFormat) : '$' + (value / 100).toFixed(2);
+                  if (p.compare_at_price > p.price) {
+                    const compare = window.Shopify?.formatMoney ? window.Shopify.formatMoney(p.compare_at_price, window.theme.moneyFormat) : '$' + (p.compare_at_price / 100).toFixed(2);
+                    value = `<strong>${value}</strong><br><span style="text-decoration:line-through;color:#999;font-size:0.9em">${compare}</span>`;
+                  } else {
+                    value = `<strong>${value}</strong>`;
+                  }
+                } else {
+                  value = feature.format(value);
+                }
+              }
+
+              return `<td>${value || '-'}</td>`;
+            }).join('');
+            compareBody.appendChild(row);
+          });
         });
 
         // Build footer with add to cart buttons
@@ -270,7 +415,7 @@
         tfoot.innerHTML = '<td></td>' + list.map(p => `
           <td>
             ${p.available
-              ? `<button type="button" class="btn btn--primary btn--small btn--full" onclick="addBundleItem(${p.variants[0].id})">Add to Cart</button>`
+              ? `<a href="${p.url}" class="btn btn--primary btn--small btn--full">View Product</a>`
               : '<button class="btn btn--outline btn--small btn--full" disabled>Sold Out</button>'
             }
           </td>
@@ -278,31 +423,16 @@
       }
     }
 
-    // Add single item to cart
-    window.addBundleItem = async function(variantId) {
-      try {
-        await fetch('/cart/add.js', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] })
-        });
-        document.dispatchEvent(new CustomEvent('cart:updated'));
-        if (window.themeUtils) {
-          window.themeUtils.announce('Item added to cart', 'assertive');
-        }
-      } catch (err) {
-        console.error('Error adding to cart:', err);
-      }
-    };
-
     // Clear all
     document.querySelector('[data-compare-clear]')?.addEventListener('click', () => {
-      saveCompareList([]);
-      updateCompareUI();
-      updateCompareButtons();
+      if (confirm('Clear all products from comparison?')) {
+        saveCompareList([]);
+        updateCompareUI();
+        updateCompareButtons();
+      }
     });
 
-    // Print comparison
+    // Print
     document.querySelector('[data-compare-print]')?.addEventListener('click', () => {
       window.print();
     });
@@ -311,22 +441,14 @@
     updateCompareUI();
     updateCompareButtons();
 
-    // Listen for compare button clicks
-    document.addEventListener('click', e => {
-      const btn = e.target.closest('[data-compare-add]');
-      if (btn) {
-        e.preventDefault();
-        window.addToCompare(btn.dataset.compareAdd);
-      }
-    });
+    // Update buttons when products are added/removed
+    document.addEventListener('compare:updated', updateCompareButtons);
   })();
 </script>
 
 {% schema %}
 {
   "name": "Product Compare",
-  "tag": "section",
-  "class": "section-product-compare",
   "settings": [
     {
       "type": "text",
@@ -335,10 +457,9 @@
       "default": "Compare Products"
     },
     {
-      "type": "text",
+      "type": "textarea",
       "id": "subtitle",
-      "label": "Subtitle",
-      "default": "See how our products stack up against each other"
+      "label": "Subtitle"
     },
     {
       "type": "range",
@@ -346,6 +467,7 @@
       "label": "Maximum products to compare",
       "min": 2,
       "max": 6,
+      "step": 1,
       "default": 4
     }
   ],
