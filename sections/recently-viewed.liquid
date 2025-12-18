@@ -5,7 +5,7 @@
 {% endcomment %}
 
 <section class="recently-viewed section {% if section.settings.background == 'alt' %}section--alt{% endif %}" aria-labelledby="recently-viewed-heading" data-recently-viewed-section>
-  <div class="container">
+  <div class="page-width" style="max-width: 1400px; margin: 0 auto; padding: 0 20px;">
     <div class="section-header">
       <h2 id="recently-viewed-heading">{{ section.settings.title | default: 'Recently Viewed' }}</h2>
       {% if section.settings.subtitle %}
