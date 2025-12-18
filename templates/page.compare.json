@@ -16,9 +16,42 @@
         "subtitle": "See how our products stack up against each other",
         "max_products": 4
       }
+    },
+    "product_comparison_dynamic": {
+      "type": "product-comparison-dynamic",
+      "blocks": {
+        "product_1": {
+          "type": "product",
+          "settings": {
+            "product": ""
+          }
+        },
+        "product_2": {
+          "type": "product",
+          "settings": {
+            "product": ""
+          }
+        },
+        "product_3": {
+          "type": "product",
+          "settings": {
+            "product": ""
+          }
+        }
+      },
+      "block_order": [
+        "product_1",
+        "product_2",
+        "product_3"
+      ],
+      "settings": {
+        "title": "Compare AED Models",
+        "subtitle": "Side-by-side comparison of our most popular AEDs"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "product_comparison_dynamic"
   ]
 }
