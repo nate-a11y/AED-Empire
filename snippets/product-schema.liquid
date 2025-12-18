@@ -1,7 +1,11 @@
 {% comment %}
-  Product structured data for Google
+  Enhanced Product structured data for Google
+  Includes warranty, maintenance, and additional product details
   Usage: {% render 'product-schema', product: product %}
 {% endcomment %}
+
+{% assign warranty = product.metafields.custom.warranty_info.value %}
+{% assign maintenance = product.metafields.custom.maintenance_schedule.value %}
 
 <script type="application/ld+json">
 {
@@ -10,7 +14,12 @@
   "name": {{ product.title | json }},
   "url": {{ request.origin | append: product.url | json }},
   {% if product.featured_image %}
-  "image": [{{ product.featured_image | image_url: width: 1200 | json }}],
+  "image": [
+    {{ product.featured_image | image_url: width: 1200 | json }}
+    {% for image in product.images limit: 5 %}
+      {% unless forloop.first %},{{ image | image_url: width: 1200 | json }}{% endunless %}
+    {% endfor %}
+  ],
   {% endif %}
   "description": {{ product.description | strip_html | truncate: 5000 | json }},
   {% if product.vendor %}
@@ -25,16 +34,73 @@
   {% if product.variants.first.barcode %}
   "gtin": {{ product.variants.first.barcode | json }},
   {% endif %}
+  {% if product.metafields.custom.product_condition %}
+  "itemCondition": "https://schema.org/{{ product.metafields.custom.product_condition.value }}",
+  {% else %}
+  "itemCondition": "https://schema.org/NewCondition",
+  {% endif %}
+  {% if warranty %}
+  "warranty": {
+    "@type": "WarrantyPromise",
+    "durationOfWarranty": {
+      "@type": "QuantitativeValue",
+      "value": {{ warranty.device_warranty_years | json }},
+      "unitCode": "ANN"
+    }
+    {% if warranty.warranty_details %}
+    ,"description": {{ warranty.warranty_details | strip_html | truncate: 500 | json }}
+    {% endif %}
+  },
+  {% endif %}
+  {% if maintenance and maintenance.battery_replacement_years %}
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Battery Replacement",
+      "value": "Every {{ maintenance.battery_replacement_years }} years"
+    }
+    {% if maintenance.pad_replacement_years %}
+    ,{
+      "@type": "PropertyValue",
+      "name": "Pad Replacement",
+      "value": "Every {{ maintenance.pad_replacement_years }} years"
+    }
+    {% endif %}
+  ],
+  {% endif %}
   "offers": {
     "@type": "Offer",
     "url": {{ request.origin | append: product.url | json }},
     "priceCurrency": {{ cart.currency.iso_code | json }},
     "price": {{ product.price | divided_by: 100.0 | json }},
+    {% if product.compare_at_price > product.price %}
+    "priceValidUntil": "{{ 'now' | date: '%s' | plus: 7776000 | date: '%Y-%m-%d' }}",
+    {% endif %}
     "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "shippingDetails": {
+      "@type": "OfferShippingDetails",
+      "shippingRate": {
+        "@type": "MonetaryAmount",
+        "value": "0",
+        "currency": "USD"
+      },
+      "shippingDestination": {
+        "@type": "DefinedRegion",
+        "addressCountry": "US"
+      }
+    },
     "seller": {
       "@type": "Organization",
-      "name": {{ shop.name | json }}
+      "name": {{ shop.name | json }},
+      "url": {{ request.origin | json }}
     }
   }
+  {% if product.metafields.reviews.rating.value %}
+  ,"aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ product.metafields.reviews.rating.value }}",
+    "reviewCount": "{{ product.metafields.reviews.rating_count.value }}"
+  }
+  {% endif %}
 }
 </script>
