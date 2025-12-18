@@ -3259,3 +3259,53 @@ textarea:focus-visible {
   .collection-list-grid--3,
   .collection-list-grid--4 { grid-template-columns: 1fr; }
 }
+
+/* =========================================
+   COLLECTION CARD - Live Site Styling
+   Targets the actual rendered HTML structure
+   ========================================= */
+.collection-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.collection-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+/* Image container - paper style with centered image */
+.collection-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: #f0f0f0;
+  padding: 20px;
+}
+
+/* Title styling */
+.collection-card h3 {
+  margin: 0;
+  padding: 16px 16px 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  text-align: center;
+}
+
+/* Product count styling */
+.collection-card span {
+  display: block;
+  margin: 0;
+  padding: 0 16px 16px;
+  font-size: 0.875rem;
+  color: #C93C3C;
+  text-align: center;
+}
