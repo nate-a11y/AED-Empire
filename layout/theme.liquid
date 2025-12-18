@@ -182,6 +182,76 @@
   {% endif %}
 
   <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
+
+{% comment %}
+  Organization and Website structured data
+  Should be included in theme.liquid <head>
+{% endcomment %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "AED Empire",
+  "legalName": "AED Empire",
+  "url": "https://www.aedempire.com",
+  "logo": "https://www.aedempire.com/cdn/shop/files/AED_Empire_Logo.png",
+  "description": "Professional AED sales and training by Firefighter/Paramedic experts. Free shipping on all defibrillators. Expert support for AED selection, compliance, and maintenance.",
+  "email": "Dustin@TalackoSafetySolutions.com",
+  "telephone": "+1-402-968-3712",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "US",
+    "addressRegion": "NE"
+  },
+  "founder": [
+    {
+      "@type": "Person",
+      "name": "Dustin Talacko",
+      "jobTitle": "President, Firefighter/Paramedic"
+    },
+    {
+      "@type": "Person",
+      "name": "Jill Talacko",
+      "jobTitle": "CEO"
+    }
+  ],
+  "sameAs": [
+    "https://www.facebook.com/AEDEmpire",
+    "https://www.linkedin.com/company/aed-empire"
+  ],
+  "areaServed": {
+    "@type": "Country",
+    "name": "United States"
+  },
+  "knowsAbout": [
+    "Automated External Defibrillators",
+    "AED Compliance",
+    "Emergency Medical Equipment",
+    "CPR Training",
+    "Stop the Bleed Training",
+    "AED Maintenance"
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "AED Empire",
+  "url": "https://www.aedempire.com",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://www.aedempire.com/search?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
 </head>
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
   {%- comment -%} Skip link for keyboard/screen reader users {%- endcomment -%}
