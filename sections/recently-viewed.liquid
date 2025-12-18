@@ -122,14 +122,14 @@
 
       if (track) {
         track.innerHTML = filtered.map(p => `
-          <div class="recently-viewed__item product-card" role="listitem">
-            <a href="${p.url}" class="product-card__image-link">
+          <div class="recently-viewed__item product-card" role="listitem" style="display: flex; flex-direction: column; min-height: 380px; height: 100%;">
+            <a href="${p.url}" class="product-card__image-link" style="display: block; height: 200px; overflow: hidden; flex-shrink: 0; background: #f9f9f9; border-radius: 4px; margin-bottom: 12px;">
               ${p.image ? `<img src="${p.image}" alt="${p.title}" width="200" height="200" loading="lazy">` : '<div class="product-card__placeholder"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>'}
               {% if section.settings.show_quick_view %}<button type="button" class="quick-view-btn" data-quick-view="${p.handle}">Quick View</button>{% endif %}
             </a>
-            <div class="product-card__info">
+            <div class="product-card__info" style="margin-top: auto; padding-top: 8px;">
               ${p.vendor ? `<p class="product-card__vendor">${p.vendor}</p>` : ''}
-              <h3 class="product-card__title">
+              <h3 class="product-card__title" style="min-height: 48px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.4; margin-bottom: 8px;">
                 <a href="${p.url}">${p.title}</a>
               </h3>
               <p class="product-card__price">
