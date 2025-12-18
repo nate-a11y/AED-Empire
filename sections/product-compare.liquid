@@ -103,10 +103,10 @@
         { key: 'weight', label: 'Weight' },
         { key: 'dimensions', label: 'Dimensions' },
         { key: 'ip_rating', label: 'IP Rating' },
-        { key: 'shock_energy', label: 'Shock Energy' },
-        { key: 'analysis_time', label: 'Analysis Time' },
-        { key: 'charge_time', label: 'Charge Time' },
-        { key: 'operating_temp', label: 'Operating Temperature' }
+        { key: 'shock_delivery_type', label: 'Shock Delivery' },
+        { key: 'cpr_feedback', label: 'CPR Feedback Details' },
+        { key: 'pediatric_capability', label: 'Pediatric Capability' },
+        { key: 'connectivity', label: 'Connectivity' }
       ]},
       
       { section: 'Warranty & Lifecycle', rows: [
@@ -275,10 +275,10 @@
           weight: specs.weight,
           dimensions: specs.dimensions,
           ip_rating: specs.ip_rating,
-          shock_energy: specs.shock_energy,
-          analysis_time: specs.analysis_time,
-          charge_time: specs.charge_time,
-          operating_temp: specs.operating_temp
+          shock_delivery_type: specs.shock_delivery_type,
+          cpr_feedback: specs.cpr_feedback,
+          pediatric_capability: specs.pediatric_capability,
+          connectivity: specs.connectivity
         };
       } catch (err) {
         console.error(`❌ Error fetching product ${handle}:`, err);
