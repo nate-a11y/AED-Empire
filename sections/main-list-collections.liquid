@@ -1,27 +1,255 @@
-<section class="section">
+{% doc %}
+  @name Collections List
+  @description Displays all collections in a responsive grid with consistent card styling.
+  Images are displayed with a fixed aspect ratio for uniform appearance.
+{% enddoc %}
+
+<section class="section collections-list-section">
   <div class="container">
-    <h1 class="text-center mb-4">Collections</h1>
-    <div class="grid grid--3">
-      {% for collection in collections %}
-        {% unless collection.handle == 'all' %}
-          <a href="{{ collection.url }}" class="collection-card">
-            {% if collection.image %}
-              <img src="{{ collection.image | image_url: width: 600 }}" alt="{{ collection.title }}" loading="lazy">
-            {% elsif collection.products.first.featured_image %}
-              <img src="{{ collection.products.first.featured_image | image_url: width: 600 }}" alt="{{ collection.title }}" loading="lazy">
-            {% endif %}
-            <h3>{{ collection.title }}</h3>
-            <span>{{ collection.products_count }} products</span>
-          </a>
-        {% endunless %}
-      {% endfor %}
+    {%- if section.settings.title != blank -%}
+      <div class="section-header">
+        <h1>{{ section.settings.title }}</h1>
+        {%- if section.settings.subtitle != blank -%}
+          <p>{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+        <div class="section-header__divider" aria-hidden="true"></div>
+      </div>
+    {%- else -%}
+      <h1 class="visually-hidden">Collections</h1>
+    {%- endif -%}
+
+    <div class="collections-grid">
+      {%- liquid
+        assign collections_to_show = collections | where: 'products_count', '>', 0
+        for collection in collections
+          unless collection.handle == 'all' or collection.products_count == 0
+            assign has_image = false
+            assign image_url = ''
+            assign image_alt = collection.title | escape
+
+            if collection.image
+              assign has_image = true
+              assign image_url = collection.image | image_url: width: 800
+            elsif collection.products.first.featured_image
+              assign has_image = true
+              assign image_url = collection.products.first.featured_image | image_url: width: 800
+            endif
+      -%}
+        <a href="{{ collection.url }}" class="collection-card" aria-label="View {{ collection.title }} collection">
+          <div class="collection-card__image">
+            {%- if has_image -%}
+              <img
+                src="{{ image_url }}"
+                alt="{{ image_alt }}"
+                width="400"
+                height="400"
+                loading="lazy"
+              >
+            {%- else -%}
+              <div class="collection-card__placeholder">
+                <svg aria-hidden="true" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <path d="M21 15l-5-5L5 21"/>
+                </svg>
+              </div>
+            {%- endif -%}
+            <div class="collection-card__overlay">
+              <span class="collection-card__cta">Shop Now</span>
+            </div>
+          </div>
+          <div class="collection-card__content">
+            <h2 class="collection-card__title">{{ collection.title }}</h2>
+            <p class="collection-card__count">{{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}</p>
+          </div>
+        </a>
+      {%-
+          endunless
+        endfor
+      -%}
     </div>
   </div>
 </section>
 
+{% stylesheet %}
+.collections-list-section {
+  padding: var(--spacing-sections, 80px) 0;
+}
+
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+@media (max-width: 1024px) {
+  .collections-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .collections-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.collection-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--color-bg, #fff);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.collection-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.collection-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.collection-card__image {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--color-bg-alt, #f5f5f5);
+}
+
+.collection-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.collection-card:hover .collection-card__image img {
+  transform: scale(1.05);
+}
+
+.collection-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-alt, #f5f5f5);
+  color: var(--color-text-light, #999);
+}
+
+.collection-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.collection-card:hover .collection-card__overlay {
+  opacity: 1;
+}
+
+.collection-card__cta {
+  display: inline-block;
+  padding: 10px 24px;
+  background: var(--color-primary, #C41E3A);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  transform: translateY(10px);
+  transition: transform 0.3s ease;
+}
+
+.collection-card:hover .collection-card__cta {
+  transform: translateY(0);
+}
+
+.collection-card__content {
+  padding: 20px;
+  text-align: center;
+}
+
+.collection-card__title {
+  margin: 0 0 4px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text, #1a1a2e);
+  line-height: 1.3;
+}
+
+.collection-card__count {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-light, #666);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .collection-card,
+  .collection-card__image img,
+  .collection-card__overlay,
+  .collection-card__cta {
+    transition: none;
+  }
+
+  .collection-card:hover .collection-card__image img {
+    transform: none;
+  }
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "Collections list",
-  "settings": []
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Our Collections"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "_if": "title"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show product count",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collections list",
+      "category": "Collection"
+    }
+  ]
 }
 {% endschema %}
