@@ -7,7 +7,7 @@
         </button>
 
         {%- comment -%} Logo - Using Dawn best practices {%- endcomment -%}
-        {%- if request.page_type == 'index' -%}<h1 class="header__heading">{%- endif -%}
+        {%- if request.page_type == 'index' -%}<div class="header__heading">{%- endif -%}
         <a href="{{ routes.root_url }}" class="header__logo focus-inset" aria-label="{{ shop.name }} - Home">
           {%- if settings.logo != blank -%}
             {%- liquid
