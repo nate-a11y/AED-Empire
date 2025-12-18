@@ -5,6 +5,17 @@
   
   Requires: Product metafield linking to Maintenance Schedule metaobject
   Metafield: product.metafields.custom.maintenance_schedule (metaobject reference)
+
+  Fields used:
+  - aed_model
+  - pad_replacement_years
+  - battery_replacement_years
+  - self_test_frequency
+  - daily_checklist
+  - monthly_checklist
+  - replacement_pads_product
+  - replacement_battery_product
+  - maintenance_tips
 {% endcomment %}
 
 {% assign maintenance = product.metafields.custom.maintenance_schedule.value %}
@@ -13,9 +24,9 @@
 <div class="product-maintenance-mo">
   <h3 class="product-maintenance-mo__title">
     {% if maintenance.aed_model != blank %}
-      Maintenance Schedule: {{ maintenance.aed_model }}
+      Maintenance for {{ maintenance.aed_model }}
     {% else %}
-      Maintenance Schedule
+      {{ title | default: 'Maintenance Schedule' }}
     {% endif %}
   </h3>
 
@@ -30,9 +41,9 @@
         </div>
         <div class="product-maintenance-mo__info">
           <h4>Electrode Pads</h4>
-          <p>Replace every {{ maintenance.pad_replacement_years }} years</p>
-          {% if maintenance.replacement_pads_product.value %}
-            <a href="{{ maintenance.replacement_pads_product.value.url }}" class="product-maintenance-mo__link">Shop Replacement Pads →</a>
+          <p>Replace every {{ maintenance.pad_replacement_years }}</p>
+          {% if maintenance.replacement_pads_product != blank %}
+            <a href="{{ maintenance.replacement_pads_product.url }}" class="product-maintenance-mo__link">Shop Replacement Pads →</a>
           {% endif %}
         </div>
       </div>
@@ -48,9 +59,9 @@
         </div>
         <div class="product-maintenance-mo__info">
           <h4>Battery</h4>
-          <p>Replace every {{ maintenance.battery_replacement_years }} years</p>
-          {% if maintenance.replacement_battery_product.value %}
-            <a href="{{ maintenance.replacement_battery_product.value.url }}" class="product-maintenance-mo__link">Shop Replacement Battery →</a>
+          <p>Replace every {{ maintenance.battery_replacement_years }}</p>
+          {% if maintenance.replacement_battery_product != blank %}
+            <a href="{{ maintenance.replacement_battery_product.url }}" class="product-maintenance-mo__link">Shop Replacement Battery →</a>
           {% endif %}
         </div>
       </div>
@@ -70,47 +81,48 @@
         </div>
       </div>
     {% endif %}
-
-    {% if maintenance.daily_checklist != blank %}
-      <div class="product-maintenance-mo__item">
-        <div class="product-maintenance-mo__icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-            <path d="M9 14l2 2 4-4"/>
-          </svg>
-        </div>
-        <div class="product-maintenance-mo__info">
-          <h4>Daily Inspection</h4>
-          <p>{{ maintenance.daily_checklist }}</p>
-        </div>
-      </div>
-    {% endif %}
-
-    {% if maintenance.monthly_checklist != blank %}
-      <div class="product-maintenance-mo__item">
-        <div class="product-maintenance-mo__icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-        </div>
-        <div class="product-maintenance-mo__info">
-          <h4>Monthly Inspection</h4>
-          <p>{{ maintenance.monthly_checklist }}</p>
-        </div>
-      </div>
-    {% endif %}
   </div>
 
+  {% if maintenance.daily_checklist != blank %}
+    <div class="product-maintenance-mo__checklist">
+      <h4>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Daily Checklist
+      </h4>
+      <div class="product-maintenance-mo__checklist-content rte">
+        {{ maintenance.daily_checklist }}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if maintenance.monthly_checklist != blank %}
+    <div class="product-maintenance-mo__checklist">
+      <h4>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        Monthly Checklist
+      </h4>
+      <div class="product-maintenance-mo__checklist-content rte">
+        {{ maintenance.monthly_checklist }}
+      </div>
+    </div>
+  {% endif %}
+
   {% if maintenance.maintenance_tips != blank %}
-    <div class="product-maintenance-mo__notes">
+    <div class="product-maintenance-mo__tips">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10"/>
         <line x1="12" y1="16" x2="12" y2="12"/>
         <line x1="12" y1="8" x2="12.01" y2="8"/>
       </svg>
-      <div class="product-maintenance-mo__content rte">
+      <div class="product-maintenance-mo__tips-content rte">
         {{ maintenance.maintenance_tips }}
       </div>
     </div>
@@ -178,7 +190,43 @@
 .product-maintenance-mo__link:hover {
   text-decoration: underline;
 }
-.product-maintenance-mo__notes {
+.product-maintenance-mo__checklist {
+  margin-top: 25px;
+  padding: 20px;
+  background: var(--color-bg-alt);
+  border-radius: 8px;
+}
+.product-maintenance-mo__checklist h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 15px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.product-maintenance-mo__checklist h4 svg {
+  color: var(--color-primary);
+}
+.product-maintenance-mo__checklist-content {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-text-light);
+}
+.product-maintenance-mo__checklist-content ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.product-maintenance-mo__checklist-content li {
+  margin-bottom: 8px;
+}
+.product-maintenance-mo__checklist-content p {
+  margin: 0 0 10px;
+}
+.product-maintenance-mo__checklist-content p:last-child {
+  margin-bottom: 0;
+}
+.product-maintenance-mo__tips {
   display: flex;
   gap: 12px;
   padding: 15px;
@@ -186,16 +234,18 @@
   border-radius: 6px;
   border-left: 4px solid #4caf50;
 }
-.product-maintenance-mo__notes svg {
+.product-maintenance-mo__tips svg {
   flex-shrink: 0;
   color: #4caf50;
 }
-.product-maintenance-mo__notes .product-maintenance-mo__content {
-  margin: 0;
+.product-maintenance-mo__tips-content {
   font-size: 0.9375rem;
   line-height: 1.5;
 }
-.product-maintenance-mo__content p:last-child {
+.product-maintenance-mo__tips-content p {
+  margin: 0 0 8px;
+}
+.product-maintenance-mo__tips-content p:last-child {
   margin-bottom: 0;
 }
 </style>
