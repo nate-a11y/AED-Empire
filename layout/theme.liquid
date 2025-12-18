@@ -252,6 +252,19 @@
 }
 </script>
 
+
+<script>
+console.log('✅ Quick View Fix Loaded - ' + new Date().toISOString());
+console.log('Modal element:', document.querySelector('[data-quick-view-modal]'));
+
+// Force re-init
+if (typeof quickView !== 'undefined') {
+  console.log('✅ quickView object exists');
+} else {
+  console.log('🔴 quickView object missing');
+}
+</script>
+
 </head>
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
   {%- comment -%} Skip link for keyboard/screen reader users {%- endcomment -%}
