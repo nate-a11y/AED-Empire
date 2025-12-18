@@ -1,0 +1,459 @@
+{% comment %}
+  Dynamic Product Comparison - Uses ALL Product Metaobject Data
+  Compares products by pulling specifications, warranty, maintenance, and features automatically
+{% endcomment %}
+
+<section class="product-comparison-section" style="padding: 60px 0; background: #f9f9f9;">
+  <div class="page-width" style="max-width: 1400px; margin: 0 auto; padding: 0 20px;">
+    
+    <div class="section-header" style="text-align: center; margin-bottom: 40px;">
+      <h2 style="font-size: 36px; font-weight: 700; color: #8b1538; margin-bottom: 10px;">
+        {{ section.settings.title | default: 'Compare AED Models' }}
+      </h2>
+      {% if section.settings.subtitle != blank %}
+        <p style="font-size: 18px; color: #666;">{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Product Selector -->
+    <div class="comparison-selector" style="background: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      <h3 style="margin-bottom: 20px; font-size: 20px; color: #333;">Select Products to Compare</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        {% for block in section.blocks %}
+          {% if block.type == 'product' %}
+            {% assign product = block.settings.product %}
+            {% if product %}
+              <div class="comparison-product-select" style="border: 2px solid #e5e5e5; border-radius: 8px; padding: 15px; transition: all 0.3s;">
+                <input type="checkbox" id="compare-{{ product.id }}" checked style="margin-right: 10px;">
+                <label for="compare-{{ product.id }}" style="font-weight: 600; cursor: pointer;">
+                  {{ product.title }}
+                </label>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="comparison-table-wrapper" style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1);">
+      <table class="comparison-table" style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #8b1538; color: white;">
+            <th style="padding: 20px; text-align: left; font-size: 14px; font-weight: 700; position: sticky; left: 0; background: #8b1538; z-index: 2;">FEATURE</th>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <th class="product-column" data-product-id="{{ product.id }}" style="padding: 20px; text-align: center; min-width: 200px; border-left: 1px solid rgba(255,255,255,0.2);">
+                    {% if product.featured_image %}
+                      <img src="{{ product.featured_image | image_url: width: 120 }}" alt="{{ product.title }}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
+                    {% endif %}
+                    <div style="font-size: 16px; font-weight: 700;">{{ product.title }}</div>
+                    <div style="font-size: 20px; margin-top: 8px; color: #FFD700;">{{ product.price | money }}</div>
+                  </th>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          
+          <!-- BASIC INFO -->
+          <tr style="background: #f5f5f5;">
+            <td colspan="100" style="padding: 15px 20px; font-weight: 700; font-size: 16px; color: #8b1538;">BASIC INFORMATION</td>
+          </tr>
+          
+          <tr>
+            <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Manufacturer</td>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                    {{ product.metafields.custom.manufacturer | default: product.vendor }}
+                  </td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Shock Type</td>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                    {{ product.metafields.custom.shock_type | default: '-' }}
+                  </td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Availability</td>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                    {% if product.available %}
+                      <span style="color: #22c55e; font-weight: 600;">✓ In Stock</span>
+                    {% else %}
+                      <span style="color: #ef4444;">Out of Stock</span>
+                    {% endif %}
+                  </td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+
+          <!-- FEATURES -->
+          <tr style="background: #f5f5f5;">
+            <td colspan="100" style="padding: 15px 20px; font-weight: 700; font-size: 16px; color: #8b1538;">KEY FEATURES</td>
+          </tr>
+
+          <tr>
+            <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">CPR Feedback</td>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                    {% if product.metafields.custom.has_cpr_feedback %}
+                      <span style="color: #22c55e; font-size: 24px;">✓</span>
+                    {% else %}
+                      <span style="color: #ef4444; font-size: 24px;">✗</span>
+                    {% endif %}
+                  </td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">WiFi Monitoring</td>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                    {% if product.metafields.custom.has_wifi_monitoring %}
+                      <span style="color: #22c55e; font-size: 24px;">✓</span>
+                    {% else %}
+                      <span style="color: #ef4444; font-size: 24px;">✗</span>
+                    {% endif %}
+                  </td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Pediatric Mode</td>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                    {% if product.metafields.custom.has_pediatric_mode %}
+                      <span style="color: #22c55e; font-size: 24px;">✓</span>
+                    {% else %}
+                      <span style="color: #ef4444; font-size: 24px;">✗</span>
+                    {% endif %}
+                  </td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+
+          <!-- SPECIFICATIONS -->
+          <tr style="background: #f5f5f5;">
+            <td colspan="100" style="padding: 15px 20px; font-weight: 700; font-size: 16px; color: #8b1538;">TECHNICAL SPECIFICATIONS</td>
+          </tr>
+
+          {% for block in section.blocks limit: 1 %}
+            {% if block.type == 'product' %}
+              {% assign first_product = block.settings.product %}
+              {% if first_product.metafields.custom.specifications.value %}
+                {% assign specs = first_product.metafields.custom.specifications.value %}
+                
+                {% if specs.weight %}
+                  <tr>
+                    <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Weight</td>
+                    {% for block2 in section.blocks %}
+                      {% if block2.type == 'product' %}
+                        {% assign product = block2.settings.product %}
+                        {% if product %}
+                          <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                            {{ product.metafields.custom.specifications.value.weight | default: '-' }}
+                          </td>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                {% endif %}
+
+                {% if specs.dimensions %}
+                  <tr>
+                    <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Dimensions</td>
+                    {% for block2 in section.blocks %}
+                      {% if block2.type == 'product' %}
+                        {% assign product = block2.settings.product %}
+                        {% if product %}
+                          <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                            {{ product.metafields.custom.specifications.value.dimensions | default: '-' }}
+                          </td>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                {% endif %}
+
+                {% if specs.ip_rating %}
+                  <tr>
+                    <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">IP Rating</td>
+                    {% for block2 in section.blocks %}
+                      {% if block2.type == 'product' %}
+                        {% assign product = block2.settings.product %}
+                        {% if product %}
+                          <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                            {{ product.metafields.custom.specifications.value.ip_rating | default: '-' }}
+                          </td>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                {% endif %}
+
+                {% if specs.shock_energy %}
+                  <tr>
+                    <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Shock Energy</td>
+                    {% for block2 in section.blocks %}
+                      {% if block2.type == 'product' %}
+                        {% assign product = block2.settings.product %}
+                        {% if product %}
+                          <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                            {{ product.metafields.custom.specifications.value.shock_energy | default: '-' }}
+                          </td>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                {% endif %}
+
+                {% if specs.analysis_time %}
+                  <tr>
+                    <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Analysis Time</td>
+                    {% for block2 in section.blocks %}
+                      {% if block2.type == 'product' %}
+                        {% assign product = block2.settings.product %}
+                        {% if product %}
+                          <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                            {{ product.metafields.custom.specifications.value.analysis_time | default: '-' }}
+                          </td>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                {% endif %}
+
+                {% if specs.charge_time %}
+                  <tr>
+                    <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Charge Time</td>
+                    {% for block2 in section.blocks %}
+                      {% if block2.type == 'product' %}
+                        {% assign product = block2.settings.product %}
+                        {% if product %}
+                          <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                            {{ product.metafields.custom.specifications.value.charge_time | default: '-' }}
+                          </td>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                {% endif %}
+
+                {% if specs.operating_temp %}
+                  <tr>
+                    <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Operating Temperature</td>
+                    {% for block2 in section.blocks %}
+                      {% if block2.type == 'product' %}
+                        {% assign product = block2.settings.product %}
+                        {% if product %}
+                          <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                            {{ product.metafields.custom.specifications.value.operating_temp | default: '-' }}
+                          </td>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          <!-- WARRANTY & LIFECYCLE -->
+          <tr style="background: #f5f5f5;">
+            <td colspan="100" style="padding: 15px 20px; font-weight: 700; font-size: 16px; color: #8b1538;">WARRANTY & LIFECYCLE</td>
+          </tr>
+
+          <tr>
+            <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Warranty Period</td>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                    {{ product.metafields.custom.warranty_years | default: '-' }} years
+                  </td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Battery Life</td>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                    {{ product.metafields.custom.battery_life_years | default: '-' }} years
+                  </td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <td style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; font-weight: 600; position: sticky; left: 0; background: white; z-index: 1;">Pad Life</td>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5; text-align: center;">
+                    {{ product.metafields.custom.pad_life_years | default: '-' }} years
+                  </td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+
+          <!-- ACTIONS -->
+          <tr style="background: #f5f5f5;">
+            <td style="padding: 15px 20px; font-weight: 600; position: sticky; left: 0; background: #f5f5f5; z-index: 1;"></td>
+            {% for block in section.blocks %}
+              {% if block.type == 'product' %}
+                {% assign product = block.settings.product %}
+                {% if product %}
+                  <td class="product-column" data-product-id="{{ product.id }}" style="padding: 15px 20px; border-left: 1px solid #e5e5e5; text-align: center;">
+                    <a href="{{ product.url }}" class="btn" style="display: inline-block; padding: 12px 24px; background: #8b1538; color: white; text-decoration: none; border-radius: 4px; font-weight: 600; transition: background 0.3s;">
+                      View Details
+                    </a>
+                  </td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Print Button -->
+    <div style="text-align: center; margin-top: 30px;">
+      <button onclick="window.print()" style="padding: 12px 30px; background: white; color: #8b1538; border: 2px solid #8b1538; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 16px;">
+        📄 Print Comparison
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .comparison-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .comparison-table tbody tr:hover {
+    background: #f9f9f9;
+  }
+  
+  .btn:hover {
+    background: #6d1129 !important;
+  }
+  
+  @media (max-width: 768px) {
+    .comparison-table th,
+    .comparison-table td {
+      font-size: 12px;
+      padding: 10px !important;
+    }
+    
+    .comparison-table th:first-child,
+    .comparison-table td:first-child {
+      min-width: 150px;
+    }
+  }
+  
+  @media print {
+    .comparison-selector,
+    button {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  // Product column toggle
+  document.querySelectorAll('.comparison-product-select input').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const productId = this.id.replace('compare-', '');
+      const columns = document.querySelectorAll(`[data-product-id="${productId}"]`);
+      
+      columns.forEach(col => {
+        col.style.display = this.checked ? '' : 'none';
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "AED Comparison",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Compare AED Models"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AED Comparison"
+    }
+  ]
+}
+{% endschema %}
