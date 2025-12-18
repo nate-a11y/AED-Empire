@@ -4,71 +4,121 @@
   Images are displayed with a fixed aspect ratio for uniform appearance.
 {% enddoc %}
 
-{%- comment -%} Styles are in assets/theme.css under "COLLECTIONS LIST PAGE" section {%- endcomment -%}
+<style>
+  .collections-page-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  @media (max-width: 1024px) {
+    .collections-page-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .collections-page-grid { grid-template-columns: 1fr; }
+  }
+  .collections-page-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .collections-page-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .collections-page-card__image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    background: #f5f5f5;
+    overflow: hidden;
+  }
+  .collections-page-card__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .collections-page-card__content {
+    padding: 20px;
+    text-align: center;
+  }
+  .collections-page-card__title {
+    margin: 0 0 8px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+  .collections-page-card__count {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #C93C3C;
+  }
+</style>
 
-<section class="section collections-list-section">
+<section class="section" style="padding: 60px 0;">
   <div class="container">
     {%- if section.settings.title != blank -%}
-      <div class="section-header">
-        <h1>{{ section.settings.title }}</h1>
+      <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="margin: 0 0 10px;">{{ section.settings.title }}</h1>
         {%- if section.settings.subtitle != blank -%}
-          <p>{{ section.settings.subtitle }}</p>
+          <p style="color: #666; margin: 0;">{{ section.settings.subtitle }}</p>
         {%- endif -%}
-        <div class="section-header__divider" aria-hidden="true"></div>
       </div>
     {%- else -%}
       <h1 class="visually-hidden">Collections</h1>
     {%- endif -%}
 
-    <div class="collections-grid">
-      {%- liquid
-        assign collections_to_show = collections | where: 'products_count', '>', 0
-        for collection in collections
-          unless collection.handle == 'all' or collection.products_count == 0
-            assign has_image = false
-            assign image_url = ''
-            assign image_alt = collection.title | escape
-
-            if collection.image
-              assign has_image = true
-              assign image_url = collection.image | image_url: width: 800
-            elsif collection.products.first.featured_image
-              assign has_image = true
-              assign image_url = collection.products.first.featured_image | image_url: width: 800
-            endif
-      -%}
-        <a href="{{ collection.url }}" class="collection-card" aria-label="View {{ collection.title }} collection">
-          <div class="collection-card__image">
-            {%- if has_image -%}
-              <img
-                src="{{ image_url }}"
-                alt="{{ image_alt }}"
-                width="400"
-                height="400"
-                loading="lazy"
-              >
-            {%- else -%}
-              <div class="collection-card__placeholder">
-                <svg aria-hidden="true" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <rect x="3" y="3" width="18" height="18" rx="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <path d="M21 15l-5-5L5 21"/>
-                </svg>
-              </div>
-            {%- endif -%}
-            <div class="collection-card__overlay">
-              <span class="collection-card__cta">Shop Now</span>
+    <div class="collections-page-grid">
+      {%- for collection in collections -%}
+        {%- unless collection.handle == 'all' or collection.products_count == 0 -%}
+          <a href="{{ collection.url }}" class="collections-page-card">
+            <div class="collections-page-card__image-wrapper">
+              {%- if collection.image -%}
+                <img
+                  class="collections-page-card__image"
+                  src="{{ collection.image | image_url: width: 600, height: 600, crop: 'center' }}"
+                  alt="{{ collection.title | escape }}"
+                  width="600"
+                  height="600"
+                  loading="lazy"
+                >
+              {%- elsif collection.products.first.featured_image -%}
+                <img
+                  class="collections-page-card__image"
+                  src="{{ collection.products.first.featured_image | image_url: width: 600, height: 600, crop: 'center' }}"
+                  alt="{{ collection.title | escape }}"
+                  width="600"
+                  height="600"
+                  loading="lazy"
+                >
+              {%- else -%}
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999;">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <path d="M21 15l-5-5L5 21"/>
+                  </svg>
+                </div>
+              {%- endif -%}
             </div>
-          </div>
-          <div class="collection-card__content">
-            <h2 class="collection-card__title">{{ collection.title }}</h2>
-            <p class="collection-card__count">{{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}</p>
-          </div>
-        </a>
-      {%-
-          endunless
-        endfor
-      -%}
+            <div class="collections-page-card__content">
+              <h2 class="collections-page-card__title">{{ collection.title }}</h2>
+              <p class="collections-page-card__count">{{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}</p>
+            </div>
+          </a>
+        {%- endunless -%}
+      {%- endfor -%}
     </div>
   </div>
 </section>
