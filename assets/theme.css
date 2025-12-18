@@ -3309,3 +3309,42 @@ textarea:focus-visible {
   color: #C93C3C;
   text-align: center;
 }
+
+
+/* ========================================
+   GLOBAL PAGE CENTERING FIX
+   ======================================== */
+
+.main-page,
+.page-width,
+.shopify-section .page-width,
+section.shopify-section,
+.section-template--page,
+.template-page .main-content {
+  max-width: 1400px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 40px !important;
+  padding-right: 40px !important;
+}
+
+.page-content,
+.rte,
+.page__content,
+.main-page__content {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .main-page,
+  .page-width,
+  .shopify-section .page-width,
+  .template-page .main-content {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}
+
+/* End Page Centering Fix */
