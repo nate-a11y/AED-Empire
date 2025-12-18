@@ -14,7 +14,7 @@
   <h3 class="product-maintenance-mo__title">{{ title | default: 'Maintenance Schedule' }}</h3>
 
   <div class="product-maintenance-mo__grid">
-    {% if maintenance.pad_replacement != blank %}
+    {% if maintenance.pad_replacement_years != blank %}
       <div class="product-maintenance-mo__item">
         <div class="product-maintenance-mo__icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -24,7 +24,7 @@
         </div>
         <div class="product-maintenance-mo__info">
           <h4>Electrode Pads</h4>
-          <p>Replace every {{ maintenance.pad_replacement }}</p>
+          <p>Replace every {{ maintenance.pad_replacement_years }}</p>
           {% if maintenance.pad_cost != blank %}
             <span class="product-maintenance-mo__cost">~{{ maintenance.pad_cost | money }}</span>
           {% endif %}
