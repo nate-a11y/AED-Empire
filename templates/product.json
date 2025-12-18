@@ -40,6 +40,7 @@
     },
     "recommendations": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "title": "You May Also Like",
         "subtitle": "",
