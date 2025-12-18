@@ -21,7 +21,7 @@
       </svg>
       <div>
         <span class="product-warranty-mo__duration">{{ warranty.device_warranty_years }}</span>
-        <span class="product-warranty-mo__type">{{ warranty.type | default: 'Manufacturer Warranty' }}</span>
+        <span class="product-warranty-mo__type">{{ warranty.warranty_type | default: 'Manufacturer Warranty' }}</span>
       </div>
     </div>
 
