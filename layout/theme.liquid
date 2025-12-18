@@ -254,15 +254,16 @@
 
 
 <script>
-console.log('✅ Quick View Fix Loaded - ' + new Date().toISOString());
-console.log('Modal element:', document.querySelector('[data-quick-view-modal]'));
-
-// Force re-init
-if (typeof quickView !== 'undefined') {
-  console.log('✅ quickView object exists');
-} else {
-  console.log('🔴 quickView object missing');
-}
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('✅ Quick View Fix Loaded - ' + new Date().toISOString());
+  const modal = document.querySelector('[data-quick-view-modal]');
+  console.log('Modal element:', modal);
+  if (modal) {
+    console.log('✅ MODAL FOUND! Quick view should work now.');
+  } else {
+    console.log('🔴 Modal still not found - check Elements tab');
+  }
+});
 </script>
 
 </head>
@@ -337,6 +338,6 @@ if (typeof quickView !== 'undefined') {
 
   {%- comment -%} Accessibility: Announce dynamic content changes {%- endcomment -%}
   <div id="aria-live-region" aria-live="polite" aria-atomic="true" class="visually-hidden"></div>
-  {% render 'quick-view-modal' %}
+  
   </body>
 </html>
