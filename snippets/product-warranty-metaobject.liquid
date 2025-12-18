@@ -1,8 +1,8 @@
-{% comment %}
+{% comment %} 
   Product Warranty Snippet - Displays warranty info from Warranty Info metaobjects
-
+  
   Usage: {% render 'product-warranty-metaobject', product: product %}
-
+  
   Requires: Product metafield linking to Warranty Info metaobject
   Metafield: product.metafields.custom.warranty_info (metaobject reference)
 
@@ -21,7 +21,7 @@
 
 {% if warranty %}
 <div class="product-warranty-mo">
-  <h3 class="product-warranty-mo__title">{{ title | default: 'Warranty Information' }}</h3>
+  <h3 class="product-warranty-mo__title">{{ warranty.name | default: 'Warranty Information' }}</h3>
 
   <div class="product-warranty-mo__card">
     <div class="product-warranty-mo__header">
@@ -37,7 +37,7 @@
 
     {% if warranty.warranty_details != blank %}
       <div class="product-warranty-mo__section">
-        <h4>What's Covered</h4>
+        <h4>Warranty Coverage</h4>
         <div class="product-warranty-mo__content rte">
           {{ warranty.warranty_details }}
         </div>
@@ -68,7 +68,7 @@
           <line x1="12" y1="8" x2="12" y2="12"/>
           <line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
-        <span>Product registration required to activate warranty</span>
+        <span>Product registration required to activate warranty{% if warranty.registration_url != blank %} - <a href="{{ warranty.registration_url }}" target="_blank">Register Now</a>{% endif %}</span>
       </div>
     {% endif %}
 
@@ -98,12 +98,16 @@
 </div>
 
 <style>
+.product-warranty-mo {
+  margin: 30px 0;
+}
 .product-warranty-mo__title {
   font-size: 1.25rem;
   margin: 0 0 20px;
+  font-weight: 600;
 }
 .product-warranty-mo__card {
-  border: 1px solid var(--color-border);
+  border: 1px solid #ddd;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -112,7 +116,7 @@
   align-items: center;
   gap: 15px;
   padding: 20px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark, #1a1a2e));
+  background: linear-gradient(135deg, #8b1538 0%, #1a1a2e 100%);
   color: #fff;
 }
 .product-warranty-mo__header svg {
@@ -130,9 +134,9 @@
 }
 .product-warranty-mo__section {
   padding: 20px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid #ddd;
 }
-.product-warranty-mo__section:last-child {
+.product-warranty-mo__section:last-of-type {
   border-bottom: none;
 }
 .product-warranty-mo__section h4 {
@@ -143,7 +147,7 @@
 .product-warranty-mo__content {
   font-size: 0.9375rem;
   line-height: 1.6;
-  color: var(--color-text-light);
+  color: #666;
 }
 .product-warranty-mo__content p:last-child {
   margin-bottom: 0;
@@ -173,15 +177,20 @@
   padding: 12px 20px;
   background: #fff3cd;
   font-size: 0.875rem;
+  border-bottom: 1px solid #ddd;
 }
 .product-warranty-mo__notice svg {
   flex-shrink: 0;
   color: #856404;
 }
+.product-warranty-mo__notice a {
+  color: #856404;
+  text-decoration: underline;
+}
 .product-warranty-mo__contact {
   padding: 15px 20px;
   font-size: 0.875rem;
-  background: var(--color-bg-alt);
+  background: #f9f9f9;
 }
 .product-warranty-mo__contact-item {
   display: inline-flex;
