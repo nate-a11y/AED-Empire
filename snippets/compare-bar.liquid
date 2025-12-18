@@ -47,7 +47,7 @@
     } catch {}
   }
 
-  // Add product to compare
+  // Add product to compare (with GraphQL)
   window.addToCompare = async function(handle) {
     const list = getCompareList();
     if (list.find(p => p.handle === handle)) {
@@ -60,22 +60,95 @@
     }
 
     try {
-      const response = await fetch(`/products/${handle}.js`);
-      const product = await response.json();
+      const query = `
+        query getProduct($handle: String!) {
+          product(handle: $handle) {
+            id
+            handle
+            title
+            description
+            featuredImage { url(transform: {maxWidth: 300}) }
+            priceRange { minVariantPrice { amount currencyCode } }
+            compareAtPriceRange { minVariantPrice { amount } }
+            availableForSale
+            vendor
+            productType
+            variants(first: 1) { nodes { id } }
+            metafields(identifiers: [
+              {namespace: "custom", key: "manufacturer"},
+              {namespace: "custom", key: "shock_type"},
+              {namespace: "custom", key: "has_cpr_feedback"},
+              {namespace: "custom", key: "has_wifi_monitoring"},
+              {namespace: "custom", key: "has_pediatric_mode"},
+              {namespace: "custom", key: "warranty_years"},
+              {namespace: "custom", key: "battery_life_years"},
+              {namespace: "custom", key: "pad_life_years"},
+              {namespace: "custom", key: "specifications"}
+            ]) {
+              key value type
+              reference { ... on Metaobject { fields { key value } } }
+            }
+          }
+        }
+      `;
+
+      const response = await fetch('https://{{ shop.permanent_domain }}/api/2024-10/graphql.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': 'bbdd07adaf083ca9ff43460f2a37ea75'
+        },
+        body: JSON.stringify({ query, variables: { handle } })
+      });
+
+      const result = await response.json();
+      if (result.errors) throw new Error('GraphQL error');
+
+      const product = result.data.product;
+      const parseBoolean = v => v === 'true' || v === true;
+      
+      const metafields = {}, specs = {};
+      product.metafields.forEach(mf => {
+        if (!mf) return;
+        if (mf.key === 'specifications' && mf.reference?.fields) {
+          mf.reference.fields.forEach(f => specs[f.key] = f.value);
+        } else if (['has_cpr_feedback','has_wifi_monitoring','has_pediatric_mode'].includes(mf.key)) {
+          metafields[mf.key] = parseBoolean(mf.value);
+        } else if (['warranty_years','battery_life_years','pad_life_years'].includes(mf.key)) {
+          metafields[mf.key] = mf.value ? parseInt(mf.value) : null;
+        } else {
+          metafields[mf.key] = mf.value;
+        }
+      });
 
       list.push({
         handle: product.handle,
         id: product.id,
         title: product.title,
-        price: product.price,
-        compare_at_price: product.compare_at_price,
+        price: parseFloat(product.priceRange.minVariantPrice.amount) * 100,
+        compare_at_price: product.compareAtPriceRange?.minVariantPrice?.amount ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount) * 100 : null,
+        manufacturer: metafields.manufacturer || product.vendor,
         vendor: product.vendor,
-        type: product.type,
-        image: product.featured_image,
-        url: product.url,
-        available: product.available,
-        variants: product.variants,
-        description: product.description ? product.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...' : ''
+        type: product.productType,
+        image: product.featuredImage?.url,
+        url: `/products/${product.handle}`,
+        available: product.availableForSale,
+        variantId: product.variants.nodes[0]?.id,
+        description: product.description?.replace(/<[^>]*>/g, '').substring(0, 150) + '...',
+        shock_type: metafields.shock_type,
+        has_cpr_feedback: metafields.has_cpr_feedback,
+        has_wifi_monitoring: metafields.has_wifi_monitoring,
+        has_pediatric_mode: metafields.has_pediatric_mode,
+        warranty_years: metafields.warranty_years,
+        battery_life_years: metafields.battery_life_years,
+        pad_life_years: metafields.pad_life_years,
+        weight: specs.weight,
+        dimensions: specs.dimensions,
+        ip_rating: specs.ip_rating,
+        shock_delivery_type: specs.shock_delivery_type,
+        cpr_feedback: specs.cpr_feedback,
+        pediatric_capability: specs.pediatric_capability,
+        connectivity: specs.connectivity
       });
 
       saveCompareList(list);
@@ -83,6 +156,7 @@
       updateCompareButtons();
     } catch (err) {
       console.error('Error adding to compare:', err);
+      alert('Error adding product to comparison');
     }
   };
 
