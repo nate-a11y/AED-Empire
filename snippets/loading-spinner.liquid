@@ -1,14 +1,16 @@
-{% comment %}
-  Renders a loading spinner.
-  Following Dawn theme best practices.
+{% doc %}
+  @name Loading Spinner
+  @description Renders an accessible loading spinner with visually hidden text.
+  Follows Dawn theme best practices.
 
-  Accepts:
-  - class: {String} Additional CSS classes (optional)
+  @param {string} [class] - Additional CSS classes for styling
 
-  Usage:
-  {% render 'loading-spinner' %}
-  {% render 'loading-spinner', class: 'button__spinner' %}
-{% endcomment %}
+  @example
+    {% render 'loading-spinner' %}
+
+  @example
+    {% render 'loading-spinner', class: 'button__spinner' %}
+{% enddoc %}
 
 <div class="loading-spinner{% if class %} {{ class }}{% endif %}">
   <span class="visually-hidden">Loading</span>

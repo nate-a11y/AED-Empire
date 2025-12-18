@@ -1,3 +1,13 @@
+{% doc %}
+  @name Breadcrumbs
+  @description Renders accessible breadcrumb navigation based on current template.
+  Automatically detects the page type and builds the appropriate breadcrumb trail.
+  Hidden on the homepage.
+
+  @example
+    {% render 'breadcrumbs' %}
+{% enddoc %}
+
 {% unless template.name == 'index' %}
   <nav class="breadcrumbs" aria-label="Breadcrumb">
     <div class="container">

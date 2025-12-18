@@ -1,13 +1,16 @@
-{% comment %}
-  Renders social media icons.
-  Using inline styles to override any CSS issues.
+{% doc %}
+  @name Social Icons
+  @description Renders social media icon links based on theme settings.
+  Supports Facebook, Instagram, TikTok, YouTube, LinkedIn, X (Twitter), and Pinterest.
 
-  Accepts:
-  - class: {String} additional class for the container (optional)
+  @param {string} [class] - Additional CSS class for the container
 
-  Usage:
-  {% render 'social-icons', class: 'footer__social' %}
-{% endcomment %}
+  @example
+    {% render 'social-icons' %}
+
+  @example
+    {% render 'social-icons', class: 'footer__social' %}
+{% enddoc %}
 
 <nav class="social-icons{% if class %} {{ class }}{% endif %}" aria-label="Social media links">
   {%- if settings.social_facebook != blank -%}

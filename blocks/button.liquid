@@ -1,0 +1,218 @@
+{% doc %}
+  @name Button Block
+  @description A versatile button block with multiple styles and sizes
+  @category Actions
+{% enddoc %}
+
+{%- liquid
+  assign button_style = block.settings.style | default: 'primary'
+  assign button_size = block.settings.size | default: 'medium'
+-%}
+
+<div class="button-block" {{ block.shopify_attributes }}>
+  {%- if block.settings.link != blank -%}
+    <a
+      href="{{ block.settings.link }}"
+      class="button-block__btn button-block__btn--{{ button_style }} button-block__btn--{{ button_size }}"
+      {% if block.settings.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}
+    >
+      {%- if block.settings.icon != 'none' and block.settings.icon_position == 'left' -%}
+        <span class="button-block__icon" aria-hidden="true">
+          {%- render 'icon', name: block.settings.icon -%}
+        </span>
+      {%- endif -%}
+
+      <span>{{ block.settings.text | default: 'Learn More' }}</span>
+
+      {%- if block.settings.icon != 'none' and block.settings.icon_position == 'right' -%}
+        <span class="button-block__icon" aria-hidden="true">
+          {%- render 'icon', name: block.settings.icon -%}
+        </span>
+      {%- endif -%}
+    </a>
+  {%- else -%}
+    <span class="button-block__btn button-block__btn--{{ button_style }} button-block__btn--{{ button_size }} button-block__btn--disabled">
+      {{ block.settings.text | default: 'Learn More' }}
+    </span>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+.button-block {
+  display: inline-block;
+}
+
+.button-block__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--border-radius, 6px);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+/* Sizes */
+.button-block__btn--small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.button-block__btn--medium {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+.button-block__btn--large {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+}
+
+/* Styles */
+.button-block__btn--primary {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.button-block__btn--primary:hover {
+  background: var(--color-primary-dark, color-mix(in oklch, var(--color-primary), black 15%));
+  border-color: var(--color-primary-dark, color-mix(in oklch, var(--color-primary), black 15%));
+}
+
+.button-block__btn--secondary {
+  background: var(--color-secondary);
+  color: white;
+  border-color: var(--color-secondary);
+}
+
+.button-block__btn--secondary:hover {
+  background: var(--color-secondary-dark, color-mix(in oklch, var(--color-secondary), black 15%));
+  border-color: var(--color-secondary-dark, color-mix(in oklch, var(--color-secondary), black 15%));
+}
+
+.button-block__btn--outline {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.button-block__btn--outline:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.button-block__btn--ghost {
+  background: transparent;
+  color: var(--color-text);
+  border-color: transparent;
+}
+
+.button-block__btn--ghost:hover {
+  background: var(--color-background-alt, #f5f5f5);
+}
+
+.button-block__btn--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-block__icon {
+  display: flex;
+  align-items: center;
+}
+
+.button-block__icon svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* Focus states */
+.button-block__btn:focus-visible {
+  outline: 2px solid var(--color-focus, var(--color-primary));
+  outline-offset: 2px;
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Button",
+  "category": "Actions",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Button text",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "ghost", "label": "Ghost" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "arrow-right", "label": "Arrow right" },
+        { "value": "phone", "label": "Phone" },
+        { "value": "mail", "label": "Email" },
+        { "value": "cart", "label": "Cart" },
+        { "value": "heart", "label": "Heart" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "icon_position",
+      "label": "Icon position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "right",
+      "_if": "icon != 'none'"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Button",
+      "category": "Actions"
+    }
+  ]
+}
+{% endschema %}

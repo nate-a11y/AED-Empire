@@ -27,15 +27,41 @@
   "name": "Hero banner",
   "settings": [
     {
+      "type": "header",
+      "content": "Background"
+    },
+    {
       "type": "image_picker",
       "id": "image",
       "label": "Background image"
     },
     {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 40,
+      "_if": "image"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show badge",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "badge",
       "label": "Badge text",
-      "default": "Trusted Life Safety Equipment"
+      "default": "Trusted Life Safety Equipment",
+      "_if": "show_badge"
     },
     {
       "type": "text",
@@ -50,31 +76,42 @@
       "default": "Life-saving AEDs don't have to break the budget. As authorized dealers, we make preparedness affordable and accessible."
     },
     {
+      "type": "header",
+      "content": "Primary button"
+    },
+    {
       "type": "text",
       "id": "button_1_text",
-      "label": "Button 1 text",
+      "label": "Button text",
       "default": "Shop AEDs"
     },
     {
       "type": "url",
       "id": "button_1_link",
-      "label": "Button 1 link"
+      "label": "Button link",
+      "_if": "button_1_text"
+    },
+    {
+      "type": "header",
+      "content": "Secondary button"
     },
     {
       "type": "text",
       "id": "button_2_text",
-      "label": "Button 2 text",
+      "label": "Button text",
       "default": "Bleeding Control"
     },
     {
       "type": "url",
       "id": "button_2_link",
-      "label": "Button 2 link"
+      "label": "Button link",
+      "_if": "button_2_text"
     }
   ],
   "presets": [
     {
-      "name": "Hero banner"
+      "name": "Hero banner",
+      "category": "Hero"
     }
   ]
 }

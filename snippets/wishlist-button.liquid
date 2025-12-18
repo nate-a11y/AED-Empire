@@ -1,10 +1,13 @@
-{% comment %}
-  Wishlist Button Snippet
-  Usage: {% render 'wishlist-button', product: product %}
+{% doc %}
+  @name Wishlist Button
+  @description Renders a wishlist toggle button with heart icon and pressed state.
+  Saves to localStorage for guests, can be extended to customer metafields for logged-in users.
 
-  Premium feature - saves to localStorage for guests,
-  can be extended to save to customer metafields for logged-in users
-{% endcomment %}
+  @param {product} product - The product object to add to wishlist (required)
+
+  @example
+    {% render 'wishlist-button', product: product %}
+{% enddoc %}
 
 <button
   type="button"

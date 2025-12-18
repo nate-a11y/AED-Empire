@@ -1,9 +1,14 @@
-{% comment %}
-  Product Badges
-  Displays various product badges: sale, new, refurbished, certified, etc.
+{% doc %}
+  @name Product Badges
+  @description Renders contextual product badges based on product state and tags.
+  Supports sale (with percentage), sold out, new (within 30 days), refurbished,
+  FDA certified, bestseller, value bundle, and free shipping badges.
 
-  Usage: {% render 'product-badges', product: product %}
-{% endcomment %}
+  @param {product} product - The product object to generate badges for (required)
+
+  @example
+    {% render 'product-badges', product: product %}
+{% enddoc %}
 
 {%- liquid
   assign show_badges = true
@@ -97,61 +102,71 @@
   </div>
 {% endif %}
 
-<style>
-  .product-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 5;
-  }
-  .product-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 5px 10px;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-radius: 3px;
-    line-height: 1;
-  }
-  .product-badge svg {
-    flex-shrink: 0;
-  }
-  .product-badge--sale {
-    background: var(--color-primary);
-    color: #fff;
-  }
-  .product-badge--soldout {
-    background: #6c757d;
-    color: #fff;
-  }
-  .product-badge--new {
-    background: var(--color-success);
-    color: #fff;
-  }
-  .product-badge--refurbished {
-    background: var(--color-secondary);
-    color: #fff;
-  }
-  .product-badge--certified {
-    background: var(--color-accent);
-    color: #fff;
-  }
-  .product-badge--bestseller {
-    background: #FFD700;
-    color: #1a1a1a;
-  }
-  .product-badge--bundle {
-    background: #9C27B0;
-    color: #fff;
-  }
-  .product-badge--freeship {
-    background: var(--color-success);
-    color: #fff;
-  }
-</style>
+{% stylesheet %}
+.product-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+}
+
+.product-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 3px;
+  line-height: 1;
+}
+
+.product-badge svg {
+  flex-shrink: 0;
+}
+
+.product-badge--sale {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.product-badge--soldout {
+  background: #6c757d;
+  color: #fff;
+}
+
+.product-badge--new {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.product-badge--refurbished {
+  background: var(--color-secondary);
+  color: #fff;
+}
+
+.product-badge--certified {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.product-badge--bestseller {
+  background: oklch(0.85 0.15 85); /* OKLCH gold */
+  color: #1a1a1a;
+}
+
+.product-badge--bundle {
+  background: oklch(0.5 0.2 300); /* OKLCH purple */
+  color: #fff;
+}
+
+.product-badge--freeship {
+  background: var(--color-success);
+  color: #fff;
+}
+{% endstylesheet %}

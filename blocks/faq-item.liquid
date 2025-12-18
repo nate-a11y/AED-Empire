@@ -1,0 +1,167 @@
+{% doc %}
+  @name FAQ Item Block
+  @description An accessible accordion FAQ item with question and answer
+  @category Content
+{% enddoc %}
+
+{%- liquid
+  assign faq_id = 'faq-' | append: block.id
+  assign answer_id = faq_id | append: '-answer'
+  assign question_id = faq_id | append: '-question'
+  assign is_open = block.settings.open_by_default
+-%}
+
+<div class="faq-item-block" {{ block.shopify_attributes }}>
+  <h3 class="faq-item-block__heading">
+    <button
+      class="faq-item-block__trigger"
+      aria-expanded="{{ is_open }}"
+      aria-controls="{{ answer_id }}"
+      id="{{ question_id }}"
+      data-faq-trigger
+    >
+      <span class="faq-item-block__question">{{ block.settings.question }}</span>
+      <span class="faq-item-block__icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </span>
+    </button>
+  </h3>
+  <div
+    class="faq-item-block__answer{% if is_open %} faq-item-block__answer--open{% endif %}"
+    id="{{ answer_id }}"
+    role="region"
+    aria-labelledby="{{ question_id }}"
+    {% unless is_open %}hidden{% endunless %}
+  >
+    <div class="faq-item-block__content rte">
+      {{ block.settings.answer }}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.faq-item-block {
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.faq-item-block__heading {
+  margin: 0;
+}
+
+.faq-item-block__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1.25rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-heading);
+  transition: color 0.2s ease;
+}
+
+.faq-item-block__trigger:hover {
+  color: var(--color-primary);
+}
+
+.faq-item-block__trigger:focus-visible {
+  outline: 2px solid var(--color-focus, var(--color-primary));
+  outline-offset: 2px;
+}
+
+.faq-item-block__question {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.faq-item-block__icon {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.faq-item-block__trigger[aria-expanded="true"] .faq-item-block__icon {
+  transform: rotate(180deg);
+}
+
+.faq-item-block__answer {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.faq-item-block__answer[hidden] {
+  display: none;
+}
+
+.faq-item-block__content {
+  padding-bottom: 1.25rem;
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+.faq-item-block__content p:last-child {
+  margin-bottom: 0;
+}
+{% endstylesheet %}
+
+{% javascript %}
+(function() {
+  const triggers = document.querySelectorAll('[data-faq-trigger]');
+
+  triggers.forEach(trigger => {
+    trigger.addEventListener('click', function() {
+      const expanded = this.getAttribute('aria-expanded') === 'true';
+      const answerId = this.getAttribute('aria-controls');
+      const answer = document.getElementById(answerId);
+
+      this.setAttribute('aria-expanded', !expanded);
+
+      if (expanded) {
+        answer.hidden = true;
+        answer.classList.remove('faq-item-block__answer--open');
+      } else {
+        answer.hidden = false;
+        answer.classList.add('faq-item-block__answer--open');
+      }
+    });
+  });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "FAQ Item",
+  "category": "Content",
+  "settings": [
+    {
+      "type": "text",
+      "id": "question",
+      "label": "Question",
+      "default": "What is an AED?"
+    },
+    {
+      "type": "richtext",
+      "id": "answer",
+      "label": "Answer",
+      "default": "<p>An AED (Automated External Defibrillator) is a portable device that can check heart rhythm and deliver an electric shock to restore a normal heartbeat during sudden cardiac arrest.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_by_default",
+      "label": "Open by default",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Item",
+      "category": "Content"
+    }
+  ]
+}
+{% endschema %}

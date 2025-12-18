@@ -1,7 +1,23 @@
-{% comment %}
-  Product Card Snippet
-  Usage: {% render 'product-card', product: product, show_quick_view: true, show_swatches: true %}
-{% endcomment %}
+{% doc %}
+  @name Product Card
+  @description Renders a product card with image, badges, price, and actions.
+  Supports quick view, color swatches, compare functionality, and multiple view modes.
+
+  @param {product} product - The product object to display (required)
+  @param {boolean} [show_quick_view=false] - Whether to show the quick view button
+  @param {boolean} [show_swatches=false] - Whether to show color swatches
+  @param {string} [card_class] - Additional CSS classes for the card
+
+  @example
+    {% render 'product-card', product: product %}
+
+  @example
+    {% render 'product-card',
+      product: product,
+      show_quick_view: true,
+      show_swatches: true
+    %}
+{% enddoc %}
 
 <article class="product-card" data-product-card data-product-id="{{ product.id }}" data-vendor="{{ product.vendor | handleize }}" data-price="{{ product.price }}">
   {%- comment -%} Badges {%- endcomment -%}

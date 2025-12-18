@@ -1,19 +1,21 @@
-{% comment %}
-  Renders pagination links. Must be used within paginate tags.
-  Following Dawn theme best practices.
+{% doc %}
+  @name Pagination
+  @description Renders accessible pagination links with previous/next buttons and page numbers.
+  Must be used within paginate tags. Follows Dawn theme best practices.
 
-  Accepts:
-  - paginate: {Object} Paginate object (required)
-  - anchor: {String} Anchor link to jump to on page load (optional)
+  @param {paginate} paginate - The paginate object from Liquid (required)
+  @param {string} [anchor] - Anchor link to jump to on page load (e.g., '#products')
 
-  Usage:
-  {% paginate collection.products by 12 %}
-    {% render 'pagination', paginate: paginate %}
-  {% endpaginate %}
+  @example
+    {% paginate collection.products by 12 %}
+      {% render 'pagination', paginate: paginate %}
+    {% endpaginate %}
 
-  With anchor:
-  {% render 'pagination', paginate: paginate, anchor: '#products' %}
-{% endcomment %}
+  @example
+    {% paginate collection.products by 12 %}
+      {% render 'pagination', paginate: paginate, anchor: '#products' %}
+    {% endpaginate %}
+{% enddoc %}
 
 {%- if paginate.pages > 1 -%}
   <nav class="pagination" role="navigation" aria-label="Pagination">

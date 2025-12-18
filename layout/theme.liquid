@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="theme-color" content="{{ settings.color_primary | default: '#C41E3A' }}">
+  <meta name="theme-color" content="{{ settings.color_primary | default: '#C93C3C' }}">
 
   <title>{{ page_title }}{% unless page_title contains shop.name %} — {{ shop.name }}{% endunless %}</title>
 
@@ -32,7 +32,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="{{ shop.name }}">
   <meta name="application-name" content="{{ shop.name }}">
-  <meta name="msapplication-TileColor" content="{{ settings.color_primary | default: '#C41E3A' }}">
+  <meta name="msapplication-TileColor" content="{{ settings.color_primary | default: '#C93C3C' }}">
 
   {%- comment -%} Preconnect to critical origins {%- endcomment -%}
   <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
@@ -60,29 +60,61 @@
   {%- comment -%} Main stylesheet {%- endcomment -%}
   {{ 'theme.css' | asset_url | stylesheet_tag }}
 
-  {%- comment -%} CSS Custom Properties {%- endcomment -%}
+  {%- comment -%} CSS Custom Properties - Winter '26 Edition with OKLCH Support {%- endcomment -%}
+  {%- comment -%} Brand Colors from AED Empire Logo {%- endcomment -%}
   <style>
     :root {
-      /* Red/White/Blue Patriotic Color Scheme */
-      --color-primary: {{ settings.color_primary | default: '#C41E3A' }};
-      --color-primary-hover: {{ settings.color_primary_hover | default: '#A01830' }};
-      --color-secondary: {{ settings.color_secondary | default: '#002868' }};
-      --color-accent: {{ settings.color_accent | default: '#0052A5' }};
+      /* AED Empire Brand Colors - Extracted from Logo */
+      --color-primary: {{ settings.color_primary | default: '#C93C3C' }};          /* Heart Red - "AED" text */
+      --color-primary-hover: {{ settings.color_primary_hover | default: '#A82E2E' }};
+      --color-secondary: {{ settings.color_secondary | default: '#1E4B8E' }};       /* Shield Navy - "EMPIRE" text */
+      --color-accent: {{ settings.color_accent | default: '#2B5797' }};             /* Royal Blue accent */
       --color-bg: {{ settings.color_background | default: '#FFFFFF' }};
       --color-bg-alt: {{ settings.color_background_alt | default: '#F5F7FA' }};
-      --color-bg-dark: {{ settings.color_secondary | default: '#002868' }};
+      --color-bg-dark: {{ settings.color_secondary | default: '#1E4B8E' }};
       --color-text: {{ settings.color_text | default: '#1A1A2E' }};
       --color-text-light: {{ settings.color_text_light | default: '#5A5A6E' }};
       --color-border: {{ settings.color_border | default: '#E1E5EB' }};
       --color-sale: {{ settings.color_sale | default: '#2E7D32' }};
       --color-error: {{ settings.color_error | default: '#dc3545' }};
       --color-success: {{ settings.color_success | default: '#28a745' }};
+      --color-star: #f59e0b;
+      --color-focus: var(--color-primary);
       --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
       --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
       --font-size-base: {{ settings.font_body_size | default: 16 }}px;
       --page-width: {{ settings.page_width | default: 1400 }}px;
       --spacing-sections: {{ settings.spacing_sections | default: 80 }}px;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 2rem;
+      --spacing-xl: 3rem;
       --button-radius: {{ settings.button_border_radius | default: 0 }}px;
+      --border-radius: 8px;
+    }
+
+    /* OKLCH Color Support (Winter '26) - Progressive enhancement */
+    @supports (color: oklch(0% 0 0)) {
+      :root {
+        /* OKLCH provides wider color gamut and perceptual uniformity */
+        /* AED Empire brand colors in OKLCH */
+        --color-primary-oklch: oklch(0.55 0.18 25);      /* Heart Red */
+        --color-secondary-oklch: oklch(0.38 0.12 250);   /* Shield Navy */
+        --color-accent-oklch: oklch(0.45 0.12 250);      /* Royal Blue */
+        --color-success-oklch: oklch(0.55 0.15 145);
+        --color-error-oklch: oklch(0.55 0.2 25);
+        --color-star-oklch: oklch(0.75 0.15 85);
+
+        /* Dynamic color mixing with OKLCH */
+        --color-primary-dark: color-mix(in oklch, var(--color-primary), black 20%);
+        --color-primary-light: color-mix(in oklch, var(--color-primary), white 30%);
+        --color-secondary-dark: color-mix(in oklch, var(--color-secondary), black 15%);
+        --color-secondary-light: color-mix(in oklch, var(--color-secondary), white 30%);
+
+        /* Translucent variants for overlays */
+        --color-primary-translucent: color-mix(in oklch, var(--color-primary), transparent 80%);
+        --color-secondary-translucent: color-mix(in oklch, var(--color-secondary), transparent 80%);
+      }
     }
 
     /* Reduced motion support */
