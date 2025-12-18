@@ -20,16 +20,16 @@
         <polyline points="9 12 11 14 15 10"/>
       </svg>
       <div>
-        <span class="product-warranty-mo__duration">{{ warranty.duration }}</span>
+        <span class="product-warranty-mo__duration">{{ warranty.device_warranty_years }}</span>
         <span class="product-warranty-mo__type">{{ warranty.type | default: 'Manufacturer Warranty' }}</span>
       </div>
     </div>
 
-    {% if warranty.coverage != blank %}
+    {% if warranty.warranty_details != blank %}
       <div class="product-warranty-mo__section">
         <h4>What's Covered</h4>
         <div class="product-warranty-mo__content rte">
-          {{ warranty.coverage }}
+          {{ warranty.warranty_details }}
         </div>
       </div>
     {% endif %}
