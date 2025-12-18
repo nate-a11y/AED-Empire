@@ -57,26 +57,28 @@
       {
         "type": "color",
         "id": "color_primary",
-        "label": "Primary brand color (Red)",
-        "default": "#C41E3A"
+        "label": "Primary brand color (Heart Red)",
+        "default": "#C93C3C",
+        "info": "AED Empire logo heart and 'AED' text color"
       },
       {
         "type": "color",
         "id": "color_primary_hover",
         "label": "Primary hover",
-        "default": "#A01830"
+        "default": "#A82E2E"
       },
       {
         "type": "color",
         "id": "color_secondary",
-        "label": "Secondary (Navy Blue)",
-        "default": "#002868"
+        "label": "Secondary (Shield Navy)",
+        "default": "#1E4B8E",
+        "info": "AED Empire logo shield and 'EMPIRE' text color"
       },
       {
         "type": "color",
         "id": "color_accent",
-        "label": "Accent (Blue)",
-        "default": "#0052A5"
+        "label": "Accent (Royal Blue)",
+        "default": "#2B5797"
       },
       {
         "type": "header",
