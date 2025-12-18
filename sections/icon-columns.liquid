@@ -26,22 +26,110 @@
 {
   "name": "Icon columns",
   "settings": [
-    {"type":"text","id":"title","label":"Heading"},
-    {"type":"text","id":"subtitle","label":"Subtitle"},
-    {"type":"range","id":"columns","min":2,"max":4,"step":1,"label":"Columns","default":3},
-    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":true}
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "_if": "title"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "icon_style",
+      "label": "Icon style",
+      "options": [
+        { "value": "circle", "label": "Circle background" },
+        { "value": "square", "label": "Square background" },
+        { "value": "none", "label": "No background" }
+      ],
+      "default": "circle"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Alternate background",
+      "default": true
+    }
   ],
   "blocks": [
     {
       "type": "column",
       "name": "Column",
       "settings": [
-        {"type":"select","id":"icon","label":"Icon","options":[{"value":"shield","label":"Shield"},{"value":"check","label":"Checkmark"},{"value":"award","label":"Award"},{"value":"heart","label":"Heart"},{"value":"truck","label":"Truck"},{"value":"phone","label":"Phone"},{"value":"clock","label":"Clock"}],"default":"shield"},
-        {"type":"text","id":"title","label":"Heading","default":"Feature"},
-        {"type":"textarea","id":"text","label":"Text","default":"Describe this feature in a few words."}
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "shield", "label": "Shield" },
+            { "value": "check", "label": "Checkmark" },
+            { "value": "award", "label": "Award" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "phone", "label": "Phone" },
+            { "value": "clock", "label": "Clock" },
+            { "value": "star", "label": "Star" },
+            { "value": "users", "label": "Users" },
+            { "value": "refresh", "label": "Refresh" }
+          ],
+          "default": "shield"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom icon image",
+          "info": "Overrides selected icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Feature"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Describe this feature in a few words."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link text",
+          "default": "Learn more",
+          "_if": "link"
+        }
       ]
     }
   ],
-  "presets": [{"name":"Icon columns","blocks":[{"type":"column"},{"type":"column"},{"type":"column"}]}]
+  "presets": [
+    {
+      "name": "Icon columns",
+      "category": "Features",
+      "blocks": [
+        { "type": "column" },
+        { "type": "column" },
+        { "type": "column" }
+      ]
+    }
+  ]
 }
 {% endschema %}

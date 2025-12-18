@@ -1,17 +1,23 @@
-{% comment %}
-  Renders a product's price (regular, sale, sold out)
-  Following Dawn theme best practices.
+{% doc %}
+  @name Price
+  @description Renders a product's price with support for regular, sale, and sold out states.
+  Follows Dawn theme best practices with accessibility considerations.
 
-  Accepts:
-  - product: {Object} Product Liquid object (required)
-  - use_variant: {Boolean} Use selected/first variant price instead of product price (optional)
-  - show_badges: {Boolean} Show 'Sale' and 'Sold Out' badges (optional)
-  - price_class: {String} Additional class for price container (optional)
+  @param {product} product - The product object to display pricing for (required)
+  @param {boolean} [use_variant=false] - Use selected/first variant price instead of product price
+  @param {boolean} [show_badges=false] - Show 'Sale' and 'Sold Out' badges
+  @param {string} [price_class] - Additional CSS class for the price container
 
-  Usage:
-  {% render 'price', product: product %}
-  {% render 'price', product: product, use_variant: true, show_badges: true %}
-{% endcomment %}
+  @example
+    {% render 'price', product: product %}
+
+  @example
+    {% render 'price',
+      product: product,
+      use_variant: true,
+      show_badges: true
+    %}
+{% enddoc %}
 
 {%- liquid
   if use_variant

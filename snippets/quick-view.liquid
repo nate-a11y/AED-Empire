@@ -1,3 +1,12 @@
+{% doc %}
+  @name Quick View
+  @description Renders the quick view modal container for product previews.
+  Content is loaded dynamically via AJAX when triggered from product cards.
+
+  @example
+    {% render 'quick-view' %}
+{% enddoc %}
+
 <div class="quick-view-modal" data-quick-view-modal hidden>
   <div class="quick-view-modal__overlay" data-quick-view-close></div>
   <div class="quick-view-modal__content">

@@ -31,21 +31,92 @@
 {
   "name": "Testimonials",
   "settings": [
-    {"type":"text","id":"title","label":"Heading","default":"What Our Customers Say"},
-    {"type":"text","id":"subtitle","label":"Subtitle"},
-    {"type":"checkbox","id":"alt_bg","label":"Alternate background","default":true}
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "_if": "title"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns per row",
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Alternate background",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stars",
+      "label": "Show star ratings",
+      "default": true
+    }
   ],
   "blocks": [
     {
       "type": "testimonial",
       "name": "Testimonial",
       "settings": [
-        {"type":"textarea","id":"quote","label":"Quote","default":"Excellent products and outstanding customer service. The AED arrived quickly and the team walked us through setup."},
-        {"type":"text","id":"author","label":"Author name","default":"John Smith"},
-        {"type":"text","id":"title","label":"Author title","default":"Safety Director, ABC Company"}
+        {
+          "type": "range",
+          "id": "stars",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Star rating",
+          "default": 5,
+          "_if": "section.settings.show_stars"
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "Excellent products and outstanding customer service. The AED arrived quickly and the team walked us through setup."
+        },
+        {
+          "type": "image_picker",
+          "id": "author_image",
+          "label": "Author photo"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author name",
+          "default": "John Smith"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Author title",
+          "default": "Safety Director, ABC Company",
+          "_if": "author"
+        }
       ]
     }
   ],
-  "presets": [{"name":"Testimonials","blocks":[{"type":"testimonial"},{"type":"testimonial"},{"type":"testimonial"}]}]
+  "presets": [
+    {
+      "name": "Testimonials",
+      "category": "Social proof",
+      "blocks": [
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" }
+      ]
+    }
+  ]
 }
 {% endschema %}

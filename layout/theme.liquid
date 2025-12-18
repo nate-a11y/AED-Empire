@@ -60,10 +60,10 @@
   {%- comment -%} Main stylesheet {%- endcomment -%}
   {{ 'theme.css' | asset_url | stylesheet_tag }}
 
-  {%- comment -%} CSS Custom Properties {%- endcomment -%}
+  {%- comment -%} CSS Custom Properties - Winter '26 Edition with OKLCH Support {%- endcomment -%}
   <style>
     :root {
-      /* Red/White/Blue Patriotic Color Scheme */
+      /* Red/White/Blue Patriotic Color Scheme - Hex fallbacks */
       --color-primary: {{ settings.color_primary | default: '#C41E3A' }};
       --color-primary-hover: {{ settings.color_primary_hover | default: '#A01830' }};
       --color-secondary: {{ settings.color_secondary | default: '#002868' }};
@@ -77,12 +77,42 @@
       --color-sale: {{ settings.color_sale | default: '#2E7D32' }};
       --color-error: {{ settings.color_error | default: '#dc3545' }};
       --color-success: {{ settings.color_success | default: '#28a745' }};
+      --color-star: #f59e0b;
+      --color-focus: var(--color-primary);
       --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
       --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
       --font-size-base: {{ settings.font_body_size | default: 16 }}px;
       --page-width: {{ settings.page_width | default: 1400 }}px;
       --spacing-sections: {{ settings.spacing_sections | default: 80 }}px;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 2rem;
+      --spacing-xl: 3rem;
       --button-radius: {{ settings.button_border_radius | default: 0 }}px;
+      --border-radius: 8px;
+    }
+
+    /* OKLCH Color Support (Winter '26) - Progressive enhancement */
+    @supports (color: oklch(0% 0 0)) {
+      :root {
+        /* OKLCH provides wider color gamut and perceptual uniformity */
+        --color-primary-oklch: oklch(0.52 0.22 25);
+        --color-secondary-oklch: oklch(0.25 0.1 260);
+        --color-accent-oklch: oklch(0.45 0.15 250);
+        --color-success-oklch: oklch(0.55 0.15 145);
+        --color-error-oklch: oklch(0.55 0.2 25);
+        --color-star-oklch: oklch(0.75 0.15 85);
+
+        /* Dynamic color mixing with OKLCH */
+        --color-primary-dark: color-mix(in oklch, var(--color-primary), black 20%);
+        --color-primary-light: color-mix(in oklch, var(--color-primary), white 30%);
+        --color-secondary-dark: color-mix(in oklch, var(--color-secondary), black 15%);
+        --color-secondary-light: color-mix(in oklch, var(--color-secondary), white 30%);
+
+        /* Translucent variants for overlays */
+        --color-primary-translucent: color-mix(in oklch, var(--color-primary), transparent 80%);
+        --color-secondary-translucent: color-mix(in oklch, var(--color-secondary), transparent 80%);
+      }
     }
 
     /* Reduced motion support */

@@ -1,0 +1,154 @@
+{% doc %}
+  @name Heading Block
+  @description A reusable section heading with title, subtitle, and optional divider
+  @category Layout
+{% enddoc %}
+
+{%- liquid
+  assign alignment = block.settings.alignment | default: 'center'
+  assign heading_size = block.settings.heading_size | default: 'h2'
+-%}
+
+<div class="heading-block heading-block--{{ alignment }}" {{ block.shopify_attributes }}>
+  {%- if block.settings.eyebrow != blank -%}
+    <p class="heading-block__eyebrow">{{ block.settings.eyebrow }}</p>
+  {%- endif -%}
+
+  {%- if block.settings.title != blank -%}
+    <{{ heading_size }} class="heading-block__title">{{ block.settings.title }}</{{ heading_size }}>
+  {%- endif -%}
+
+  {%- if block.settings.subtitle != blank -%}
+    <p class="heading-block__subtitle">{{ block.settings.subtitle }}</p>
+  {%- endif -%}
+
+  {%- if block.settings.show_divider -%}
+    <div class="heading-block__divider" aria-hidden="true"></div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+.heading-block {
+  margin-bottom: var(--spacing-lg, 2rem);
+}
+
+.heading-block--center {
+  text-align: center;
+}
+
+.heading-block--left {
+  text-align: left;
+}
+
+.heading-block--right {
+  text-align: right;
+}
+
+.heading-block__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.heading-block__title {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-heading);
+}
+
+.heading-block__subtitle {
+  margin: 0.75rem 0 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-text-light);
+  max-width: 65ch;
+}
+
+.heading-block--center .heading-block__subtitle {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heading-block__divider {
+  width: 60px;
+  height: 3px;
+  margin-top: 1.5rem;
+  background: var(--color-primary);
+  border-radius: 2px;
+}
+
+.heading-block--center .heading-block__divider {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heading-block--right .heading-block__divider {
+  margin-left: auto;
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Heading",
+  "category": "Layout",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "info": "Small text above the heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Section Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h1", "label": "H1 (largest)" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4 (smallest)" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Heading",
+      "category": "Layout"
+    }
+  ]
+}
+{% endschema %}
