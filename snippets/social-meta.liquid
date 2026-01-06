@@ -7,7 +7,7 @@
   assign og_title = page_title | default: shop.name
   assign og_description = page_description | default: shop.description | strip_html | truncate: 200
   assign og_type = 'website'
-  assign og_image = nil
+  assign og_image = settings.share_image | image_url: width: 1200
   assign og_image_alt = settings.share_image_alt | default: shop.name
 
   if template contains 'product'
@@ -38,10 +38,6 @@
   elsif template contains 'page'
     assign og_title = page.title | append: ' | ' | append: shop.name
     assign og_description = page.content | strip_html | truncate: 200 | default: page_description
-  endif
-
-  if og_image == nil and settings.share_image
-    assign og_image = settings.share_image | image_url: width: 1200
   endif
 %}
 
