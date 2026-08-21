@@ -26,14 +26,14 @@
                 height="200">
             {% else %}
               <div class="industry-card__placeholder">
-                {% render 'icon', name: block.settings.icon | default: 'building' %}
+                {% render 'icon', name: block.settings.icon, default: 'building' %}
               </div>
             {% endif %}
             <div class="industry-card__overlay"></div>
           </div>
           <div class="industry-card__content">
             <div class="industry-card__icon">
-              {% render 'icon', name: block.settings.icon | default: 'building' %}
+              {% render 'icon', name: block.settings.icon, default: 'building' %}
             </div>
             <h3 class="industry-card__title">{{ block.settings.title }}</h3>
             {% if block.settings.description != blank %}
@@ -265,3 +265,16 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% render 'icon', name: block.settings.icon | default: 'building' %}"
+  to: "{% render 'icon', name: block.settings.icon, default: 'building' %}"
+  position: 1240..1307
+- from: "{% render 'icon', name: block.settings.icon | default: 'building' %}"
+  to: "{% render 'icon', name: block.settings.icon, default: 'building' %}"
+  position: 1532..1599
+{% endcomment %}
